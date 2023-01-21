@@ -29,9 +29,13 @@ This repository contains two sets of notebooks:
     ocrpostcorrection
     ├── LICENSE
     ├── README.md
-    ├── colab                                 <- Notebooks to be run on GPU
-    │   ├── icdar-task1-hf-evaluation.ipynb   <- Evaluate Huggingface BERT model for task 1
-    │   └── icdar-task1-hf-train.ipynb        <- Train Huggingface BERT model for task 1
-    └── local                                 <- Notebooks to be run locally
-        └── icdar-create-hf-dataset.ipynb     <- Create Huggingface dataset from the icdar data
+    ├── colab                                      <- Notebooks to be run on GPU
+    │   ├── icdar-task1-hf-evaluation.ipynb        <- Evaluate Huggingface BERT model for task 1
+    │   └── icdar-task1-hf-train.ipynb             <- Train Huggingface BERT model for task 1
+    └── local                                      <- Notebooks to be run locally
+        ├── data                                   <- Data generated and/or used by local notebooks
+        ├── icdar-create-hf-dataset.ipynb          <- Create Huggingface dataset from the icdar data
+        ├── icdar-task2-create-dataset.ipynb       <- Create error correction dataset from the icdar data
+        ├── icdar-task2-results-analysis.ipynb     <- Preliminary analysis of error correction results
+        └── perfect_task1+2_output_analysis.ipynb  <- Analysis of evalTool script for measuring performance
 ```
