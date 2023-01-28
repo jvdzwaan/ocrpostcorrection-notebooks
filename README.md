@@ -30,10 +30,13 @@ This repository contains two sets of notebooks:
     ├── LICENSE
     ├── README.md
     ├── colab                                      <- Notebooks to be run on GPU
-    │   ├── icdar-task1-hf-evaluation.ipynb        <- Evaluate Huggingface BERT model for task 1
-    │   └── icdar-task1-hf-train.ipynb             <- Train Huggingface BERT model for task 1
+    │   ├── icdar-task1-hf-evaluation.ipynb        <- Evaluate Huggingface BERT model for error detection
+    │   ├── icdar-task1-hf-train.ipynb             <- Train Huggingface BERT model for error detection
+    │   ├── icdar-task2-seq2seq-evaluation.ipynb   <- Evaluate performance of error correction model
+    │   └── icdar-task2-train-seq2seq.ipynb        <- Train error correction model
     └── local                                      <- Notebooks to be run locally
         ├── data                                   <- Data generated and/or used by local notebooks
+        ├── evalTool_ICDAR2017.py                  <- ICDAR competition evaluation script
         ├── icdar-create-hf-dataset.ipynb          <- Create Huggingface dataset from the icdar data
         ├── icdar-task2-create-dataset.ipynb       <- Create error correction dataset from the icdar data
         ├── icdar-task2-results-analysis.ipynb     <- Preliminary analysis of error correction results
