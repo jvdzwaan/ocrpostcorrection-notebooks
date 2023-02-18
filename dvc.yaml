@@ -1,0 +1,13 @@
+stages:
+  create-intermediate-data:
+    cmd: python src/stages/create-intermediate-data.py --config params.yaml
+    deps:
+    - src/stages/create-intermediate-data.py
+    params:
+    - base
+    - create-intermediate-data
+    outs:
+    - data/interim/md.csv
+    - data/interim/md_test.csv
+    - data/interim/data.pkl
+    - data/interim/data_test.pkl

@@ -1,0 +1,32 @@
+schema: '2.0'
+stages:
+  create-intermediate-data:
+    cmd: python src/stages/create-intermediate-data.py --config params.yaml
+    deps:
+    - path: src/stages/create-intermediate-data.py
+      md5: 379d8e288160baf1498715bdbc5858b9
+      size: 1278
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+        create-intermediate-data:
+          raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
+          raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+          intermediate-train-md-csv: data/interim/md.csv
+          intermediate-test-md-csv: data/interim/md_test.csv
+          intermediate-train-texts: data/interim/data.pkl
+          intermediate-test-texts: data/interim/data_test.pkl
+    outs:
+    - path: data/interim/data.pkl
+      md5: 183a1f6c0c6d592f6a8f94bbbc578706
+      size: 321792009
+    - path: data/interim/data_test.pkl
+      md5: 7d66e5c51731b1fbbcaa8c44fa157a30
+      size: 85580376
+    - path: data/interim/md.csv
+      md5: ce3f99beead6a9a13cecec23a3df79c8
+      size: 591418
+    - path: data/interim/md_test.csv
+      md5: a8cec318fd8692c40c50ebce0d4daf56
+      size: 151272
