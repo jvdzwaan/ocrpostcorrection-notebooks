@@ -1,5 +1,6 @@
 import argparse
 import pickle
+import sys
 
 from pathlib import Path
 from typing import Text
@@ -15,6 +16,9 @@ from ocrpostcorrection.icdar_data import generate_sentences
 
 def create_error_detection_dataset(config_path: Text) -> None:
     config = yaml.safe_load(open(config_path))
+
+    logger.remove()
+    logger.add(sys.stderr, level=config['base']['loglevel'])
 
     X_train = pd.read_csv(config['data-split']['train-split'], index_col=0)
     X_val = pd.read_csv(config['data-split']['val-split'], index_col=0)

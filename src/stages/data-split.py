@@ -1,5 +1,6 @@
 import argparse
 import shutil
+import sys
 
 from pathlib import Path
 from typing import Text
@@ -13,6 +14,9 @@ from sklearn.model_selection import train_test_split
 
 def data_split(config_path: Text) -> None:
     config = yaml.safe_load(open(config_path))
+
+    logger.remove()
+    logger.add(sys.stderr, level=config['base']['loglevel'])
 
     Path(config['data-split']['train-split']).parent.mkdir(exist_ok=True, parents=True)
 

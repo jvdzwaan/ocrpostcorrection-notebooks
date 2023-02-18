@@ -1,5 +1,6 @@
 import argparse
 import pickle
+import sys
 
 from pathlib import Path
 from typing import Text
@@ -13,6 +14,9 @@ from ocrpostcorrection.icdar_data import generate_data
 
 def create_intermediate_data(config_path: Text) -> None:
     config = yaml.safe_load(open(config_path))
+
+    logger.remove()
+    logger.add(sys.stderr, level=config['base']['loglevel'])
 
     Path(config['create-intermediate-data']['intermediate-train-md-csv']).parent.mkdir(exist_ok=True, parents=True)
 
