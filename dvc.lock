@@ -70,3 +70,46 @@ stages:
     - path: data/splits/val.csv
       md5: 805fa2fd625eb2c98d00d1fa6c842317
       size: 58188
+  create-error-detection-dataset:
+    cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
+    deps:
+    - path: data/interim/data.pkl
+      md5: 183a1f6c0c6d592f6a8f94bbbc578706
+      size: 321792009
+    - path: data/interim/data_test.pkl
+      md5: 7d66e5c51731b1fbbcaa8c44fa157a30
+      size: 85580376
+    - path: data/splits/test.csv
+      md5: a8cec318fd8692c40c50ebce0d4daf56
+      size: 151272
+    - path: data/splits/train.csv
+      md5: 9007d043684d8ad02dd7ecc86b092220
+      size: 523831
+    - path: data/splits/val.csv
+      md5: 805fa2fd625eb2c98d00d1fa6c842317
+      size: 58188
+    - path: src/stages/create-error-detection-dataset.py
+      md5: 579e0f97280c14eb898cba5b08987e5f
+      size: 2485
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+        create-error-detection-dataset:
+          size: 35
+          step: 30
+          max-edit-distance: 0.3
+          dataset: data/processed/correction-dataset
+        create-intermediate-data:
+          raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
+          raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+          intermediate-train-md-csv: data/interim/md.csv
+          intermediate-test-md-csv: data/interim/md_test.csv
+          intermediate-train-texts: data/interim/data.pkl
+          intermediate-test-texts: data/interim/data_test.pkl
+    outs:
+    - path: data/processed/correction-dataset
+      md5: 491caa1f16e96277c3a0d1e0d6d5f6ca.dir
+      size: 77730504
+      nfiles: 10

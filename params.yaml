@@ -14,3 +14,8 @@ data-split:
   train-split: data/splits/train.csv
   val-split: data/splits/val.csv
   test-split: data/splits/test.csv
+create-error-detection-dataset:
+  size: 35
+  step: 30
+  max-edit-distance: 0.3
+  dataset: data/processed/correction-dataset

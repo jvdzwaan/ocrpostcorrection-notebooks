@@ -25,3 +25,18 @@ stages:
     - data/splits/train.csv
     - data/splits/val.csv
     - data/splits/test.csv
+  create-error-detection-dataset:
+    cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
+    deps:
+    - src/stages/create-error-detection-dataset.py
+    - data/interim/data.pkl
+    - data/interim/data_test.pkl
+    - data/splits/train.csv
+    - data/splits/val.csv
+    - data/splits/test.csv
+    params:
+    - base
+    - create-intermediate-data
+    - create-error-detection-dataset
+    outs:
+    - data/processed/correction-dataset
