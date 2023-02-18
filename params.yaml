@@ -1,5 +1,6 @@
 base:
   loglevel: INFO
+  seed: 8232
 get-raw-data:
 create-intermediate-data:
   raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
@@ -8,3 +9,8 @@ create-intermediate-data:
   intermediate-test-md-csv: data/interim/md_test.csv
   intermediate-train-texts: data/interim/data.pkl
   intermediate-test-texts: data/interim/data_test.pkl
+data-split:
+  val-size: 0.1
+  train-split: data/splits/train.csv
+  val-split: data/splits/val.csv
+  test-split: data/splits/test.csv

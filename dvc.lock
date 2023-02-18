@@ -10,6 +10,7 @@ stages:
       params.yaml:
         base:
           loglevel: INFO
+          seed: 8232
         create-intermediate-data:
           raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
           raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
@@ -30,3 +31,42 @@ stages:
     - path: data/interim/md_test.csv
       md5: a8cec318fd8692c40c50ebce0d4daf56
       size: 151272
+  data-split:
+    cmd: python src/stages/data-split.py --config params.yaml
+    deps:
+    - path: data/interim/md.csv
+      md5: ce3f99beead6a9a13cecec23a3df79c8
+      size: 591418
+    - path: data/interim/md_test.csv
+      md5: a8cec318fd8692c40c50ebce0d4daf56
+      size: 151272
+    - path: src/stages/data-split.py
+      md5: 8210ed2a47a2314ad29c8a1386079efa
+      size: 1389
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+        create-intermediate-data:
+          raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
+          raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+          intermediate-train-md-csv: data/interim/md.csv
+          intermediate-test-md-csv: data/interim/md_test.csv
+          intermediate-train-texts: data/interim/data.pkl
+          intermediate-test-texts: data/interim/data_test.pkl
+        data-split:
+          val-size: 0.1
+          train-split: data/splits/train.csv
+          val-split: data/splits/val.csv
+          test-split: data/splits/test.csv
+    outs:
+    - path: data/splits/test.csv
+      md5: a8cec318fd8692c40c50ebce0d4daf56
+      size: 151272
+    - path: data/splits/train.csv
+      md5: 9007d043684d8ad02dd7ecc86b092220
+      size: 523831
+    - path: data/splits/val.csv
+      md5: 805fa2fd625eb2c98d00d1fa6c842317
+      size: 58188

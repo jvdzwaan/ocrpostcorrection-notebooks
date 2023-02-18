@@ -11,3 +11,17 @@ stages:
     - data/interim/md_test.csv
     - data/interim/data.pkl
     - data/interim/data_test.pkl
+  data-split:
+    cmd: python src/stages/data-split.py --config params.yaml
+    deps:
+    - src/stages/data-split.py
+    - data/interim/md.csv
+    - data/interim/md_test.csv
+    params:
+    - base
+    - create-intermediate-data
+    - data-split
+    outs:
+    - data/splits/train.csv
+    - data/splits/val.csv
+    - data/splits/test.csv
