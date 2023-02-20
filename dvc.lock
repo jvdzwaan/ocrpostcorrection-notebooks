@@ -3,6 +3,10 @@ stages:
   create-intermediate-data:
     cmd: python src/stages/create-intermediate-data.py --config params.yaml
     deps:
+    - path: data/raw
+      md5: 9085da1af8b75054040af1043d07986b.dir
+      size: 173604926
+      nfiles: 29790
     - path: src/stages/create-intermediate-data.py
       md5: f7af40b9ac60715396049befba96d0b9
       size: 1371

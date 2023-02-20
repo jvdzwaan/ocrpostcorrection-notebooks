@@ -3,6 +3,7 @@ stages:
     cmd: python src/stages/create-intermediate-data.py --config params.yaml
     deps:
     - src/stages/create-intermediate-data.py
+    - data/raw
     params:
     - base
     - create-intermediate-data
