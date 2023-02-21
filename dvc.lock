@@ -4,20 +4,19 @@ stages:
     cmd: python src/stages/create-intermediate-data.py --config params.yaml
     deps:
     - path: data/raw
-      md5: 9085da1af8b75054040af1043d07986b.dir
-      size: 173604926
-      nfiles: 29790
+      md5: 23ff008ffcaa09e15095a2cc479a8e62.dir
+      size: 66523152
+      nfiles: 1
     - path: src/stages/create-intermediate-data.py
-      md5: f7af40b9ac60715396049befba96d0b9
-      size: 1371
+      md5: de6efe0b2125c68142167b581093f7a0
+      size: 2427
     params:
       params.yaml:
         base:
           loglevel: INFO
           seed: 8232
         create-intermediate-data:
-          raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
-          raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
           intermediate-train-md-csv: data/interim/md.csv
           intermediate-test-md-csv: data/interim/md_test.csv
           intermediate-train-texts: data/interim/data.pkl
@@ -53,8 +52,7 @@ stages:
           loglevel: INFO
           seed: 8232
         create-intermediate-data:
-          raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
-          raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
           intermediate-train-md-csv: data/interim/md.csv
           intermediate-test-md-csv: data/interim/md_test.csv
           intermediate-train-texts: data/interim/data.pkl
@@ -106,8 +104,7 @@ stages:
           max-edit-distance: 0.3
           dataset: data/processed/correction-dataset
         create-intermediate-data:
-          raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
-          raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
           intermediate-train-md-csv: data/interim/md.csv
           intermediate-test-md-csv: data/interim/md_test.csv
           intermediate-train-texts: data/interim/data.pkl

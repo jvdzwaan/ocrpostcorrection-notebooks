@@ -3,8 +3,7 @@ base:
   seed: 8232
 get-raw-data:
 create-intermediate-data:
-  raw-data-dir-train: data/raw/ICDAR2019_POCR_competition_training_18M_without_Finnish
-  raw-data-dir-test: data/raw/ICDAR2019_POCR_competition_evaluation_4M_without_Finnish
+  raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
   intermediate-train-md-csv: data/interim/md.csv
   intermediate-test-md-csv: data/interim/md_test.csv
   intermediate-train-texts: data/interim/data.pkl
