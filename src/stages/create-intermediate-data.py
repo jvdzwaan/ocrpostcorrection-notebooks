@@ -37,7 +37,7 @@ def create_intermediate_data(config_path: Text) -> None:
         }
         for from_dir, to_dir in inputs.items():
             for in_file in (in_dir/'output'/from_dir).iterdir():
-                if in_file.is_file:
+                if in_file.is_file():
                     out_file = path/to_dir/'FI'/'FI1'/in_file.name
                     shutil.copy2(in_file, out_file)
 

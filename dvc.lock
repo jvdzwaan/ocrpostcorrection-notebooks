@@ -8,8 +8,8 @@ stages:
       size: 66523152
       nfiles: 1
     - path: src/stages/create-intermediate-data.py
-      md5: de6efe0b2125c68142167b581093f7a0
-      size: 2427
+      md5: 6ea1cae1b3f25ed108d25caaa065525a
+      size: 2429
     params:
       params.yaml:
         base:
