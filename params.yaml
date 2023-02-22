@@ -1,13 +1,7 @@
 base:
   loglevel: INFO
   seed: 8232
-get-raw-data:
-create-intermediate-data:
   raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
-  intermediate-train-md-csv: data/interim/md.csv
-  intermediate-test-md-csv: data/interim/md_test.csv
-  intermediate-train-texts: data/interim/data.pkl
-  intermediate-test-texts: data/interim/data_test.pkl
 data-split:
   val-size: 0.1
   train-split: data/splits/train.csv

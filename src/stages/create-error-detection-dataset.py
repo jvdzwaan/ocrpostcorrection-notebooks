@@ -1,5 +1,5 @@
 import argparse
-import pickle
+import json
 import sys
 
 from pathlib import Path
@@ -11,7 +11,7 @@ import yaml
 from datasets import Sequence, ClassLabel, DatasetDict, Dataset
 from loguru import logger
 
-from ocrpostcorrection.icdar_data import generate_sentences
+from ocrpostcorrection.icdar_data import generate_sentences, get_intermediate_data
 
 
 def create_error_detection_dataset(config_path: Text) -> None:
@@ -20,12 +20,11 @@ def create_error_detection_dataset(config_path: Text) -> None:
     logger.remove()
     logger.add(sys.stderr, level=config['base']['loglevel'])
 
+    data, _, data_test, _ = get_intermediate_data(config['base']['raw-data-zip'])
+
     X_train = pd.read_csv(config['data-split']['train-split'], index_col=0)
     X_val = pd.read_csv(config['data-split']['val-split'], index_col=0)
     X_test = pd.read_csv(config['data-split']['test-split'], index_col=0)
-
-    data = pickle.load(open(config['create-intermediate-data']['intermediate-train-texts'], 'rb'))
-    data_test = pickle.load(open(config['create-intermediate-data']['intermediate-test-texts'], 'rb'))
 
     size = config['create-error-detection-dataset']['size']
     step = config['create-error-detection-dataset']['step']

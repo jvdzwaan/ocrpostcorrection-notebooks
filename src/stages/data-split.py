@@ -11,6 +11,8 @@ import yaml
 from loguru import logger
 from sklearn.model_selection import train_test_split
 
+from ocrpostcorrection.icdar_data import get_intermediate_data
+
 
 def data_split(config_path: Text) -> None:
     config = yaml.safe_load(open(config_path))
@@ -20,7 +22,8 @@ def data_split(config_path: Text) -> None:
 
     Path(config['data-split']['train-split']).parent.mkdir(exist_ok=True, parents=True)
 
-    md = pd.read_csv(config['create-intermediate-data']['intermediate-train-md-csv'], index_col=0)
+    _, md, _, md_test = get_intermediate_data(config['base']['raw-data-zip'])
+
     X_train, X_val, _, _ = train_test_split(
         md,
         md['file_name'],
@@ -35,12 +38,9 @@ def data_split(config_path: Text) -> None:
     logger.info(f'Train set contains {X_train.shape[0]} texts')
     logger.info(f'Val set contains {X_val.shape[0]} texts')
 
-    shutil.copy(
-        config['create-intermediate-data']['intermediate-test-md-csv'], config['data-split']['test-split']
-    )
+    md_test.to_csv(config['data-split']['test-split'])
 
-    X_test = pd.read_csv(config['data-split']['test-split'])
-    logger.info(f'Test set contains {X_test.shape[0]} texts')
+    logger.info(f'Test set contains {md_test.shape[0]} texts')
 
 
 if __name__ == '__main__':

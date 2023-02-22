@@ -1,62 +1,17 @@
 schema: '2.0'
 stages:
-  create-intermediate-data:
-    cmd: python src/stages/create-intermediate-data.py --config params.yaml
-    deps:
-    - path: data/raw
-      md5: 23ff008ffcaa09e15095a2cc479a8e62.dir
-      size: 66523152
-      nfiles: 1
-    - path: src/stages/create-intermediate-data.py
-      md5: 6ea1cae1b3f25ed108d25caaa065525a
-      size: 2429
-    params:
-      params.yaml:
-        base:
-          loglevel: INFO
-          seed: 8232
-        create-intermediate-data:
-          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
-          intermediate-train-md-csv: data/interim/md.csv
-          intermediate-test-md-csv: data/interim/md_test.csv
-          intermediate-train-texts: data/interim/data.pkl
-          intermediate-test-texts: data/interim/data_test.pkl
-    outs:
-    - path: data/interim/data.pkl
-      md5: 183a1f6c0c6d592f6a8f94bbbc578706
-      size: 321792009
-    - path: data/interim/data_test.pkl
-      md5: 7d66e5c51731b1fbbcaa8c44fa157a30
-      size: 85580376
-    - path: data/interim/md.csv
-      md5: ce3f99beead6a9a13cecec23a3df79c8
-      size: 591418
-    - path: data/interim/md_test.csv
-      md5: a8cec318fd8692c40c50ebce0d4daf56
-      size: 151272
   data-split:
     cmd: python src/stages/data-split.py --config params.yaml
     deps:
-    - path: data/interim/md.csv
-      md5: ce3f99beead6a9a13cecec23a3df79c8
-      size: 591418
-    - path: data/interim/md_test.csv
-      md5: a8cec318fd8692c40c50ebce0d4daf56
-      size: 151272
     - path: src/stages/data-split.py
-      md5: 7054529d06a3602e52e70fe157160d36
-      size: 1482
+      md5: d9aa4e9397c8f8c3b69061a274b5cf82
+      size: 1391
     params:
       params.yaml:
         base:
           loglevel: INFO
           seed: 8232
-        create-intermediate-data:
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
-          intermediate-train-md-csv: data/interim/md.csv
-          intermediate-test-md-csv: data/interim/md_test.csv
-          intermediate-train-texts: data/interim/data.pkl
-          intermediate-test-texts: data/interim/data_test.pkl
         data-split:
           val-size: 0.1
           train-split: data/splits/train.csv
@@ -64,53 +19,42 @@ stages:
           test-split: data/splits/test.csv
     outs:
     - path: data/splits/test.csv
-      md5: a8cec318fd8692c40c50ebce0d4daf56
+      md5: e7ddfb949902c81b7ee76971295b3688
       size: 151272
     - path: data/splits/train.csv
-      md5: 9007d043684d8ad02dd7ecc86b092220
-      size: 523831
+      md5: 135ea87880a8dd2f69684c9a5a9466dc
+      size: 532103
     - path: data/splits/val.csv
-      md5: 805fa2fd625eb2c98d00d1fa6c842317
-      size: 58188
+      md5: c74421cede23176eed7e7323ee7f9961
+      size: 59369
   create-error-detection-dataset:
     cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
     deps:
-    - path: data/interim/data.pkl
-      md5: 183a1f6c0c6d592f6a8f94bbbc578706
-      size: 321792009
-    - path: data/interim/data_test.pkl
-      md5: 7d66e5c51731b1fbbcaa8c44fa157a30
-      size: 85580376
     - path: data/splits/test.csv
-      md5: a8cec318fd8692c40c50ebce0d4daf56
+      md5: e7ddfb949902c81b7ee76971295b3688
       size: 151272
     - path: data/splits/train.csv
-      md5: 9007d043684d8ad02dd7ecc86b092220
-      size: 523831
+      md5: 135ea87880a8dd2f69684c9a5a9466dc
+      size: 532103
     - path: data/splits/val.csv
-      md5: 805fa2fd625eb2c98d00d1fa6c842317
-      size: 58188
+      md5: c74421cede23176eed7e7323ee7f9961
+      size: 59369
     - path: src/stages/create-error-detection-dataset.py
-      md5: 5200f0cd2c05c0902b4d86ed915bb177
-      size: 2578
+      md5: fc8d16246dba598f1cbc4e7a93d44d0e
+      size: 2479
     params:
       params.yaml:
         base:
           loglevel: INFO
           seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         create-error-detection-dataset:
           size: 35
           step: 30
           max-edit-distance: 0.3
           dataset: data/processed/correction-dataset
-        create-intermediate-data:
-          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
-          intermediate-train-md-csv: data/interim/md.csv
-          intermediate-test-md-csv: data/interim/md_test.csv
-          intermediate-train-texts: data/interim/data.pkl
-          intermediate-test-texts: data/interim/data_test.pkl
     outs:
     - path: data/processed/correction-dataset
-      md5: 491caa1f16e96277c3a0d1e0d6d5f6ca.dir
-      size: 77730504
+      md5: 04b003ebe5c92a6a775acecd099322d1.dir
+      size: 140725579
       nfiles: 10
