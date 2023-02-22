@@ -55,7 +55,6 @@ def train_error_detection(config_path: Text) -> None:
     set_seed(config['base']['seed'])
 
     dataset = load_from_disk(config['create-error-detection-dataset']['dataset'])
-    dataset = reduce_dataset(dataset)
 
     logger.info(f'Dataset loaded: # samples train: {len(dataset["train"])}, val: {len(dataset["val"])}')
 
