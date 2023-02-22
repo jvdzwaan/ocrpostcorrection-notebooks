@@ -35,7 +35,7 @@ def create_error_detection_dataset(config_path: Text) -> None:
     val_data = generate_sentences(X_val, data, size=size, step=step)
     test_data = generate_sentences(X_test, data_test, size=size, step=size)
 
-    logger.info(f'# samples train: {train_data.shape[0]}, val: {val_data.shape[0]}, test: {train_data.shape[0]})')
+    logger.info(f'# samples train: {train_data.shape[0]}, val: {val_data.shape[0]}, test: {test_data.shape[0]})')
 
     dataset = DatasetDict(
         {
