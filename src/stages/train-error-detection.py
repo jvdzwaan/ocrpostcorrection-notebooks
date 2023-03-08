@@ -1,6 +1,6 @@
 import argparse
 import sys
-from typing import Any, Text
+from typing import Any, Dict, Text
 
 import pandas as pd
 import yaml
@@ -19,7 +19,7 @@ from ocrpostcorrection.token_classification import tokenize_and_align_labels
 from ocrpostcorrection.utils import reduce_dataset
 
 
-def add_values(prefix: str, row: dict[str, Any], name: str, value: Any) -> dict[str, Any]:
+def add_values(prefix: str, row: Dict[str, Any], name: str, value: Any) -> Dict[str, Any]:
     new_name = name.replace(prefix, '')
     row[new_name] = value
     row['stage'] = prefix.replace('_', '')
