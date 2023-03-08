@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "ocrpostcorrection-notebooks"
+version = "0.1.0"
+description = ""
+authors = ["Janneke van der Zwaan <jannekevdzwaan@gmail.com>"]
+license = "Apache 2.0"
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.8"
+datasets = "2.10.0"
+transformers = "4.26.1"
+pandas = "1.5.3"
+ocrpostcorrection = {git = "https://github.com/jvdzwaan/ocrpostcorrection.git"}
+dvc-gdrive = "2.19.1"
+dvc = "^2.46.0"
+
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
