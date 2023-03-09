@@ -37,6 +37,14 @@ def create_error_detection_dataset(config_path: Text) -> None:
 
     logger.info(f'# samples train: {train_data.shape[0]}, val: {val_data.shape[0]}, test: {test_data.shape[0]})')
 
+    max_ed = config['create-error-detection-dataset']['max-edit-distance']
+    logger.info(f"Filtering train and val based on maximum edit distance of {max_ed}")
+    train_data = train_data[train_data.score < max_ed]
+    val_data = val_data[val_data.score < max_ed]
+
+    for df in (train_data, val_data, test_data):
+        df.drop(columns=['score'], inplace=True)
+
     dataset = DatasetDict(
         {
             'train': Dataset.from_pandas(train_data),
@@ -51,14 +59,8 @@ def create_error_detection_dataset(config_path: Text) -> None:
         Sequence(feature=ClassLabel(num_classes=3, names=['O', 'OCR-Mistake-B', 'OCR-Mistake-I']), length=-1)
     )
 
-    max_ed = config['create-error-detection-dataset']['max-edit-distance']
-    logger.info(f"Filtering train and val based on maximum edit distance of {max_ed}")
-    for split in ('train', 'val'):
-        dataset[split] = dataset[split].filter(lambda x: x['score'] < max_ed)
-
+    logger.info('Saving dataset')
     dataset.save_to_disk(config['create-error-detection-dataset']['dataset'])
-
-    logger.info('Saved dataset')
     logger.info(f'# samples train: {len(dataset["train"])}, val: {len(dataset["val"])}, test: {len(dataset["test"])})')
 
 
