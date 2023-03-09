@@ -52,9 +52,9 @@ stages:
           size: 35
           step: 30
           max-edit-distance: 0.3
-          dataset: data/processed/correction-dataset
+          dataset: data/processed/detection-dataset
     outs:
-    - path: data/processed/correction-dataset
+    - path: data/processed/detection-dataset
       md5: a1383bc7cad91b4632ca06e1a45b37de.dir
       size: 77549763
       nfiles: 10

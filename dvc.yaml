@@ -21,12 +21,12 @@ stages:
     - base
     - create-error-detection-dataset
     outs:
-    - data/processed/correction-dataset
+    - data/processed/detection-dataset
   train-error-detection:
     cmd: python src/stages/train-error-detection.py --config params.yaml
     deps:
     - src/stages/train-error-detection.py
-    - data/processed/correction-dataset
+    - data/processed/detection-dataset
     params:
     - base
     - create-error-detection-dataset

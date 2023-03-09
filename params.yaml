@@ -11,7 +11,7 @@ create-error-detection-dataset:
   size: 35
   step: 30
   max-edit-distance: 0.3
-  dataset: data/processed/correction-dataset
+  dataset: data/processed/detection-dataset
 train-error-detection:
   pretrained-model-name: bert-base-multilingual-cased
   output_dir: models/error-detection/
