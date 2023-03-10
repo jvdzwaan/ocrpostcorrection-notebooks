@@ -7,31 +7,31 @@ stages:
     - base
     - data-split
     outs:
-    - data/splits/train.csv
-    - data/splits/val.csv
-    - data/splits/test.csv
+    - ${data-split.train-split}
+    - ${data-split.val-split}
+    - ${data-split.test-split}
   create-error-detection-dataset:
     cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
     deps:
     - src/stages/create-error-detection-dataset.py
-    - data/splits/train.csv
-    - data/splits/val.csv
-    - data/splits/test.csv
+    - ${data-split.train-split}
+    - ${data-split.val-split}
+    - ${data-split.test-split}
     params:
     - base
     - create-error-detection-dataset
     outs:
-    - data/processed/detection-dataset
+    - ${create-error-detection-dataset.dataset}
   train-error-detection:
     cmd: python src/stages/train-error-detection.py --config params.yaml
     deps:
     - src/stages/train-error-detection.py
-    - data/processed/detection-dataset
+    - ${create-error-detection-dataset.dataset}
     params:
     - base
     - create-error-detection-dataset
     - train-error-detection
     outs:
-    - error-detection-train-log.csv:
+    - ${train-error-detection.train_log}:
         cache: false
-    - models/error-detection/
+    - ${train-error-detection.output_dir}
