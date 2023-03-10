@@ -3,6 +3,9 @@ stages:
   data-split:
     cmd: python src/stages/data-split.py --config params.yaml
     deps:
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
     - path: src/stages/data-split.py
       md5: d9aa4e9397c8f8c3b69061a274b5cf82
       size: 1391

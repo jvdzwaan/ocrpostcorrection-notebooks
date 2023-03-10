@@ -3,6 +3,7 @@ stages:
     cmd: python src/stages/data-split.py --config params.yaml
     deps:
     - src/stages/data-split.py
+    - ${base.raw-data-zip}
     params:
     - base
     - data-split
