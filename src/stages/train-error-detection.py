@@ -1,6 +1,6 @@
 import argparse
 import sys
-from typing import Any, Dict, Text
+from typing import Any, Dict, List, Text
 
 import pandas as pd
 import yaml
@@ -16,7 +16,6 @@ from transformers import (
 )
 
 from ocrpostcorrection.token_classification import tokenize_and_align_labels
-from ocrpostcorrection.utils import reduce_dataset
 
 
 def add_values(prefix: str, row: Dict[str, Any], name: str, value: Any) -> Dict[str, Any]:
@@ -26,7 +25,7 @@ def add_values(prefix: str, row: Dict[str, Any], name: str, value: Any) -> Dict[
     return row
 
 
-def create_train_log(logs: list[dict[str, Any]]) -> pd.DataFrame:
+def create_train_log(logs: List[Dict[str, Any]]) -> pd.DataFrame:
     rows = []
 
     for log in logs:
