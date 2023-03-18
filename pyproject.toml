@@ -16,6 +16,7 @@ ocrpostcorrection = {git = "https://github.com/jvdzwaan/ocrpostcorrection.git"}
 dvc-gdrive = "2.19.1"
 dvc = "^2.46.0"
 scikit-learn = "^1.2.1"
+nbdev = "^2.3.12"
 
 
 [tool.poetry.group.dev.dependencies]
