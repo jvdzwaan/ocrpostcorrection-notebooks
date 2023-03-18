@@ -18,6 +18,7 @@ stages:
     - ${data-split.train-split}
     - ${data-split.val-split}
     - ${data-split.test-split}
+    - ${base.raw-data-zip}
     params:
     - base
     - create-error-detection-dataset

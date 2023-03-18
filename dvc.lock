@@ -33,6 +33,9 @@ stages:
   create-error-detection-dataset:
     cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
     deps:
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
     - path: data/splits/test.csv
       md5: e7ddfb949902c81b7ee76971295b3688
       size: 151272
