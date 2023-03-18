@@ -137,3 +137,6 @@ _docs/
 _proc/
 .quarto
 .last_checked
+
+# IDE
+.vscode
