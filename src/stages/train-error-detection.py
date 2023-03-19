@@ -33,7 +33,7 @@ def create_train_log(logs: List[Dict[str, Any]]) -> pd.DataFrame:
     rows = []
 
     for log in logs:
-        row: dict[str, Any] = {}
+        row: Dict[str, Any] = {}
         for name, value in log.items():
             if name.startswith('eval_'):
                 row = add_values('eval_', row, name, value)
