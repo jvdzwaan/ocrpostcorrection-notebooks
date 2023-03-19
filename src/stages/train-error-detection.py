@@ -1,9 +1,13 @@
 import argparse
+import shutil
 import sys
+
+from pathlib import Path
 from typing import Any, Dict, List, Text
 
 import pandas as pd
 import yaml
+
 from datasets import load_from_disk
 from loguru import logger
 from transformers import AutoTokenizer
@@ -87,6 +91,12 @@ def train_error_detection(config_path: Text) -> None:
     trainer.train()
 
     trainer.save_model()
+
+    if config['train-error-detection']['delete-checkpoints']:
+        logger.info('Removing checkpoints')
+        for path in Path(config['train-error-detection']['output_dir']).glob('checkpoint-*'):
+            if path.is_dir:
+                shutil.rmtree(path)
 
     log_data = create_train_log(trainer.state.log_history)
     log_data.to_csv(config['train-error-detection']['train_log'])

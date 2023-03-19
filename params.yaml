@@ -21,3 +21,4 @@ train-error-detection:
   save_strategy: epoch
   per_device_train_batch_size: 16
   train_log: error-detection-train-log.csv
+  delete-checkpoints: True
