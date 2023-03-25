@@ -68,12 +68,12 @@ stages:
     cmd: python src/stages/train-error-detection.py --config params.yaml
     deps:
     - path: data/processed/detection-dataset
-      md5: 8f7f5fd57906c59011fc532c3f6e0a52.dir
-      size: 291944387
-      nfiles: 13
+      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
+      size: 77549763
+      nfiles: 10
     - path: src/stages/train-error-detection.py
-      md5: c82acbbc9c098091ea4aadf4f4eba01b
-      size: 3402
+      md5: 38fac49446a37bcf488710d9eb492d24
+      size: 3958
     params:
       params.yaml:
         base:
@@ -87,18 +87,19 @@ stages:
           dataset: data/processed/detection-dataset
         train-error-detection:
           pretrained-model-name: bert-base-multilingual-cased
-          output_dir: models/error-detection/
-          evaluation_strategy: epoch
-          num_train_epochs: 3
-          load_best_model_at_end: true
-          save_strategy: epoch
-          per_device_train_batch_size: 16
-          train_log: error-detection-train-log.csv
+          output-dir: models/error-detection/
+          evaluation-strategy: epoch
+          num-train-epochs: 3
+          load-best-model-at-end: true
+          save-strategy: epoch
+          per-device-train-batch-size: 16
+          train-log: results/detection/logs/train-log.csv
+          delete-checkpoints: true
     outs:
-    - path: error-detection-train-log.csv
-      md5: 2f2b7bac73ebff619c60dd36ff58092a
-      size: 1088
     - path: models/error-detection/
-      md5: 836feca03afa267aa4d0a2626ff3f0f0.dir
-      size: 7106980235
-      nfiles: 40
+      md5: 9011ab45e489e833da3be6572abbca28.dir
+      size: 713052764
+      nfiles: 7
+    - path: results/detection/logs/train-log.csv
+      md5: 38daee3e382c8519eefd81e912ccf89b
+      size: 1088
