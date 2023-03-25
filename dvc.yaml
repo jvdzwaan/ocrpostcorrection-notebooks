@@ -34,6 +34,6 @@ stages:
     - create-error-detection-dataset
     - train-error-detection
     outs:
-    - ${train-error-detection.train_log}:
+    - ${train-error-detection.train-log}:
         cache: false
-    - ${train-error-detection.output_dir}
+    - ${train-error-detection.output-dir}

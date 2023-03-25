@@ -79,15 +79,15 @@ def train_error_detection(config_path: Text) -> None:
     data_collator = DataCollatorForTokenClassification(tokenizer)
 
     training_args = TrainingArguments(
-        output_dir=config["train-error-detection"]["output_dir"],
-        evaluation_strategy=config["train-error-detection"]["evaluation_strategy"],
-        num_train_epochs=config["train-error-detection"]["num_train_epochs"],
+        output_dir=config["train-error-detection"]["output-dir"],
+        evaluation_strategy=config["train-error-detection"]["evaluation-strategy"],
+        num_train_epochs=config["train-error-detection"]["num-train-epochs"],
         load_best_model_at_end=config["train-error-detection"][
-            "load_best_model_at_end"
+            "load-best-model-at-end"
         ],
-        save_strategy=config["train-error-detection"]["save_strategy"],
+        save_strategy=config["train-error-detection"]["save-strategy"],
         per_device_train_batch_size=config["train-error-detection"][
-            "per_device_train_batch_size"
+            "per-device-train-batch-size"
         ],
     )
 
@@ -111,14 +111,16 @@ def train_error_detection(config_path: Text) -> None:
 
     if config["train-error-detection"]["delete-checkpoints"]:
         logger.info("Removing checkpoints")
-        for path in Path(config["train-error-detection"]["output_dir"]).glob(
+        for path in Path(config["train-error-detection"]["output-dir"]).glob(
             "checkpoint-*"
         ):
             if path.is_dir():
                 shutil.rmtree(path)
 
+    log_file = config["train-error-detection"]["train-log"]
+    Path(log_file).parent.mkdir(exist_ok=True, parents=True)
     log_data = create_train_log(trainer.state.log_history)
-    log_data.to_csv(config["train-error-detection"]["train_log"])
+    log_data.to_csv(log_file)
 
 
 if __name__ == "__main__":

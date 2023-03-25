@@ -14,11 +14,11 @@ create-error-detection-dataset:
   dataset: data/processed/detection-dataset
 train-error-detection:
   pretrained-model-name: bert-base-multilingual-cased
-  output_dir: models/error-detection/
-  evaluation_strategy: epoch
-  num_train_epochs: 3
-  load_best_model_at_end: True
-  save_strategy: epoch
-  per_device_train_batch_size: 16
-  train_log: error-detection-train-log.csv
+  output-dir: models/error-detection/
+  evaluation-strategy: epoch
+  num-train-epochs: 3
+  load-best-model-at-end: True
+  save-strategy: epoch
+  per-device-train-batch-size: 16
+  train-log: results/detection/logs/train-log.csv
   delete-checkpoints: True
