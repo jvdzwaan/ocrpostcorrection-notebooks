@@ -16,7 +16,6 @@ from ocrpostcorrection.utils import (
     aggregate_results,
     predictions2icdar_output,
     predictions_to_labels,
-    reduce_dataset,
     runEvaluation,
 )
 from transformers import (
@@ -46,7 +45,6 @@ def evaluate_error_detection(config_path: Text) -> None:
     set_seed(config["base"]["seed"])
 
     dataset = load_from_disk(config["create-error-detection-dataset"]["dataset"])
-    dataset = reduce_dataset(dataset)
 
     logger.info(f'Dataset loaded: # samples test: {len(dataset["test"])}')
 
