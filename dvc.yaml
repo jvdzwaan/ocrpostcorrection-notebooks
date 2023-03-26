@@ -37,3 +37,23 @@ stages:
     - ${train-error-detection.train-log}:
         cache: false
     - ${train-error-detection.output-dir}
+  evaluate-error-detection:
+    cmd: python src/stages/evaluate-error-detection.py --config params.yaml
+    deps:
+    - src/stages/evaluate-error-detection.py
+    - ${base.raw-data-zip}
+    - ${create-error-detection-dataset.dataset}
+    - ${train-error-detection.output-dir}
+    - ${train-error-detection.train-log}
+    params:
+    - base
+    - data-split
+    - create-error-detection-dataset
+    - train-error-detection
+    - evaluate-error-detection
+    outs:
+    - ${evaluate-error-detection.test-log}:
+        cache: false
+    - ${evaluate-error-detection.icdar-output-json}
+    - ${evaluate-error-detection.icdar-output-csv}
+    - ${evaluate-error-detection.report-file}

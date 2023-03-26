@@ -22,3 +22,8 @@ train-error-detection:
   per-device-train-batch-size: 16
   train-log: results/detection/logs/train-log.csv
   delete-checkpoints: True
+evaluate-error-detection:
+  test-log: results/detection/logs/test-log.csv
+  icdar-output-json: results/detection/icdar_predictions.json
+  icdar-output-csv: results/detection/icdar_evaluation_results.csv
+  report-file: reports/detection/experiment_results.md
