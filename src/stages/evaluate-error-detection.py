@@ -63,7 +63,7 @@ def evaluate_error_detection(config_path: Text) -> None:
 
     num_labels = dataset["train"].features["tags"].feature.num_classes
     model = AutoModelForTokenClassification.from_pretrained(
-        model_name, num_labels=num_labels
+        model_dir, num_labels=num_labels
     )
 
     training_args = TrainingArguments(
