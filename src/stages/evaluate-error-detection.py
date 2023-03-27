@@ -66,10 +66,12 @@ def evaluate_error_detection(config_path: Text) -> None:
         model_dir, num_labels=num_labels
     )
 
+    eval_batch_size = config["evaluate-error-detection"]["per-device-eval-batch-size"]
     training_args = TrainingArguments(
         output_dir=config["train-error-detection"]["output-dir"],
         evaluation_strategy=config["train-error-detection"]["evaluation-strategy"],
         num_train_epochs=config["train-error-detection"]["num-train-epochs"],
+        per_device_eval_batch_size=eval_batch_size,
     )
 
     trainer = Trainer(
