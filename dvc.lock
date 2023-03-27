@@ -103,3 +103,67 @@ stages:
     - path: results/detection/logs/train-log.csv
       md5: 38daee3e382c8519eefd81e912ccf89b
       size: 1088
+  evaluate-error-detection:
+    cmd: python src/stages/evaluate-error-detection.py --config params.yaml
+    deps:
+    - path: data/processed/detection-dataset
+      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
+      size: 77549763
+      nfiles: 10
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
+    - path: models/error-detection/
+      md5: 9011ab45e489e833da3be6572abbca28.dir
+      size: 713052764
+      nfiles: 7
+    - path: results/detection/logs/train-log.csv
+      md5: 38daee3e382c8519eefd81e912ccf89b
+      size: 1088
+    - path: src/stages/evaluate-error-detection.py
+      md5: 9491c7056bb9163050b15e509ebd3cb4
+      size: 5593
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-error-detection-dataset:
+          size: 35
+          step: 30
+          max-edit-distance: 0.3
+          dataset: data/processed/detection-dataset
+        data-split:
+          val-size: 0.1
+          train-split: data/splits/train.csv
+          val-split: data/splits/val.csv
+          test-split: data/splits/test.csv
+        evaluate-error-detection:
+          test-log: results/detection/logs/test-log.csv
+          icdar-output-json: results/detection/icdar_predictions.json
+          icdar-output-csv: results/detection/icdar_evaluation_results.csv
+          report-file: reports/detection/experiment_results.md
+        train-error-detection:
+          pretrained-model-name: bert-base-multilingual-cased
+          output-dir: models/error-detection/
+          evaluation-strategy: epoch
+          num-train-epochs: 3
+          load-best-model-at-end: true
+          save-strategy: epoch
+          per-device-train-batch-size: 16
+          train-log: results/detection/logs/train-log.csv
+          delete-checkpoints: true
+    outs:
+    - path: reports/detection/experiment_results.md
+      md5: f22dd5cbe3c05518d0dbb4e241d15238
+      size: 1477
+    - path: results/detection/icdar_evaluation_results.csv
+      md5: 8df3bd3665eb461609509afca0959e6b
+      size: 158455
+    - path: results/detection/icdar_predictions.json
+      md5: d303dc6a813dc0802f94a631bd4362ad
+      size: 5229733
+    - path: results/detection/logs/test-log.csv
+      md5: c604953c5ccad71b65f587d0a5db800e
+      size: 95
