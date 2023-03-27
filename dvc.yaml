@@ -56,4 +56,5 @@ stages:
         cache: false
     - ${evaluate-error-detection.icdar-output-json}
     - ${evaluate-error-detection.icdar-output-csv}
-    - ${evaluate-error-detection.report-file}
+    - ${evaluate-error-detection.report-file}:
+        cache: false
