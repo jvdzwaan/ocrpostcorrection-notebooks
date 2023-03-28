@@ -121,8 +121,8 @@ stages:
       md5: 38daee3e382c8519eefd81e912ccf89b
       size: 1088
     - path: src/stages/evaluate-error-detection.py
-      md5: 9491c7056bb9163050b15e509ebd3cb4
-      size: 5593
+      md5: eeb4c54121177511dca966872d5fa2bf
+      size: 5732
     params:
       params.yaml:
         base:
@@ -140,6 +140,7 @@ stages:
           val-split: data/splits/val.csv
           test-split: data/splits/test.csv
         evaluate-error-detection:
+          per-device-eval-batch-size: 16
           test-log: results/detection/logs/test-log.csv
           icdar-output-json: results/detection/icdar_predictions.json
           icdar-output-csv: results/detection/icdar_evaluation_results.csv
@@ -156,7 +157,7 @@ stages:
           delete-checkpoints: true
     outs:
     - path: reports/detection/experiment_results.md
-      md5: f22dd5cbe3c05518d0dbb4e241d15238
+      md5: baa8a1e2372195e055733aa56a999942
       size: 1477
     - path: results/detection/icdar_evaluation_results.csv
       md5: 8df3bd3665eb461609509afca0959e6b
@@ -165,5 +166,5 @@ stages:
       md5: d303dc6a813dc0802f94a631bd4362ad
       size: 5229733
     - path: results/detection/logs/test-log.csv
-      md5: c604953c5ccad71b65f587d0a5db800e
+      md5: de449611b84c61d666e2eebaf05c1a01
       size: 95
