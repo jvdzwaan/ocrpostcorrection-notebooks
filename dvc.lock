@@ -168,3 +168,103 @@ stages:
     - path: results/detection/logs/test-log.csv
       md5: de449611b84c61d666e2eebaf05c1a01
       size: 95
+  predict-test-set-error-detection:
+    cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
+    deps:
+    - path: data/processed/detection-dataset
+      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
+      size: 77549763
+      nfiles: 10
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
+    - path: models/error-detection/
+      md5: 9011ab45e489e833da3be6572abbca28.dir
+      size: 713052764
+      nfiles: 7
+    - path: src/stages/predict-test-set-error-detection.py
+      md5: a75a4e1dfb2c4f7eaf1fbd8600a57cc9
+      size: 3659
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-error-detection-dataset:
+          size: 35
+          step: 30
+          max-edit-distance: 0.3
+          dataset: data/processed/detection-dataset
+        predict-test-set-error-detection:
+          per-device-eval-batch-size: 16
+          test-log: results/detection/logs/test-log.csv
+          icdar-output-json: results/detection/icdar_predictions.json
+        train-error-detection:
+          pretrained-model-name: bert-base-multilingual-cased
+          output-dir: models/error-detection/
+          evaluation-strategy: epoch
+          num-train-epochs: 3
+          load-best-model-at-end: true
+          save-strategy: epoch
+          per-device-train-batch-size: 16
+          train-log: results/detection/logs/train-log.csv
+          delete-checkpoints: true
+    outs:
+    - path: results/detection/icdar_predictions.json
+      md5: fea5f27bb10fe5fe6ab390b7a33052be
+      size: 4891768
+    - path: results/detection/logs/test-log.csv
+      md5: accf9e0f87b2bc67cd49e991d7318163
+      size: 95
+  generate-error-detection-report:
+    cmd: python src/stages/generate-error-detection-report.py --config params.yaml
+    deps:
+    - path: results/detection/logs/test-log.csv
+      md5: accf9e0f87b2bc67cd49e991d7318163
+      size: 95
+    - path: results/detection/logs/train-log.csv
+      md5: 38daee3e382c8519eefd81e912ccf89b
+      size: 1088
+    - path: src/stages/generate-error-detection-report.py
+      md5: a5abe21ad60c6fa6e145bbcda7cf3b5e
+      size: 2296
+    - path: templates/report-error-detection.md
+      md5: a6f392d6f73022cf9ef9b35dfa600b74
+      size: 633
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-error-detection-dataset:
+          size: 35
+          step: 30
+          max-edit-distance: 0.3
+          dataset: data/processed/detection-dataset
+        data-split:
+          val-size: 0.1
+          train-split: data/splits/train.csv
+          val-split: data/splits/val.csv
+          test-split: data/splits/test.csv
+        evaluate-error-detection:
+          icdar-output-csv: results/detection/icdar_evaluation_results.csv
+        predict-test-set-error-detection:
+          per-device-eval-batch-size: 16
+          test-log: results/detection/logs/test-log.csv
+          icdar-output-json: results/detection/icdar_predictions.json
+        train-error-detection:
+          pretrained-model-name: bert-base-multilingual-cased
+          output-dir: models/error-detection/
+          evaluation-strategy: epoch
+          num-train-epochs: 3
+          load-best-model-at-end: true
+          save-strategy: epoch
+          per-device-train-batch-size: 16
+          train-log: results/detection/logs/train-log.csv
+          delete-checkpoints: true
+    outs:
+    - path: reports/detection/experiment_results.md
+      md5: 5455a7401c7459732f9176d908fa4115
+      size: 1520

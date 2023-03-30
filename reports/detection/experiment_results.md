@@ -1,15 +1,16 @@
-## Results Error Detection Experiment (2023-03-28)
+### Experiment XXX (2023-03-30) { #sec-experiment-detection-XXX }
 
-* [ocrpostcorrection-notebooks commit: ]()
+* ocrpostcorrection-notebooks commit: [XXX](XXX)
 * Dataset
-	* Split seed: 8232 (10.0% for validation)
-	* Normalized editdistance threshold for 'sentences': 0.3 (only for train and val)
-	* Sequence (sentence) length: size: 35, step: 30
+    * Split seed: 8232
+    * Validation set: 10.0%
+    * Normalized editdistance threshold for 'sentences': 0.3 (only for train and val)
+    * Sequence (sentence) length: size: 35, step: 30
 * Pretrained model: [bert-base-multilingual-cased](https://huggingface.co/bert-base-multilingual-cased)
 * Loss
-	* Train: 0.2398
-	* Val: 0.2871749699115753
-	* Test: 0.4474944472312927
+    * Train: 0.2398
+    * Val: 0.2871749699115753
+    * Test: 0.4474944472312927
 
 | language   |   T1_Precision |   T1_Recall |   T1_Fmesure |
 |:-----------|---------------:|------------:|-------------:|
