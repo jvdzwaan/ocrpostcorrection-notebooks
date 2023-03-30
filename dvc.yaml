@@ -37,24 +37,48 @@ stages:
     - ${train-error-detection.train-log}:
         cache: false
     - ${train-error-detection.output-dir}
+  predict-test-set-error-detection:
+    cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
+    deps:
+    - src/stages/predict-test-set-error-detection.py
+    - ${base.raw-data-zip}
+    - ${create-error-detection-dataset.dataset}
+    - ${train-error-detection.output-dir}
+    params:
+    - base
+    - create-error-detection-dataset
+    - train-error-detection
+    - predict-test-set-error-detection
+    outs:
+    - ${predict-test-set-error-detection.test-log}:
+        cache: false
+    - ${predict-test-set-error-detection.icdar-output-json}
   evaluate-error-detection:
     cmd: python src/stages/evaluate-error-detection.py --config params.yaml
     deps:
     - src/stages/evaluate-error-detection.py
     - ${base.raw-data-zip}
-    - ${create-error-detection-dataset.dataset}
-    - ${train-error-detection.output-dir}
+    - ${predict-test-set-error-detection.icdar-output-json}
+    params:
+    - base
+    - predict-test-set-error-detection
+    - evaluate-error-detection
+    outs:
+    - ${evaluate-error-detection.icdar-output-csv}
+  generate-error-detection-report:
+    cmd: python src/stages/generate-error-detection-report.py --config params.yaml
+    deps:
+    - src/stages/generate-error-detection-report.py
+    - templates/report-error-detection.md
     - ${train-error-detection.train-log}
+    - ${predict-test-set-error-detection.test-log}
     params:
     - base
     - data-split
     - create-error-detection-dataset
     - train-error-detection
+    - predict-test-set-error-detection
     - evaluate-error-detection
     outs:
-    - ${evaluate-error-detection.test-log}:
-        cache: false
-    - ${evaluate-error-detection.icdar-output-json}
-    - ${evaluate-error-detection.icdar-output-csv}
-    - ${evaluate-error-detection.report-file}:
+    - ${generate-error-detection-report.report-file}:
         cache: false
