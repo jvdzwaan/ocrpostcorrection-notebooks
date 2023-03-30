@@ -3319,7 +3319,7 @@ transformers = "^4.26.1"
 type = "git"
 url = "https://github.com/jvdzwaan/ocrpostcorrection.git"
 reference = "HEAD"
-resolved_reference = "863c92c36742fc884cc3a6eaa000efe52ac58f88"
+resolved_reference = "7b87e774df814284796202b5eb936ecf710fd0d8"
 
 [[package]]
 name = "omegaconf"
@@ -5641,4 +5641,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "76dc0a5e8a03947406eba007f2531d6aeb45095543a38f7326db1230839d8e34"
+content-hash = "fd6003d361088830e749c17cd0371a8cf1c8688b3646710aad5bc87aea46b089"
