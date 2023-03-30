@@ -72,6 +72,7 @@ stages:
     - templates/report-error-detection.md
     - ${train-error-detection.train-log}
     - ${predict-test-set-error-detection.test-log}
+    - ${evaluate-error-detection.icdar-output-csv}
     params:
     - base
     - data-split
