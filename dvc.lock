@@ -212,10 +212,10 @@ stages:
           delete-checkpoints: true
     outs:
     - path: results/detection/icdar_predictions.json
-      md5: fea5f27bb10fe5fe6ab390b7a33052be
-      size: 4891768
+      md5: 8b90186ac54e9ce67bba158880dd1739
+      size: 4884895
     - path: results/detection/logs/test-log.csv
-      md5: accf9e0f87b2bc67cd49e991d7318163
+      md5: 06a818ce0afddf7e3ad2e53ce3ee95a3
       size: 95
   generate-error-detection-report:
     cmd: python src/stages/generate-error-detection-report.py --config params.yaml
