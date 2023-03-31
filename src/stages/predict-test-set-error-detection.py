@@ -1,20 +1,14 @@
 import argparse
-import json
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any, Dict, Text
 
+import numpy as np
 import pandas as pd
 import yaml
 from datasets import load_from_disk
 from loguru import logger
-from ocrpostcorrection.icdar_data import extract_icdar_data, generate_data
 from ocrpostcorrection.token_classification import tokenize_and_align_labels
-from ocrpostcorrection.utils import (
-    predictions2icdar_output,
-    predictions_to_labels,
-)
 from transformers import (
     AutoModelForTokenClassification,
     AutoTokenizer,
@@ -63,7 +57,8 @@ def predict_test_set_error_detection(config_path: Text) -> None:
         model_dir, num_labels=num_labels
     )
 
-    eval_batch_size = config["predict-test-set-error-detection"]["per-device-eval-batch-size"]
+    stage = "predict-test-set-error-detection"
+    eval_batch_size = config[stage]["per-device-eval-batch-size"]
     training_args = TrainingArguments(
         output_dir=config["train-error-detection"]["output-dir"],
         evaluation_strategy=config["train-error-detection"]["evaluation-strategy"],
@@ -81,24 +76,8 @@ def predict_test_set_error_detection(config_path: Text) -> None:
     )
 
     pred = trainer.predict(tokenized_dataset["test"])
+    np.save(config["predict-test-set-error-detection"]["predictions"], pred.predictions)
     save_test_log(pred.metrics, config["predict-test-set-error-detection"]["test-log"])
-
-    logger.info("Converting predictions to icdar output format")
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        _, test_path = extract_icdar_data(tmp_dir, config["base"]["raw-data-zip"])
-
-        data_test, _ = generate_data(test_path)
-
-        icdar_output = predictions2icdar_output(
-            tokenized_dataset["test"],
-            predictions_to_labels(pred.predictions),
-            tokenizer,
-            data_test,
-        )
-
-    json_file = config["predict-test-set-error-detection"]["icdar-output-json"]
-    with open(json_file, "w") as f:
-        json.dump(icdar_output, f)
 
 
 if __name__ == "__main__":

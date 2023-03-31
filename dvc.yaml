@@ -41,7 +41,6 @@ stages:
     cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
     deps:
     - src/stages/predict-test-set-error-detection.py
-    - ${base.raw-data-zip}
     - ${create-error-detection-dataset.dataset}
     - ${train-error-detection.output-dir}
     params:
@@ -52,13 +51,27 @@ stages:
     outs:
     - ${predict-test-set-error-detection.test-log}:
         cache: false
-    - ${predict-test-set-error-detection.icdar-output-json}
+    - ${predict-test-set-error-detection.predictions}
+  convert-predictions-to-icdar-output:
+    cmd: python src/stages/convert-predictions-to-icdar-output.py --config params.yaml
+    deps:
+    - src/stages/convert-predictions-to-icdar-output.py
+    - ${base.raw-data-zip}
+    - ${create-error-detection-dataset.dataset}
+    - ${predict-test-set-error-detection.predictions}
+    params:
+    - base
+    - train-error-detection
+    - predict-test-set-error-detection
+    - convert-predictions-to-icdar-output
+    outs:
+    - ${convert-predictions-to-icdar-output.icdar-output-json}
   evaluate-error-detection:
     cmd: python src/stages/evaluate-error-detection.py --config params.yaml
     deps:
     - src/stages/evaluate-error-detection.py
     - ${base.raw-data-zip}
-    - ${predict-test-set-error-detection.icdar-output-json}
+    - ${convert-predictions-to-icdar-output.icdar-output-json}
     params:
     - base
     - predict-test-set-error-detection
