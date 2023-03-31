@@ -1,2 +1,3 @@
 /icdar_predictions.json
 /icdar_evaluation_results.csv
+/predictions.npy
