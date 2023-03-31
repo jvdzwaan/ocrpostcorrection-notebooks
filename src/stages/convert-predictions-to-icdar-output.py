@@ -47,7 +47,7 @@ def convert_predictions_to_icdar_output(config_path: Text) -> None:
             data_test,
         )
 
-    json_file = config["predict-test-set-error-detection"]["icdar-output-json"]
+    json_file = config["convert-predictions-to-icdar-output"]["icdar-output-json"]
     with open(json_file, "w") as f:
         json.dump(icdar_output, f)
 

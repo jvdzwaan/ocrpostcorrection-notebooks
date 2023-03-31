@@ -18,7 +18,7 @@ def evaluate_error_detection(config_path: Text) -> None:
     logger.info("Running evaluation")
     with tempfile.TemporaryDirectory() as tmp_dir:
         _, test_path = extract_icdar_data(tmp_dir, config["base"]["raw-data-zip"])
-        json_file = config["predict-test-set-error-detection"]["icdar-output-json"]
+        json_file = config["convert-predictions-to-icdar-output"]["icdar-output-json"]
         csv_file = config["evaluate-error-detection"]["icdar-output-csv"]
 
         runEvaluation(test_path, json_file, csv_file)

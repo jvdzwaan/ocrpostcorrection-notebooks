@@ -75,6 +75,7 @@ stages:
     params:
     - base
     - predict-test-set-error-detection
+    - convert-predictions-to-icdar-output
     - evaluate-error-detection
     outs:
     - ${evaluate-error-detection.icdar-output-csv}
