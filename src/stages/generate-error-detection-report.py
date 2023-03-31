@@ -2,7 +2,7 @@ import argparse
 import sys
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, Text
+from typing import Text
 
 from jinja2 import Environment, FileSystemLoader
 import pandas as pd
@@ -18,15 +18,15 @@ def generate_error_detection_report(config_path: Text) -> None:
     logger.add(sys.stderr, level=config["base"]["loglevel"])
 
     here = Path(__file__).parent
-    environment = Environment(loader=FileSystemLoader(here/'..'/'..'/"templates/"))
+    environment = Environment(
+        loader=FileSystemLoader(here / ".." / ".." / "templates/")
+    )
     template = environment.get_template("report-error-detection.md")
 
     csv_file = config["evaluate-error-detection"]["icdar-output-csv"]
     results = aggregate_results(csv_file)
 
-    train_log = pd.read_csv(
-        config["train-error-detection"]["train-log"], index_col=0
-    )
+    train_log = pd.read_csv(config["train-error-detection"]["train-log"], index_col=0)
     idx_min = train_log.query('stage == "eval"')["loss"].idxmin()
     val_loss = train_log.loc[idx_min].loss
     train_loss = train_log.loc[idx_min - 1].loss
@@ -38,11 +38,11 @@ def generate_error_detection_report(config_path: Text) -> None:
 
     content = template.render(
         today=date.today(),
-        seed=config['base']['seed'],
-        val_size=config['data-split']['val-size'],
-        max_edit_distance=config['create-error-detection-dataset']['max-edit-distance'],
-        size=config['create-error-detection-dataset']['size'],
-        step=config['create-error-detection-dataset']['step'],
+        seed=config["base"]["seed"],
+        val_size=config["data-split"]["val-size"],
+        max_edit_distance=config["create-error-detection-dataset"]["max-edit-distance"],
+        size=config["create-error-detection-dataset"]["size"],
+        step=config["create-error-detection-dataset"]["step"],
         model_name=config["train-error-detection"]["pretrained-model-name"],
         train_loss=train_loss,
         val_loss=val_loss,
