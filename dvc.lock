@@ -192,8 +192,8 @@ stages:
       md5: 38daee3e382c8519eefd81e912ccf89b
       size: 1088
     - path: src/stages/generate-error-detection-report.py
-      md5: 570c4c9285b5907c463142aafdafa974
-      size: 2291
+      md5: 9721c57fc0a83d3336218eea950db930
+      size: 2721
     - path: templates/report-error-detection.md
       md5: a6f392d6f73022cf9ef9b35dfa600b74
       size: 633
@@ -231,8 +231,11 @@ stages:
           delete-checkpoints: true
     outs:
     - path: reports/detection/experiment_results.md
-      md5: 72eeedc195049ebc3e3e4fe114033782
+      md5: a1dc38825a5c6e2f6a49ca0dacc98e0e
       size: 1520
+    - path: reports/detection/metrics.json
+      md5: 6bc54c6db9074ce576c94d39b435df5c
+      size: 343
   convert-predictions-to-icdar-output:
     cmd: python src/stages/convert-predictions-to-icdar-output.py --config params.yaml
     deps:
