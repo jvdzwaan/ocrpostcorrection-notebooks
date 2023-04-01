@@ -31,4 +31,5 @@ convert-predictions-to-icdar-output:
 evaluate-error-detection:
   icdar-output-csv: results/detection/icdar_evaluation_results.csv
 generate-error-detection-report:
+  metrics: reports/detection/metrics.json
   report-file: reports/detection/experiment_results.md

@@ -1,4 +1,5 @@
 import argparse
+import json
 import sys
 from datetime import date
 from pathlib import Path
@@ -35,6 +36,19 @@ def generate_error_detection_report(config_path: Text) -> None:
         config["predict-test-set-error-detection"]["test-log"], index_col=0
     )
     test_loss = test_log.loc[0].loss
+
+    metrics = {
+        "train_loss": train_loss,
+        "val_loss": val_loss,
+        "test_loss": test_loss,
+    }
+    for lang, f1 in results.T1_Fmesure.to_dict().items():
+        metrics[f"{lang}_F1"] = f1
+
+    out_file = config["generate-error-detection-report"]["metrics"]
+    logger.info(f'Writing metrics "{out_file}"')
+    with open(out_file, mode="w", encoding="utf-8") as f:
+        json.dump(metrics, f)
 
     content = template.render(
         today=date.today(),

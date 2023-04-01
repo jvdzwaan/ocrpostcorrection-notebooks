@@ -97,3 +97,6 @@ stages:
     outs:
     - ${generate-error-detection-report.report-file}:
         cache: false
+    metrics:
+    - ${generate-error-detection-report.metrics}:
+        cache: false
