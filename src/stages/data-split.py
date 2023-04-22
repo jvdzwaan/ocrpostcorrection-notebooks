@@ -24,7 +24,7 @@ def data_split(config_path: Text) -> None:
         md["file_name"],
         test_size=config["data-split"]["val-size"],
         random_state=config["base"]["seed"],
-        stratify=md["language"],
+        stratify=md["subset"],
     )
 
     X_train.to_csv(config["data-split"]["train-split"])
