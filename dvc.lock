@@ -7,8 +7,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: src/stages/data-split.py
-      md5: 84883bb36ac963fea60ce1947c692d71
-      size: 1355
+      md5: d1bc7ed746535b3745e64345810d414e
+      size: 1353
     params:
       params.yaml:
         base:
@@ -22,14 +22,14 @@ stages:
           test-split: data/splits/test.csv
     outs:
     - path: data/splits/test.csv
-      md5: e7ddfb949902c81b7ee76971295b3688
-      size: 151272
+      md5: 12b4e9253147e46207a934aa0988e15e
+      size: 163439
     - path: data/splits/train.csv
-      md5: 135ea87880a8dd2f69684c9a5a9466dc
-      size: 532103
+      md5: 4e3d17d9ef2abdf7debb09b7184d19f1
+      size: 574230
     - path: data/splits/val.csv
-      md5: c74421cede23176eed7e7323ee7f9961
-      size: 59369
+      md5: 481d6c2885fa9f6aa7805c0100cb32e6
+      size: 63904
   create-error-detection-dataset:
     cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
     deps:
@@ -37,14 +37,14 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: data/splits/test.csv
-      md5: e7ddfb949902c81b7ee76971295b3688
-      size: 151272
+      md5: 12b4e9253147e46207a934aa0988e15e
+      size: 163439
     - path: data/splits/train.csv
-      md5: 135ea87880a8dd2f69684c9a5a9466dc
-      size: 532103
+      md5: 4e3d17d9ef2abdf7debb09b7184d19f1
+      size: 574230
     - path: data/splits/val.csv
-      md5: c74421cede23176eed7e7323ee7f9961
-      size: 59369
+      md5: 481d6c2885fa9f6aa7805c0100cb32e6
+      size: 63904
     - path: src/stages/create-error-detection-dataset.py
       md5: 71bcecd7f786dda1e8a30f51377e6d54
       size: 2738
@@ -61,15 +61,15 @@ stages:
           dataset: data/processed/detection-dataset
     outs:
     - path: data/processed/detection-dataset
-      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
-      size: 77549763
+      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      size: 77550059
       nfiles: 10
   train-error-detection:
     cmd: python src/stages/train-error-detection.py --config params.yaml
     deps:
     - path: data/processed/detection-dataset
-      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
-      size: 77549763
+      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      size: 77550059
       nfiles: 10
     - path: src/stages/train-error-detection.py
       md5: 38fac49446a37bcf488710d9eb492d24
@@ -97,12 +97,12 @@ stages:
           delete-checkpoints: true
     outs:
     - path: models/error-detection/
-      md5: 9011ab45e489e833da3be6572abbca28.dir
+      md5: c6ae910b1dde1c6dd1476ba0016ef584.dir
       size: 713052764
       nfiles: 7
     - path: results/detection/logs/train-log.csv
-      md5: 38daee3e382c8519eefd81e912ccf89b
-      size: 1088
+      md5: 18ce9c5204d48f5913664f2fd29e4ff1
+      size: 1092
   evaluate-error-detection:
     cmd: python src/stages/evaluate-error-detection.py --config params.yaml
     deps:
@@ -110,8 +110,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: results/detection/icdar_predictions.json
-      md5: 214bcd8898bdccd86d6b9a5e6b68d3c6
-      size: 5231392
+      md5: 1f1295ece1c46384f92aaa6fe1de2c7e
+      size: 5172170
     - path: src/stages/evaluate-error-detection.py
       md5: 9840bbd524892a2ecda567c0b278d813
       size: 1016
@@ -131,17 +131,17 @@ stages:
           predictions: results/detection/predictions.npy
     outs:
     - path: results/detection/icdar_evaluation_results.csv
-      md5: cd35e95f3360d3411f20924af9262a24
-      size: 158455
+      md5: 7eb61fb367022ea9ca9dffa7d05a048c
+      size: 158458
   predict-test-set-error-detection:
     cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
     deps:
     - path: data/processed/detection-dataset
-      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
-      size: 77549763
+      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      size: 77550059
       nfiles: 10
     - path: models/error-detection/
-      md5: 9011ab45e489e833da3be6572abbca28.dir
+      md5: c6ae910b1dde1c6dd1476ba0016ef584.dir
       size: 713052764
       nfiles: 7
     - path: src/stages/predict-test-set-error-detection.py
@@ -174,23 +174,23 @@ stages:
           delete-checkpoints: true
     outs:
     - path: results/detection/logs/test-log.csv
-      md5: 14f0032632d051414f75439a6a51faea
+      md5: 40aced86d4b486aee8dfa00a1f14573c
       size: 95
     - path: results/detection/predictions.npy
-      md5: bd5e29ea68cd470e39845ee73482b8ee
+      md5: f3b134a9149b2205687ac3e13737d732
       size: 78632336
   generate-error-detection-report:
     cmd: python src/stages/generate-error-detection-report.py --config params.yaml
     deps:
     - path: results/detection/icdar_evaluation_results.csv
-      md5: cd35e95f3360d3411f20924af9262a24
-      size: 158455
+      md5: 7eb61fb367022ea9ca9dffa7d05a048c
+      size: 158458
     - path: results/detection/logs/test-log.csv
-      md5: 14f0032632d051414f75439a6a51faea
+      md5: 40aced86d4b486aee8dfa00a1f14573c
       size: 95
     - path: results/detection/logs/train-log.csv
-      md5: 38daee3e382c8519eefd81e912ccf89b
-      size: 1088
+      md5: 18ce9c5204d48f5913664f2fd29e4ff1
+      size: 1092
     - path: src/stages/generate-error-detection-report.py
       md5: 9721c57fc0a83d3336218eea950db930
       size: 2721
@@ -231,23 +231,23 @@ stages:
           delete-checkpoints: true
     outs:
     - path: reports/detection/experiment_results.md
-      md5: fa333de08b827c4d9fc4b455d23b1c71
+      md5: d4e0bd9e1339ff66ce31095ff6f95152
       size: 1520
     - path: reports/detection/metrics.json
-      md5: 3b2f7bbcb65eae8ad7316d8c1108da88
-      size: 353
+      md5: a0ffc36c50a661284c907e4a55d58f27
+      size: 329
   convert-predictions-to-icdar-output:
     cmd: python src/stages/convert-predictions-to-icdar-output.py --config params.yaml
     deps:
     - path: data/processed/detection-dataset
-      md5: a1383bc7cad91b4632ca06e1a45b37de.dir
-      size: 77549763
+      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      size: 77550059
       nfiles: 10
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: results/detection/predictions.npy
-      md5: bd5e29ea68cd470e39845ee73482b8ee
+      md5: f3b134a9149b2205687ac3e13737d732
       size: 78632336
     - path: src/stages/convert-predictions-to-icdar-output.py
       md5: bf628478304b9fb7c3163f3425eef0bf
@@ -276,5 +276,5 @@ stages:
           delete-checkpoints: true
     outs:
     - path: results/detection/icdar_predictions.json
-      md5: 214bcd8898bdccd86d6b9a5e6b68d3c6
-      size: 5231392
+      md5: 1f1295ece1c46384f92aaa6fe1de2c7e
+      size: 5172170
