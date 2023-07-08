@@ -11,6 +11,8 @@ stages:
     - ${data-split.train-split}
     - ${data-split.val-split}
     - ${data-split.test-split}
+
+  # Error detection
   create-error-detection-dataset:
     cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
     deps:
@@ -100,3 +102,16 @@ stages:
     metrics:
     - ${generate-error-detection-report.metrics}:
         cache: false
+
+  # Error correction
+  create-error-correction-dataset:
+    cmd: python src/stages/create-error-correction-dataset.py --config params.yaml
+    deps:
+    - src/stages/create-error-correction-dataset.py
+    - ${data-split.val-split}
+    - ${base.raw-data-zip}
+    params:
+    - base
+    - create-error-correction-dataset
+    outs:
+    - ${create-error-correction-dataset.dataset}

@@ -7,6 +7,8 @@ data-split:
   train-split: data/splits/train.csv
   val-split: data/splits/val.csv
   test-split: data/splits/test.csv
+
+# Error detection
 create-error-detection-dataset:
   size: 35
   step: 30
@@ -33,3 +35,7 @@ evaluate-error-detection:
 generate-error-detection-report:
   metrics: reports/detection/metrics.json
   report-file: reports/detection/experiment_results.md
+
+# Error correction
+create-error-correction-dataset:
+  dataset: data/processed/correction-dataset/dataset.csv

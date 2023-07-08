@@ -278,3 +278,27 @@ stages:
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
+  create-error-correction-dataset:
+    cmd: python src/stages/create-error-correction-dataset.py --config params.yaml
+    deps:
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
+    - path: data/splits/val.csv
+      md5: 481d6c2885fa9f6aa7805c0100cb32e6
+      size: 63904
+    - path: src/stages/create-error-correction-dataset.py
+      md5: 415cd200f63847e6cfa927a3fe3e32e1
+      size: 1571
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-error-correction-dataset:
+          dataset: data/processed/correction-dataset/dataset.csv
+    outs:
+    - path: data/processed/correction-dataset/dataset.csv
+      md5: 53c8c4d51c5641c39b824f8d485df4ee
+      size: 85464812
