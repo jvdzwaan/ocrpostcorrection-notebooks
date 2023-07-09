@@ -104,7 +104,9 @@ stages:
       md5: 18ce9c5204d48f5913664f2fd29e4ff1
       size: 1092
   evaluate-error-detection:
-    cmd: python src/stages/evaluate-error-detection.py --config params.yaml
+    cmd: python src/stages/run-icdar-evaluation.py data/raw/ICDAR2019_POCR_competition_dataset.zip
+      results/detection/icdar_predictions.json results/detection/icdar_evaluation_results.csv
+      INFO
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
@@ -112,9 +114,9 @@ stages:
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
-    - path: src/stages/evaluate-error-detection.py
-      md5: 9840bbd524892a2ecda567c0b278d813
-      size: 1016
+    - path: src/stages/run-icdar-evaluation.py
+      md5: 36368e053f7968b516715d047e0c7857
+      size: 649
     params:
       params.yaml:
         base:

@@ -69,9 +69,9 @@ stages:
     outs:
     - ${convert-predictions-to-icdar-output.icdar-output-json}
   evaluate-error-detection:
-    cmd: python src/stages/evaluate-error-detection.py --config params.yaml
+    cmd: python src/stages/run-icdar-evaluation.py ${base.raw-data-zip} ${convert-predictions-to-icdar-output.icdar-output-json} ${evaluate-error-detection.icdar-output-csv} ${base.loglevel}
     deps:
-    - src/stages/evaluate-error-detection.py
+    - src/stages/run-icdar-evaluation.py
     - ${base.raw-data-zip}
     - ${convert-predictions-to-icdar-output.icdar-output-json}
     params:
