@@ -115,3 +115,16 @@ stages:
     - create-error-correction-dataset
     outs:
     - ${create-error-correction-dataset.dataset}
+  train-error-correction:
+    cmd: python src/stages/train-error-correction.py --config params.yaml
+    deps:
+    - src/stages/train-error-correction.py
+    - ${create-error-correction-dataset.dataset}
+    params:
+    - base
+    - create-error-correction-dataset
+    - train-error-correction
+    outs:
+    - ${train-error-correction.train-log}:
+        cache: false
+    - ${train-error-correction.model-save-path}
