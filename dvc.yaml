@@ -2,129 +2,129 @@ stages:
   data-split:
     cmd: python src/stages/data-split.py --config params.yaml
     deps:
-    - src/stages/data-split.py
-    - ${base.raw-data-zip}
+      - src/stages/data-split.py
+      - ${base.raw-data-zip}
     params:
-    - base
-    - data-split
+      - base
+      - data-split
     outs:
-    - ${data-split.train-split}
-    - ${data-split.val-split}
-    - ${data-split.test-split}
+      - ${data-split.train-split}
+      - ${data-split.val-split}
+      - ${data-split.test-split}
 
   # Error detection
   create-error-detection-dataset:
     cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
     deps:
-    - src/stages/create-error-detection-dataset.py
-    - ${data-split.train-split}
-    - ${data-split.val-split}
-    - ${data-split.test-split}
-    - ${base.raw-data-zip}
+      - src/stages/create-error-detection-dataset.py
+      - ${data-split.train-split}
+      - ${data-split.val-split}
+      - ${data-split.test-split}
+      - ${base.raw-data-zip}
     params:
-    - base
-    - create-error-detection-dataset
+      - base
+      - create-error-detection-dataset
     outs:
-    - ${create-error-detection-dataset.dataset}
+      - ${create-error-detection-dataset.dataset}
   train-error-detection:
     cmd: python src/stages/train-error-detection.py --config params.yaml
     deps:
-    - src/stages/train-error-detection.py
-    - ${create-error-detection-dataset.dataset}
+      - src/stages/train-error-detection.py
+      - ${create-error-detection-dataset.dataset}
     params:
-    - base
-    - create-error-detection-dataset
-    - train-error-detection
+      - base
+      - create-error-detection-dataset
+      - train-error-detection
     outs:
-    - ${train-error-detection.train-log}:
-        cache: false
-    - ${train-error-detection.output-dir}
+      - ${train-error-detection.train-log}:
+          cache: false
+      - ${train-error-detection.output-dir}
   predict-test-set-error-detection:
     cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
     deps:
-    - src/stages/predict-test-set-error-detection.py
-    - ${create-error-detection-dataset.dataset}
-    - ${train-error-detection.output-dir}
+      - src/stages/predict-test-set-error-detection.py
+      - ${create-error-detection-dataset.dataset}
+      - ${train-error-detection.output-dir}
     params:
-    - base
-    - create-error-detection-dataset
-    - train-error-detection
-    - predict-test-set-error-detection
+      - base
+      - create-error-detection-dataset
+      - train-error-detection
+      - predict-test-set-error-detection
     outs:
-    - ${predict-test-set-error-detection.test-log}:
-        cache: false
-    - ${predict-test-set-error-detection.predictions}
+      - ${predict-test-set-error-detection.test-log}:
+          cache: false
+      - ${predict-test-set-error-detection.predictions}
   convert-predictions-to-icdar-output:
     cmd: python src/stages/convert-predictions-to-icdar-output.py --config params.yaml
     deps:
-    - src/stages/convert-predictions-to-icdar-output.py
-    - ${base.raw-data-zip}
-    - ${create-error-detection-dataset.dataset}
-    - ${predict-test-set-error-detection.predictions}
+      - src/stages/convert-predictions-to-icdar-output.py
+      - ${base.raw-data-zip}
+      - ${create-error-detection-dataset.dataset}
+      - ${predict-test-set-error-detection.predictions}
     params:
-    - base
-    - train-error-detection
-    - predict-test-set-error-detection
-    - convert-predictions-to-icdar-output
+      - base
+      - train-error-detection
+      - predict-test-set-error-detection
+      - convert-predictions-to-icdar-output
     outs:
-    - ${convert-predictions-to-icdar-output.icdar-output-json}
+      - ${convert-predictions-to-icdar-output.icdar-output-json}
   evaluate-error-detection:
     cmd: python src/stages/run-icdar-evaluation.py ${base.raw-data-zip} ${convert-predictions-to-icdar-output.icdar-output-json} ${evaluate-error-detection.icdar-output-csv} ${base.loglevel}
     deps:
-    - src/stages/run-icdar-evaluation.py
-    - ${base.raw-data-zip}
-    - ${convert-predictions-to-icdar-output.icdar-output-json}
+      - src/stages/run-icdar-evaluation.py
+      - ${base.raw-data-zip}
+      - ${convert-predictions-to-icdar-output.icdar-output-json}
     params:
-    - base
-    - predict-test-set-error-detection
-    - convert-predictions-to-icdar-output
-    - evaluate-error-detection
+      - base
+      - predict-test-set-error-detection
+      - convert-predictions-to-icdar-output
+      - evaluate-error-detection
     outs:
-    - ${evaluate-error-detection.icdar-output-csv}
+      - ${evaluate-error-detection.icdar-output-csv}
   generate-error-detection-report:
     cmd: python src/stages/generate-error-detection-report.py --config params.yaml
     deps:
-    - src/stages/generate-error-detection-report.py
-    - templates/report-error-detection.md
-    - ${train-error-detection.train-log}
-    - ${predict-test-set-error-detection.test-log}
-    - ${evaluate-error-detection.icdar-output-csv}
+      - src/stages/generate-error-detection-report.py
+      - templates/report-error-detection.md
+      - ${train-error-detection.train-log}
+      - ${predict-test-set-error-detection.test-log}
+      - ${evaluate-error-detection.icdar-output-csv}
     params:
-    - base
-    - data-split
-    - create-error-detection-dataset
-    - train-error-detection
-    - predict-test-set-error-detection
-    - evaluate-error-detection
+      - base
+      - data-split
+      - create-error-detection-dataset
+      - train-error-detection
+      - predict-test-set-error-detection
+      - evaluate-error-detection
     outs:
-    - ${generate-error-detection-report.report-file}:
-        cache: false
+      - ${generate-error-detection-report.report-file}:
+          cache: false
     metrics:
-    - ${generate-error-detection-report.metrics}:
-        cache: false
+      - ${generate-error-detection-report.metrics}:
+          cache: false
 
   # Error correction
   create-error-correction-dataset:
     cmd: python src/stages/create-error-correction-dataset.py --config params.yaml
     deps:
-    - src/stages/create-error-correction-dataset.py
-    - ${data-split.val-split}
-    - ${base.raw-data-zip}
+      - src/stages/create-error-correction-dataset.py
+      - ${data-split.val-split}
+      - ${base.raw-data-zip}
     params:
-    - base
-    - create-error-correction-dataset
+      - base
+      - create-error-correction-dataset
     outs:
-    - ${create-error-correction-dataset.dataset}
+      - ${create-error-correction-dataset.dataset}
   train-error-correction:
     cmd: python src/stages/train-error-correction.py --config params.yaml
     deps:
-    - src/stages/train-error-correction.py
-    - ${create-error-correction-dataset.dataset}
+      - src/stages/train-error-correction.py
+      - ${create-error-correction-dataset.dataset}
     params:
-    - base
-    - create-error-correction-dataset
-    - train-error-correction
+      - base
+      - create-error-correction-dataset
+      - train-error-correction
     outs:
-    - ${train-error-correction.train-log}:
-        cache: false
-    - ${train-error-correction.model-save-path}
+      - ${train-error-correction.train-log}:
+          cache: false
+      - ${train-error-correction.model-save-path}
