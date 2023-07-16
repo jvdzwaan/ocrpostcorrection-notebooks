@@ -52,3 +52,7 @@ train-error-correction:
   max-num-trial: 5
   lr-decay: 0.5
   train-log: results/correction/logs/train-log.csv
+predict-error-correction:
+  test-log: results/correction/logs/test-log.csv
+  predictions-out-perfect-error-detection: results/correction/predictions-perfect-detection.csv
+  predictions-out-error-detection-model: results/correction/predictions-error-detection-model.csv

@@ -128,3 +128,35 @@ stages:
       - ${train-error-correction.train-log}:
           cache: false
       - ${train-error-correction.model-save-path}
+  predict-error-correction:
+    cmd: >
+      python src/stages/predict-error-correction.py
+      --error-correction-dataset ${create-error-correction-dataset.dataset}
+      --hidden-size ${train-error-correction.hidden-size}
+      --dropout ${train-error-correction.dropout}
+      --max-len ${train-error-correction.max-len}
+      --teacher-forcing-ratio ${train-error-correction.teacher-forcing-ratio}
+      --model-path ${train-error-correction.model-save-path}
+      --batch-size ${train-error-correction.batch-size}
+      --calculate-loss
+      --test-log-file ${predict-error-correction.test-log}
+      --raw-dataset ${base.raw-data-zip}
+      --predictions-out-perfect-error-detection ${predict-error-correction.predictions-out-perfect-error-detection}
+      --results-error-detection-model ${convert-predictions-to-icdar-output.icdar-output-json}
+      --predictions-out-error-detection-model ${predict-error-correction.predictions-out-error-detection-model}
+      --loglevel ${base.loglevel}
+    deps:
+      - src/stages/predict-error-correction.py
+      - ${create-error-correction-dataset.dataset}
+      - ${base.raw-data-zip}
+      - ${convert-predictions-to-icdar-output.icdar-output-json}
+    params:
+      - base
+      - create-error-correction-dataset
+      - train-error-correction
+      - convert-predictions-to-icdar-output
+      - predict-error-correction
+    outs:
+      - ${predict-error-correction.test-log}
+      - ${predict-error-correction.predictions-out-perfect-error-detection}
+      - ${predict-error-correction.predictions-out-error-detection-model}
