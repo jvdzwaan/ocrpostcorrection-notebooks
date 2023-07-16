@@ -3372,7 +3372,7 @@ transformers = "^4.26.1"
 type = "git"
 url = "https://github.com/jvdzwaan/ocrpostcorrection.git"
 reference = "HEAD"
-resolved_reference = "fa46380a88979b0ce909bff2f61d926e07b0735e"
+resolved_reference = "7e04495630eb027e008e6f0af4e1b7f126e3adb8"
 
 [[package]]
 name = "omegaconf"
