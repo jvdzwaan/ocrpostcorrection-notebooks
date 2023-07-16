@@ -341,3 +341,62 @@ stages:
     - path: results/correction/logs/train-log.csv
       md5: 220ac260dd4578f6a2ab816dd108345d
       size: 1404
+  predict-error-correction:
+    cmd: "python src/stages/predict-error-correction.py --error-correction-dataset\
+      \ data/processed/correction-dataset/dataset.csv --hidden-size 256 --dropout\
+      \ 0.1 --max-len 22 --teacher-forcing-ratio 0.5 --model-path models/error-correction/model.rar\
+      \ --batch-size 256 --calculate-loss --test-log-file results/correction/logs/test-log.csv\
+      \ --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip --predictions-out-perfect-error-detection\
+      \ results/correction/predictions-perfect-detection.csv --results-error-detection-model\
+      \ results/detection/icdar_predictions.json --predictions-out-error-detection-model\
+      \ results/correction/predictions-error-detection-model.csv --loglevel INFO\n"
+    deps:
+    - path: data/processed/correction-dataset/dataset.csv
+      md5: 53c8c4d51c5641c39b824f8d485df4ee
+      size: 85464812
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
+    - path: results/detection/icdar_predictions.json
+      md5: 1f1295ece1c46384f92aaa6fe1de2c7e
+      size: 5172170
+    - path: src/stages/predict-error-correction.py
+      md5: d77a62194935e484d4eccdc6fc2d3ec3
+      size: 7475
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        convert-predictions-to-icdar-output:
+          icdar-output-json: results/detection/icdar_predictions.json
+        create-error-correction-dataset:
+          dataset: data/processed/correction-dataset/dataset.csv
+        predict-error-correction:
+          test-log: results/correction/logs/test-log.csv
+          predictions-out-perfect-error-detection: results/correction/predictions-perfect-detection.csv
+          predictions-out-error-detection-model: results/correction/predictions-error-detection-model.csv
+        train-error-correction:
+          max-len: 22
+          batch-size: 256
+          model-save-path: models/error-correction/model.rar
+          hidden-size: 256
+          dropout: 0.1
+          teacher-forcing-ratio: 0.5
+          num-epochs: 25
+          valid-niter: 5
+          max-num-patience: 5
+          max-num-trial: 5
+          lr-decay: 0.5
+          train-log: results/correction/logs/train-log.csv
+    outs:
+    - path: results/correction/logs/test-log.csv
+      md5: fc1875859fd563fd0f8b58b6c20daa89
+      size: 31
+    - path: results/correction/predictions-error-detection-model.csv
+      md5: 10a626a9f99f342a34ba311672244f03
+      size: 36434480
+    - path: results/correction/predictions-perfect-detection.csv
+      md5: 6f76f4d572a4d215112eff1c62ac5b24
+      size: 37398698
