@@ -400,3 +400,25 @@ stages:
     - path: results/correction/predictions-perfect-detection.csv
       md5: 6f76f4d572a4d215112eff1c62ac5b24
       size: 37398698
+  generate-perfect-icdar-json:
+    cmd: python src/stages/generate-perfect-icdar-json.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip
+      --out-file results/perfect/perfect-detection.json
+    deps:
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
+    - path: src/stages/generate-perfect-icdar-json.py
+      md5: 709ecc053b4c36ad099b7747a70c88b0
+      size: 1196
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        generate-perfect-icdar-json:
+          out-file: results/perfect/perfect-detection.json
+    outs:
+    - path: results/perfect/perfect-detection.json
+      md5: 386921f65b5221fcd45ab48b5dece85c
+      size: 5197896
