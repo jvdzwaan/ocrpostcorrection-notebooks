@@ -161,7 +161,11 @@ stages:
       - ${predict-error-correction.predictions-out-perfect-error-detection}
       - ${predict-error-correction.predictions-out-error-detection-model}
   generate-perfect-icdar-json:
-    cmd: python src/stages/generate-perfect-icdar-json.py --raw-dataset ${base.raw-data-zip} --out-file ${generate-perfect-icdar-json.out-file}
+    cmd: >
+      python src/stages/generate-perfect-icdar-json.py
+      --raw-dataset ${base.raw-data-zip}
+      --out-file-detection ${generate-perfect-icdar-json.out-file-detection}
+      --out-file-correction ${generate-perfect-icdar-json.out-file-correction}
     deps:
       - src/stages/generate-perfect-icdar-json.py
       - ${base.raw-data-zip}
@@ -169,4 +173,5 @@ stages:
       - base
       - generate-perfect-icdar-json
     outs:
-      - ${generate-perfect-icdar-json.out-file}
+      - ${generate-perfect-icdar-json.out-file-detection}
+      - ${generate-perfect-icdar-json.out-file-correction}
