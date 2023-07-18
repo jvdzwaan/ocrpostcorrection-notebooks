@@ -160,3 +160,13 @@ stages:
       - ${predict-error-correction.test-log}
       - ${predict-error-correction.predictions-out-perfect-error-detection}
       - ${predict-error-correction.predictions-out-error-detection-model}
+  generate-perfect-icdar-json:
+    cmd: python src/stages/generate-perfect-icdar-json.py --raw-dataset ${base.raw-data-zip} --out-file ${generate-perfect-icdar-json.out-file}
+    deps:
+      - src/stages/generate-perfect-icdar-json.py
+      - ${base.raw-data-zip}
+    params:
+      - base
+      - generate-perfect-icdar-json
+    outs:
+      - ${generate-perfect-icdar-json.out-file}

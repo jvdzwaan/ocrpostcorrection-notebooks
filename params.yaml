@@ -56,3 +56,5 @@ predict-error-correction:
   test-log: results/correction/logs/test-log.csv
   predictions-out-perfect-error-detection: results/correction/predictions-perfect-detection.csv
   predictions-out-error-detection-model: results/correction/predictions-error-detection-model.csv
+generate-perfect-icdar-json:
+  out-file: results/perfect/perfect-detection.json
