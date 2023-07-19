@@ -1,4 +1,5 @@
 stages:
+  # Shared/misc
   data-split:
     cmd: python src/stages/data-split.py --config params.yaml
     deps:
@@ -11,6 +12,21 @@ stages:
       - ${data-split.train-split}
       - ${data-split.val-split}
       - ${data-split.test-split}
+  generate-perfect-icdar-json:
+    cmd: >
+      python src/stages/generate-perfect-icdar-json.py
+      --raw-dataset ${base.raw-data-zip}
+      --out-file-detection ${generate-perfect-icdar-json.out-file-detection}
+      --out-file-correction ${generate-perfect-icdar-json.out-file-correction}
+    deps:
+      - src/stages/generate-perfect-icdar-json.py
+      - ${base.raw-data-zip}
+    params:
+      - base
+      - generate-perfect-icdar-json
+    outs:
+      - ${generate-perfect-icdar-json.out-file-detection}
+      - ${generate-perfect-icdar-json.out-file-correction}
 
   # Error detection
   create-error-detection-dataset:
@@ -163,18 +179,3 @@ stages:
       - ${predict-error-correction.test-log}
       - ${predict-error-correction.perfect-detection-out}
       - ${predict-error-correction.predicted-detection-out}
-  generate-perfect-icdar-json:
-    cmd: >
-      python src/stages/generate-perfect-icdar-json.py
-      --raw-dataset ${base.raw-data-zip}
-      --out-file-detection ${generate-perfect-icdar-json.out-file-detection}
-      --out-file-correction ${generate-perfect-icdar-json.out-file-correction}
-    deps:
-      - src/stages/generate-perfect-icdar-json.py
-      - ${base.raw-data-zip}
-    params:
-      - base
-      - generate-perfect-icdar-json
-    outs:
-      - ${generate-perfect-icdar-json.out-file-detection}
-      - ${generate-perfect-icdar-json.out-file-correction}
