@@ -59,3 +59,5 @@ predict-error-correction:
 generate-perfect-icdar-json:
   out-file-detection: results/perfect/perfect-detection.json
   out-file-correction: results/perfect/perfect-detection+correction.json
+convert-perfect-correction-predicted-detection-results-to-icdar-format:
+  out-file: results/correction/perfect-detection+predicted-correction.json

@@ -179,3 +179,19 @@ stages:
       - ${predict-error-correction.test-log}
       - ${predict-error-correction.perfect-detection-out}
       - ${predict-error-correction.predicted-detection-out}
+  convert-perfect-correction-predicted-detection-results-to-icdar-format:
+    cmd: >
+      python src/stages/convert-error-correction-predictions-to-icdar-format.py
+      --predictions ${predict-error-correction.perfect-detection-out}
+      --icdar-json ${generate-perfect-icdar-json.out-file-detection}
+      --out-file ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
+    deps:
+      - src/stages/convert-error-correction-predictions-to-icdar-format.py
+      - ${predict-error-correction.perfect-detection-out}
+      - ${generate-perfect-icdar-json.out-file-detection}
+    params:
+      - predict-error-correction
+      - generate-perfect-icdar-json
+      - convert-perfect-correction-predicted-detection-results-to-icdar-format
+    outs:
+      - ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
