@@ -195,3 +195,21 @@ stages:
       - convert-perfect-correction-predicted-detection-results-to-icdar-format
     outs:
       - ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
+  evaluate-error-correction-perfect-detection:
+    cmd: >
+      python src/stages/run-icdar-evaluation.py
+      ${base.raw-data-zip}
+      ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
+      ${evaluate-error-correction-perfect-detection.icdar-output-csv}
+      ${base.loglevel}
+    deps:
+      - src/stages/run-icdar-evaluation.py
+      - ${base.raw-data-zip}
+      - ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
+    params:
+      - base
+      - predict-test-set-error-detection
+      - convert-predictions-to-icdar-output
+      - evaluate-error-detection
+    outs:
+      - ${evaluate-error-correction-perfect-detection.icdar-output-csv}
