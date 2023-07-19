@@ -54,8 +54,8 @@ train-error-correction:
   train-log: results/correction/logs/train-log.csv
 predict-error-correction:
   test-log: results/correction/logs/test-log.csv
-  predictions-out-perfect-error-detection: results/correction/predictions-perfect-detection.csv
-  predictions-out-error-detection-model: results/correction/predictions-error-detection-model.csv
+  perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
+  predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
 generate-perfect-icdar-json:
   out-file-detection: results/perfect/perfect-detection.json
   out-file-correction: results/perfect/perfect-detection+correction.json

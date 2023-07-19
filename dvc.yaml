@@ -141,25 +141,28 @@ stages:
       --calculate-loss
       --test-log-file ${predict-error-correction.test-log}
       --raw-dataset ${base.raw-data-zip}
-      --predictions-out-perfect-error-detection ${predict-error-correction.predictions-out-perfect-error-detection}
-      --results-error-detection-model ${convert-predictions-to-icdar-output.icdar-output-json}
-      --predictions-out-error-detection-model ${predict-error-correction.predictions-out-error-detection-model}
+      --perfect-detection-in ${generate-perfect-icdar-json.out-file-detection}
+      --perfect-detection-out ${predict-error-correction.perfect-detection-out}
+      --predicted-detection-in ${convert-predictions-to-icdar-output.icdar-output-json}
+      --predicted-detection-out ${predict-error-correction.predicted-detection-out}
       --loglevel ${base.loglevel}
     deps:
       - src/stages/predict-error-correction.py
       - ${create-error-correction-dataset.dataset}
       - ${base.raw-data-zip}
+      - ${generate-perfect-icdar-json.out-file-detection}
       - ${convert-predictions-to-icdar-output.icdar-output-json}
     params:
       - base
       - create-error-correction-dataset
       - train-error-correction
       - convert-predictions-to-icdar-output
+      - generate-perfect-icdar-json
       - predict-error-correction
     outs:
       - ${predict-error-correction.test-log}
-      - ${predict-error-correction.predictions-out-perfect-error-detection}
-      - ${predict-error-correction.predictions-out-error-detection-model}
+      - ${predict-error-correction.perfect-detection-out}
+      - ${predict-error-correction.predicted-detection-out}
   generate-perfect-icdar-json:
     cmd: >
       python src/stages/generate-perfect-icdar-json.py

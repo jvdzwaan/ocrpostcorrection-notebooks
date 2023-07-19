@@ -23,10 +23,7 @@ from ocrpostcorrection.icdar_data import (
     generate_data,
     normalized_ed,
 )
-from ocrpostcorrection.utils import (
-    create_perfect_icdar_output,
-    icdar_output2simple_correction_dataset_df,
-)
+from ocrpostcorrection.utils import icdar_output2simple_correction_dataset_df
 from torch.utils.data import DataLoader
 from torchtext.vocab import Vocab
 from typing_extensions import Annotated
@@ -103,7 +100,7 @@ def create_predictions_csv(
 
 
 def predict_and_save(
-    output: Dict[str, Dict[str, float]],
+    in_file: Text,
     data_test: Dict[str, ICDARText],
     max_len: int,
     batch_size: int,
@@ -112,16 +109,27 @@ def predict_and_save(
     model: SimpleCorrectionSeq2seq,
     out_file: Text,
 ) -> None:
-    test = icdar_output2simple_correction_dataset_df(output, data_test)
-    test_dataloader = create_test_dataloader(test, max_len, batch_size, text_transform)
+    logger.info(f"Generating predictions for '{in_file}'")
+    if in_file and out_file:
+        with open(in_file) as f:
+            output = json.load(f)
+        test = icdar_output2simple_correction_dataset_df(output, data_test)
+        test_dataloader = create_test_dataloader(
+            test, max_len, batch_size, text_transform
+        )
 
-    predictions = predict_and_convert_to_str(
-        model, test_dataloader, vocab_transform["gs"], device
-    )
+        predictions = predict_and_convert_to_str(
+            model, test_dataloader, vocab_transform["gs"], device
+        )
 
-    results = create_predictions_csv(test, max_len, predictions)
-    results.to_csv(out_file)
-    logger.info(f"Saved predictions to '{out_file}'")
+        results = create_predictions_csv(test, max_len, predictions)
+        results.to_csv(out_file)
+        logger.info(f"Saved predictions to '{out_file}'")
+    elif in_file or out_file:
+        logger.info(
+            "To generate predictions for an icdar json file, please specify both --*_in"
+            + " and --*_out. (Got '{in_file}' (--*_in) and '{out_file}' (--*_out))"
+        )
 
 
 def predict_error_correction(
@@ -136,9 +144,10 @@ def predict_error_correction(
     test_log_file: Annotated[Text, typer.Option()],
     raw_dataset: Annotated[Text, typer.Option()],
     loglevel: Annotated[str, typer.Option()],
-    predictions_out_perfect_error_detection: Annotated[Text, typer.Option()] = "",
-    results_error_detection_model: Annotated[Text, typer.Option()] = "",
-    predictions_out_error_detection_model: Annotated[Text, typer.Option()] = "",
+    perfect_detection_in: Annotated[Text, typer.Option()] = "",
+    perfect_detection_out: Annotated[Text, typer.Option()] = "",
+    predicted_detection_in: Annotated[Text, typer.Option()] = "",
+    predicted_detection_out: Annotated[Text, typer.Option()] = "",
 ) -> None:
     logger.remove()
     logger.add(sys.stderr, level=loglevel)
@@ -188,39 +197,27 @@ def predict_error_correction(
         data_test, _md_test = generate_data(test_path)
         logger.info(f"Found {len(data_test)} texts in test data")
 
-    if predictions_out_perfect_error_detection:
-        logger.info("Generating predictions for perfect error detection results")
-        output = create_perfect_icdar_output(data_test)
-        predict_and_save(
-            output,
-            data_test,
-            max_len,
-            batch_size,
-            text_transform,
-            vocab_transform,
-            model,
-            predictions_out_perfect_error_detection,
-        )
-    if results_error_detection_model and predictions_out_error_detection_model:
-        logger.info("Generating predictions for error detection results from model")
-        with open(results_error_detection_model) as f:
-            output = json.load(f)
-        predict_and_save(
-            output,
-            data_test,
-            max_len,
-            batch_size,
-            text_transform,
-            vocab_transform,
-            model,
-            predictions_out_error_detection_model,
-        )
-    elif results_error_detection_model or predictions_out_error_detection_model:
-        logger.info(
-            "To generate predictions for an icdar json file, please specify both "
-            + "'results_error_detection_model' and "
-            + "'predictions_out_error_detection_model'."
-        )
+    predict_and_save(
+        perfect_detection_in,
+        data_test,
+        max_len,
+        batch_size,
+        text_transform,
+        vocab_transform,
+        model,
+        perfect_detection_out,
+    )
+
+    predict_and_save(
+        predicted_detection_in,
+        data_test,
+        max_len,
+        batch_size,
+        text_transform,
+        vocab_transform,
+        model,
+        predicted_detection_out,
+    )
 
 
 if __name__ == "__main__":
