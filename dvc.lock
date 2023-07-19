@@ -485,8 +485,8 @@ stages:
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         convert-predictions-to-icdar-output:
           icdar-output-json: results/detection/icdar_predictions.json
-        evaluate-error-detection:
-          icdar-output-csv: results/detection/icdar_evaluation_results.csv
+        evaluate-error-correction-perfect-detection:
+          icdar-output-csv: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
         predict-test-set-error-detection:
           per-device-eval-batch-size: 16
           test-log: results/detection/logs/test-log.csv
