@@ -2,3 +2,4 @@
 /predictions-error-detection-model.csv
 /perfect-detection+predicted-correction.csv
 /predicted-detection+predicted-correction.csv
+/perfect-detection+predicted-correction.json

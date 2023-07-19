@@ -365,8 +365,8 @@ stages:
       md5: 386921f65b5221fcd45ab48b5dece85c
       size: 5197896
     - path: src/stages/predict-error-correction.py
-      md5: b03339b7b328bce531f424035c9aa9ac
-      size: 7095
+      md5: 7b4c752714e0d44d187ce763817e470e
+      size: 7053
     params:
       params.yaml:
         base:
@@ -399,7 +399,7 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/logs/test-log.csv
-      md5: 1cea7848246b2c6f1062286d87d5970c
+      md5: a97971a4f4129e6174168228789e1311
       size: 32
     - path: results/correction/perfect-detection+predicted-correction.csv
       md5: 6f76f4d572a4d215112eff1c62ac5b24
@@ -434,3 +434,32 @@ stages:
     - path: results/perfect/perfect-detection.json
       md5: 386921f65b5221fcd45ab48b5dece85c
       size: 5197896
+  convert-perfect-correction-predicted-detection-results-to-icdar-format:
+    cmd: "python src/stages/convert-error-correction-predictions-to-icdar-format.py\
+      \ --predictions results/correction/perfect-detection+predicted-correction.csv\
+      \ --icdar-json results/perfect/perfect-detection.json --out-file results/correction/perfect-detection+predicted-correction.json\n"
+    deps:
+    - path: results/correction/perfect-detection+predicted-correction.csv
+      md5: 6f76f4d572a4d215112eff1c62ac5b24
+      size: 37398698
+    - path: results/perfect/perfect-detection.json
+      md5: 386921f65b5221fcd45ab48b5dece85c
+      size: 5197896
+    - path: src/stages/convert-error-correction-predictions-to-icdar-format.py
+      md5: 54a3fd0875d525109c60bdbad289ddc8
+      size: 631
+    params:
+      params.yaml:
+        convert-perfect-correction-predicted-detection-results-to-icdar-format:
+          out-file: results/correction/perfect-detection+predicted-correction.json
+        generate-perfect-icdar-json:
+          out-file-detection: results/perfect/perfect-detection.json
+          out-file-correction: results/perfect/perfect-detection+correction.json
+        predict-error-correction:
+          test-log: results/correction/logs/test-log.csv
+          perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
+          predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
+    outs:
+    - path: results/correction/perfect-detection+predicted-correction.json
+      md5: 4d92ef6e48c52ef8c37c82211e1c46c4
+      size: 9993627
