@@ -495,3 +495,31 @@ stages:
     - path: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
       md5: d888adde0973deb356dea58aef519de1
       size: 158450
+  convert-predicted-correction-predicted-detection-results-to-icdar-format:
+    cmd: "python src/stages/convert-error-correction-predictions-to-icdar-format.py\
+      \ --predictions results/correction/predicted-detection+predicted-correction.csv\
+      \ --icdar-json results/detection/icdar_predictions.json --out-file results/correction/predicted-detection+predicted-correction.json\n"
+    deps:
+    - path: results/correction/predicted-detection+predicted-correction.csv
+      md5: 10a626a9f99f342a34ba311672244f03
+      size: 36434480
+    - path: results/detection/icdar_predictions.json
+      md5: 1f1295ece1c46384f92aaa6fe1de2c7e
+      size: 5172170
+    - path: src/stages/convert-error-correction-predictions-to-icdar-format.py
+      md5: 54a3fd0875d525109c60bdbad289ddc8
+      size: 631
+    params:
+      params.yaml:
+        convert-predicted-correction-predicted-detection-results-to-icdar-format:
+          out-file: results/correction/predicted-detection+predicted-correction.json
+        convert-predictions-to-icdar-output:
+          icdar-output-json: results/detection/icdar_predictions.json
+        predict-error-correction:
+          test-log: results/correction/logs/test-log.csv
+          perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
+          predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
+    outs:
+    - path: results/correction/predicted-detection+predicted-correction.json
+      md5: 06117221abe0ce960ee39ace01ecd007
+      size: 9932390
