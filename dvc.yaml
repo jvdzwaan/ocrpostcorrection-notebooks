@@ -210,7 +210,7 @@ stages:
       - base
       - predict-test-set-error-detection
       - convert-predictions-to-icdar-output
-      - evaluate-error-detection
+      - evaluate-error-correction-perfect-detection
     outs:
       - ${evaluate-error-correction-perfect-detection.icdar-output-csv}
   convert-predicted-correction-predicted-detection-results-to-icdar-format:
