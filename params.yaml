@@ -63,3 +63,5 @@ convert-perfect-correction-predicted-detection-results-to-icdar-format:
   out-file: results/correction/perfect-detection+predicted-correction.json
 evaluate-error-correction-perfect-detection:
   icdar-output-csv: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
+convert-predicted-correction-predicted-detection-results-to-icdar-format:
+  out-file: results/correction/predicted-detection+predicted-correction.json

@@ -213,3 +213,19 @@ stages:
       - evaluate-error-detection
     outs:
       - ${evaluate-error-correction-perfect-detection.icdar-output-csv}
+  convert-predicted-correction-predicted-detection-results-to-icdar-format:
+    cmd: >
+      python src/stages/convert-error-correction-predictions-to-icdar-format.py
+      --predictions ${predict-error-correction.predicted-detection-out}
+      --icdar-json ${convert-predictions-to-icdar-output.icdar-output-json}
+      --out-file ${convert-predicted-correction-predicted-detection-results-to-icdar-format.out-file}
+    deps:
+      - src/stages/convert-error-correction-predictions-to-icdar-format.py
+      - ${convert-predictions-to-icdar-output.icdar-output-json}
+      - ${predict-error-correction.predicted-detection-out}
+    params:
+      - predict-error-correction
+      - convert-predictions-to-icdar-output
+      - convert-predicted-correction-predicted-detection-results-to-icdar-format
+    outs:
+      - ${convert-predicted-correction-predicted-detection-results-to-icdar-format.out-file}
