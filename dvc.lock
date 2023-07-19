@@ -346,10 +346,11 @@ stages:
       \ data/processed/correction-dataset/dataset.csv --hidden-size 256 --dropout\
       \ 0.1 --max-len 22 --teacher-forcing-ratio 0.5 --model-path models/error-correction/model.rar\
       \ --batch-size 256 --calculate-loss --test-log-file results/correction/logs/test-log.csv\
-      \ --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip --predictions-out-perfect-error-detection\
-      \ results/correction/predictions-perfect-detection.csv --results-error-detection-model\
-      \ results/detection/icdar_predictions.json --predictions-out-error-detection-model\
-      \ results/correction/predictions-error-detection-model.csv --loglevel INFO\n"
+      \ --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip --perfect-detection-in\
+      \ results/perfect/perfect-detection.json --perfect-detection-out results/correction/perfect-detection+predicted-correction.csv\
+      \ --predicted-detection-in results/detection/icdar_predictions.json --predicted-detection-out\
+      \ results/correction/predicted-detection+predicted-correction.csv --loglevel\
+      \ INFO\n"
     deps:
     - path: data/processed/correction-dataset/dataset.csv
       md5: 53c8c4d51c5641c39b824f8d485df4ee
@@ -360,9 +361,12 @@ stages:
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
+    - path: results/perfect/perfect-detection.json
+      md5: 386921f65b5221fcd45ab48b5dece85c
+      size: 5197896
     - path: src/stages/predict-error-correction.py
-      md5: d77a62194935e484d4eccdc6fc2d3ec3
-      size: 7475
+      md5: b03339b7b328bce531f424035c9aa9ac
+      size: 7095
     params:
       params.yaml:
         base:
@@ -373,10 +377,13 @@ stages:
           icdar-output-json: results/detection/icdar_predictions.json
         create-error-correction-dataset:
           dataset: data/processed/correction-dataset/dataset.csv
+        generate-perfect-icdar-json:
+          out-file-detection: results/perfect/perfect-detection.json
+          out-file-correction: results/perfect/perfect-detection+correction.json
         predict-error-correction:
           test-log: results/correction/logs/test-log.csv
-          predictions-out-perfect-error-detection: results/correction/predictions-perfect-detection.csv
-          predictions-out-error-detection-model: results/correction/predictions-error-detection-model.csv
+          perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
+          predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
         train-error-correction:
           max-len: 22
           batch-size: 256
@@ -392,14 +399,14 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/logs/test-log.csv
-      md5: fc1875859fd563fd0f8b58b6c20daa89
-      size: 31
-    - path: results/correction/predictions-error-detection-model.csv
-      md5: 10a626a9f99f342a34ba311672244f03
-      size: 36434480
-    - path: results/correction/predictions-perfect-detection.csv
+      md5: 1cea7848246b2c6f1062286d87d5970c
+      size: 32
+    - path: results/correction/perfect-detection+predicted-correction.csv
       md5: 6f76f4d572a4d215112eff1c62ac5b24
       size: 37398698
+    - path: results/correction/predicted-detection+predicted-correction.csv
+      md5: 10a626a9f99f342a34ba311672244f03
+      size: 36434480
   generate-perfect-icdar-json:
     cmd: "python src/stages/generate-perfect-icdar-json.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
       \ --out-file-detection results/perfect/perfect-detection.json --out-file-correction\
