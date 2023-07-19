@@ -1,10 +1,8 @@
 import json
-import sys
 from typing import Text
 
 import pandas as pd
 import typer
-from loguru import logger
 from typing_extensions import Annotated
 
 
@@ -12,11 +10,7 @@ def convert_to_icdar_output(
     predictions: Annotated[Text, typer.Option()],
     icdar_json: Annotated[Text, typer.Option()],
     out_file: Annotated[Text, typer.Option()],
-    loglevel: Annotated[str, typer.Option()],
 ) -> None:
-    logger.remove()
-    logger.add(sys.stderr, level=loglevel)
-
     with open(icdar_json) as f:
         output = json.load(f)
     data = pd.read_csv(predictions, index_col=0)
