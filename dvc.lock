@@ -555,3 +555,75 @@ stages:
     - path: results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv
       md5: 5a4fb9bf02dede07e1192dd443062309
       size: 158458
+  generate-error-correction-report:
+    cmd: "python src/stages/generate-error-correction-report.py --train-log results/correction/logs/train-log.csv\
+      \ --test-log results/correction/logs/test-log.csv --eval-perfect-detection results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv\
+      \ --eval-predicted-detection results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv\
+      \ --metrics-file reports/correction/metrics.json --seed 8232 --val-size 0.1\
+      \ --max-len 22 --report-file reports/correction/experiment_results.md\n"
+    deps:
+    - path: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
+      md5: d888adde0973deb356dea58aef519de1
+      size: 158450
+    - path: results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv
+      md5: 5a4fb9bf02dede07e1192dd443062309
+      size: 158458
+    - path: results/correction/logs/test-log.csv
+      md5: a97971a4f4129e6174168228789e1311
+      size: 32
+    - path: results/correction/logs/train-log.csv
+      md5: 220ac260dd4578f6a2ab816dd108345d
+      size: 1404
+    - path: src/stages/generate-error-correction-report.py
+      md5: 531983cfb200d1a55ca9aff9e0f835f4
+      size: 3292
+    - path: templates/report-error-correction.md
+      md5: 696f89d7277985cdcbe6c21accca7aec
+      size: 786
+    params:
+      params.yaml:
+        base:
+          loglevel: INFO
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-error-detection-dataset:
+          size: 35
+          step: 30
+          max-edit-distance: 0.3
+          dataset: data/processed/detection-dataset
+        data-split:
+          val-size: 0.1
+          train-split: data/splits/train.csv
+          val-split: data/splits/val.csv
+          test-split: data/splits/test.csv
+        evaluate-error-correction-perfect-detection:
+          icdar-output-csv: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
+        evaluate-error-correction-predicted-detection:
+          icdar-output-csv: results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv
+        generate-error-correction-report:
+          metrics: reports/correction/metrics.json
+          report-file: reports/correction/experiment_results.md
+        predict-error-correction:
+          test-log: results/correction/logs/test-log.csv
+          perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
+          predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
+        train-error-correction:
+          max-len: 22
+          batch-size: 256
+          model-save-path: models/error-correction/model.rar
+          hidden-size: 256
+          dropout: 0.1
+          teacher-forcing-ratio: 0.5
+          num-epochs: 25
+          valid-niter: 5
+          max-num-patience: 5
+          max-num-trial: 5
+          lr-decay: 0.5
+          train-log: results/correction/logs/train-log.csv
+    outs:
+    - path: reports/correction/experiment_results.md
+      md5: 7521870efc70c393b8d412d92c796a4b
+      size: 1229
+    - path: reports/correction/metrics.json
+      md5: 89443ae7873f743e21fad8feeba32ab4
+      size: 1190
