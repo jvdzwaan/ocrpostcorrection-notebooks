@@ -5,7 +5,9 @@ description = ""
 authors = ["Janneke van der Zwaan <jannekevdzwaan@gmail.com>"]
 license = "Apache 2.0"
 readme = "README.md"
-packages = []
+packages = [
+    { include = "common", from = "src" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
