@@ -247,3 +247,37 @@ stages:
       - evaluate-error-correction-predicted-detection
     outs:
       - ${evaluate-error-correction-predicted-detection.icdar-output-csv}
+  generate-error-correction-report:
+    cmd: >
+      python src/stages/generate-error-correction-report.py
+      --train-log ${train-error-correction.train-log}
+      --test-log ${predict-error-correction.test-log}
+      --eval-perfect-detection ${evaluate-error-correction-perfect-detection.icdar-output-csv}
+      --eval-predicted-detection ${evaluate-error-correction-predicted-detection.icdar-output-csv}
+      --metrics-file ${generate-error-correction-report.metrics}
+      --seed ${base.seed}
+      --val-size ${data-split.val-size}
+      --max-len ${train-error-correction.max-len}
+      --report-file ${generate-error-correction-report.report-file}
+    deps:
+      - src/stages/generate-error-correction-report.py
+      - templates/report-error-correction.md
+      - ${train-error-correction.train-log}
+      - ${predict-error-correction.test-log}
+      - ${evaluate-error-correction-perfect-detection.icdar-output-csv}
+      - ${evaluate-error-correction-predicted-detection.icdar-output-csv}
+    params:
+      - base
+      - data-split
+      - create-error-detection-dataset
+      - train-error-correction
+      - predict-error-correction
+      - evaluate-error-correction-perfect-detection
+      - evaluate-error-correction-predicted-detection
+      - generate-error-correction-report
+    outs:
+      - ${generate-error-correction-report.report-file}:
+          cache: false
+    metrics:
+      - ${generate-error-correction-report.metrics}:
+          cache: false
