@@ -1,5 +1,4 @@
 import json
-import sys
 import tempfile
 from typing import Any, Callable, Dict, Text, Tuple
 
@@ -143,15 +142,11 @@ def predict_error_correction(
     calculate_loss: Annotated[bool, typer.Option()],
     test_log_file: Annotated[Text, typer.Option()],
     raw_dataset: Annotated[Text, typer.Option()],
-    loglevel: Annotated[str, typer.Option()],
     perfect_detection_in: Annotated[Text, typer.Option()] = "",
     perfect_detection_out: Annotated[Text, typer.Option()] = "",
     predicted_detection_in: Annotated[Text, typer.Option()] = "",
     predicted_detection_out: Annotated[Text, typer.Option()] = "",
 ) -> None:
-    logger.remove()
-    logger.add(sys.stderr, level=loglevel)
-
     # Load data
     logger.info("Loading data")
     data = pd.read_csv(error_correction_dataset, index_col=0)

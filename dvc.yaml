@@ -121,23 +121,41 @@ stages:
 
   # Error correction
   create-error-correction-dataset:
-    cmd: python src/stages/create-error-correction-dataset.py --config params.yaml
+    cmd: >
+      python src/stages/create-error-correction-dataset.py
+      --raw-dataset ${base.raw-data-zip}
+      --val-split ${data-split.val-split}
+      --dataset-out ${create-error-correction-dataset.dataset}
     deps:
       - src/stages/create-error-correction-dataset.py
       - ${data-split.val-split}
       - ${base.raw-data-zip}
     params:
       - base
+      - data-split
       - create-error-correction-dataset
     outs:
       - ${create-error-correction-dataset.dataset}
   train-error-correction:
-    cmd: python src/stages/train-error-correction.py --config params.yaml
+    cmd: >
+      python src/stages/train-error-correction.py
+      --dataset ${create-error-correction-dataset.dataset}
+      --max-len ${train-error-correction.max-len}
+      --batch-size ${train-error-correction.batch-size}
+      --hidden-size ${train-error-correction.hidden-size}
+      --dropout ${train-error-correction.dropout}
+      --teacher-forcing-ratio ${train-error-correction.teacher-forcing-ratio}
+      --num-epochs ${train-error-correction.num-epochs}
+      --valid-niter ${train-error-correction.valid-niter}
+      --max-num-patience ${train-error-correction.max-num-patience}
+      --max-num-trial ${train-error-correction.max-num-trial}
+      --lr-decay ${train-error-correction.lr-decay}
+      --model-save-path ${train-error-correction.model-save-path}
+      --train-log ${train-error-correction.train-log}
     deps:
       - src/stages/train-error-correction.py
       - ${create-error-correction-dataset.dataset}
     params:
-      - base
       - create-error-correction-dataset
       - train-error-correction
     outs:
@@ -161,7 +179,6 @@ stages:
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
       --predicted-detection-in ${convert-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
-      --loglevel ${base.loglevel}
     deps:
       - src/stages/predict-error-correction.py
       - ${create-error-correction-dataset.dataset}
@@ -169,7 +186,6 @@ stages:
       - ${generate-perfect-icdar-json.out-file-detection}
       - ${convert-predictions-to-icdar-output.icdar-output-json}
     params:
-      - base
       - create-error-correction-dataset
       - train-error-correction
       - convert-predictions-to-icdar-output

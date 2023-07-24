@@ -1,25 +1,24 @@
-import argparse
-import sys
 from pathlib import Path
-from typing import Text
 
 import pandas as pd
-import yaml
+import typer
 from loguru import logger
 from ocrpostcorrection.error_correction import get_tokens_with_OCR_mistakes
 from ocrpostcorrection.icdar_data import get_intermediate_data
+from typing_extensions import Annotated
+
+from common.option_types import file_in_option, file_out_option
 
 
-def create_error_correction_dataset(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
-
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
+def create_error_correction_dataset(
+    raw_dataset: Annotated[Path, file_in_option],
+    val_split: Annotated[Path, file_in_option],
+    dataset_out: Annotated[Path, file_out_option],
+) -> None:
     logger.info("Creating intermediary data")
-    data, _, data_test, _ = get_intermediate_data(config["base"]["raw-data-zip"])
+    data, _, data_test, _ = get_intermediate_data(raw_dataset)
 
-    X_val = pd.read_csv(config["data-split"]["val-split"], index_col=0)
+    X_val = pd.read_csv(val_split, index_col=0)
 
     logger.info("Getting tokens with OCR mistakes")
     tdata = get_tokens_with_OCR_mistakes(data, data_test, list(X_val.file_name))
@@ -33,16 +32,11 @@ def create_error_correction_dataset(config_path: Text) -> None:
     )
 
     logger.info("Saving dataset")
-    out_file = Path(config["create-error-correction-dataset"]["dataset"])
-    out_dir = out_file.parent
+    out_dir = dataset_out.parent
     out_dir.mkdir(exist_ok=True, parents=True)
 
-    tdata.to_csv(out_file)
+    tdata.to_csv(dataset_out)
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    create_error_correction_dataset(args.config)
+    typer.run(create_error_correction_dataset)

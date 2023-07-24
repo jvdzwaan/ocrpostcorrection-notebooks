@@ -1,13 +1,10 @@
-from __future__ import annotations
-
-import argparse
 import sys
 from pathlib import Path
-from typing import List, Text
+from typing import List
 
 import pandas as pd
 import torch
-import yaml
+import typer
 from loguru import logger
 from ocrpostcorrection.error_correction import (
     SimpleCorrectionDataset,
@@ -19,6 +16,9 @@ from ocrpostcorrection.error_correction import (
 )
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from typing_extensions import Annotated
+
+from common.option_types import file_in_option, file_out_option
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -27,11 +27,11 @@ def train_model(
     train_dl: DataLoader[int],
     val_dl: DataLoader[int],
     model: SimpleCorrectionSeq2seq,
-    optimizer: torch.optim.optimizer.Optimizer,
+    optimizer: torch.optim.Optimizer,
     num_epochs: int = 5,
     valid_niter: int = 5000,
-    model_save_path: Text = "model.rar",
-    train_log_file: Text = "train-log.csv",
+    model_save_path: Path = Path("model.rar"),
+    train_log_file: Path = Path("train-log.csv"),
     max_num_patience: int = 5,
     max_num_trial: int = 5,
     lr_decay: float = 0.5,
@@ -141,26 +141,30 @@ def train_model(
                 df.to_csv(train_log_file)
 
 
-def train_error_correction(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
-
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
-    data = pd.read_csv(
-        config["create-error-correction-dataset"]["dataset"], index_col=0
-    )
+def train_error_correction(
+    dataset: Annotated[Path, file_in_option],
+    max_len: Annotated[int, typer.Option()],
+    batch_size: Annotated[int, typer.Option()],
+    hidden_size: Annotated[int, typer.Option()],
+    dropout: Annotated[float, typer.Option()],
+    teacher_forcing_ratio: Annotated[float, typer.Option()],
+    num_epochs: Annotated[int, typer.Option()],
+    valid_niter: Annotated[int, typer.Option()],
+    max_num_patience: Annotated[int, typer.Option()],
+    max_num_trial: Annotated[int, typer.Option()],
+    lr_decay: Annotated[float, typer.Option()],
+    model_save_path: Annotated[Path, file_out_option],
+    train_log: Annotated[Path, file_out_option],
+) -> None:
+    data = pd.read_csv(dataset)
     data = data.fillna("")
-    data = data.head(2000)
+    data = data.head(2000)  # TODO: remove line
 
     train = data.query('dataset == "train"')
     val = data.query('dataset == "val"')
 
     vocab_transform = generate_vocabs(train)
     text_transform = get_text_transform(vocab_transform)
-
-    max_len = config["train-error-correction"]["max-len"]
-    batch_size = config["train-error-correction"]["batch-size"]
 
     train_dataset = SimpleCorrectionDataset(train, max_len=max_len)
     train_dataloader = DataLoader(
@@ -178,19 +182,19 @@ def train_error_correction(config_path: Text) -> None:
     logger.info(f"# train samples: {len(train_dataset)}")
     logger.info(f"# val samples: {len(val_dataset)}")
 
-    out_dir = Path(config["train-error-correction"]["model-save-path"]).parent
+    out_dir = Path(model_save_path).parent
     out_dir.mkdir(exist_ok=True, parents=True)
 
-    out_dir = Path(config["train-error-correction"]["train-log"]).parent
+    out_dir = Path(train_log).parent
     out_dir.mkdir(exist_ok=True, parents=True)
 
     model = SimpleCorrectionSeq2seq(
         input_size=len(vocab_transform["ocr"]),
-        hidden_size=config["train-error-correction"]["hidden-size"],
+        hidden_size=hidden_size,
         output_size=len(vocab_transform["gs"]),
-        dropout=config["train-error-correction"]["dropout"],
+        dropout=dropout,
         max_length=max_len,
-        teacher_forcing_ratio=config["train-error-correction"]["teacher-forcing-ratio"],
+        teacher_forcing_ratio=teacher_forcing_ratio,
         device=device,
     )
     model.to(device)
@@ -201,20 +205,16 @@ def train_error_correction(config_path: Text) -> None:
         val_dl=val_dataloader,
         model=model,
         optimizer=optimizer,
-        model_save_path=config["train-error-correction"]["model-save-path"],
-        train_log_file=config["train-error-correction"]["train-log"],
-        num_epochs=config["train-error-correction"]["num-epochs"],
-        valid_niter=config["train-error-correction"]["valid-niter"],
-        max_num_patience=config["train-error-correction"]["max-num-patience"],
-        max_num_trial=config["train-error-correction"]["max-num-trial"],
-        lr_decay=config["train-error-correction"]["lr-decay"],
+        model_save_path=model_save_path,
+        train_log_file=train_log,
+        num_epochs=num_epochs,
+        valid_niter=valid_niter,
+        max_num_patience=max_num_patience,
+        max_num_trial=max_num_trial,
+        lr_decay=lr_decay,
         device=device,
     )
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    train_error_correction(args.config)
+    typer.run(train_error_correction)
