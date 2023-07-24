@@ -1,4 +1,4 @@
-### Experiment XXX (2023-07-23) { #sec-experiment-correction-XXX }
+### Experiment XXX (2023-07-24) { #sec-experiment-correction-XXX }
 
 * ocrpostcorrection-notebooks commit: [XXX](XXX)
 * Detection model from experiment [XXX](XXX)
@@ -9,9 +9,9 @@
 * Model: XXX
 * Decoder: XXX
 * Loss
-    * Train: 23.257548828125
-    * Val: 19.877145020723148
-    * Test: 20.81730119857481
+    * Train: 17.9494482421875
+    * Val: 21.91692504386188
+    * Test: 20.66446776502369
 
 ### Summarized results (average % of improvement in edit distance between original and corrected)
 
@@ -19,7 +19,7 @@ The input is the 'perfect' results for error detection.
 
 |                 |   BG |   CZ |   DE |   EN |   ES |   FI |   FR |   NL |   PL |   SL |
 |:----------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| %ed_improvement | -214 | -302 | -145 | -118 |  -75 | -283 |  nan |  -95 | -147 | -175 |
+| %ed_improvement | -215 | -291 | -135 | -110 |  -70 | -283 |  nan |  -90 | -138 | -163 |
 
 ### Summarized results (average % of improvement in edit distance between original and corrected)
 
@@ -27,6 +27,6 @@ The input is the errors detected by a model.
 
 |                 |   BG |   CZ |   DE |   EN |   ES |   FI |   FR |   NL |   PL |   SL |
 |:----------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| %ed_improvement | -225 | -216 | -146 | -123 |  -78 | -279 | -195 | -111 | -141 | -183 |
+| %ed_improvement | -226 | -205 | -135 | -116 |  -74 | -282 | -185 | -103 | -130 | -175 |
 
 ### Remarks
