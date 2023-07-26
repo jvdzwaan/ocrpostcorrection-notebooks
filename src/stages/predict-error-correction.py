@@ -150,12 +150,10 @@ def predict_error_correction(
     # Load data
     logger.info("Loading data")
     data = pd.read_csv(error_correction_dataset, index_col=0)
-    data = data.head(2000)  # TODO: Remove this line
     data = data.fillna("")
 
     train = data.query('dataset == "train"')
     test = data.query('dataset == "test"')
-    test = data.query('dataset == "train"')  # TODO: Remove this line
 
     logger.info(f"Train: {train.shape[0]} samples; test: {test.shape[0]} samples")
 

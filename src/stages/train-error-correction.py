@@ -162,7 +162,6 @@ def train_error_correction(
 
     data = pd.read_csv(dataset)
     data = data.fillna("")
-    data = data.head(2000)  # TODO: remove line
 
     train = data.query('dataset == "train"')
     val = data.query('dataset == "val"')
