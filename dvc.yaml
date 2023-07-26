@@ -139,6 +139,7 @@ stages:
   train-error-correction:
     cmd: >
       python src/stages/train-error-correction.py
+      --seed ${base.seed}
       --dataset ${create-error-correction-dataset.dataset}
       --max-len ${train-error-correction.max-len}
       --batch-size ${train-error-correction.batch-size}
@@ -156,6 +157,7 @@ stages:
       - src/stages/train-error-correction.py
       - ${create-error-correction-dataset.dataset}
     params:
+      - base
       - create-error-correction-dataset
       - train-error-correction
     outs:

@@ -18,6 +18,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from typing_extensions import Annotated
 
+from common.common import set_seed
 from common.option_types import file_in_option, file_out_option
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -142,6 +143,7 @@ def train_model(
 
 
 def train_error_correction(
+    seed: Annotated[int, typer.Option()],
     dataset: Annotated[Path, file_in_option],
     max_len: Annotated[int, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
@@ -156,6 +158,8 @@ def train_error_correction(
     model_save_path: Annotated[Path, file_out_option],
     train_log: Annotated[Path, file_out_option],
 ) -> None:
+    set_seed(seed)
+
     data = pd.read_csv(dataset)
     data = data.fillna("")
     data = data.head(2000)  # TODO: remove line
