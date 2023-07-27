@@ -1,14 +1,16 @@
 schema: '2.0'
 stages:
   data-split:
-    cmd: python src/stages/data-split.py --config params.yaml
+    cmd: "python src/stages/data-split.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
+      \ --train-split data/splits/train.csv --val-split data/splits/val.csv --test-split\
+      \ data/splits/test.csv --val-size 0.1 --seed 8232\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: src/stages/data-split.py
-      md5: d1bc7ed746535b3745e64345810d414e
-      size: 1353
+      md5: 9a918e6774d3e67fd9e8daa7f9ea9efb
+      size: 1298
     params:
       params.yaml:
         base:
