@@ -47,7 +47,7 @@ train-error-correction:
   dropout: 0.1
   teacher-forcing-ratio: 0.5
   num-epochs: 25
-  valid-niter: 5
+  valid-niter: 1000
   max-num-patience: 5
   max-num-trial: 5
   lr-decay: 0.5
