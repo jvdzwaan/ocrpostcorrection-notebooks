@@ -1,7 +1,14 @@
 stages:
   # Shared/misc
   data-split:
-    cmd: python src/stages/data-split.py --config params.yaml
+    cmd: >
+      python src/stages/data-split.py
+      --raw-dataset ${base.raw-data-zip}
+      --train-split ${data-split.train-split}
+      --val-split ${data-split.val-split}
+      --test-split ${data-split.test-split}
+      --val-size ${data-split.val-size}
+      --seed ${base.seed}
     deps:
       - src/stages/data-split.py
       - ${base.raw-data-zip}
