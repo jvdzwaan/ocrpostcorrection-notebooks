@@ -28,7 +28,7 @@ predict-test-set-error-detection:
   per-device-eval-batch-size: 16
   test-log: results/detection/logs/test-log.csv
   predictions: results/detection/predictions.npy
-convert-predictions-to-icdar-output:
+convert-error-detection-predictions-to-icdar-output:
   icdar-output-json: results/detection/icdar_predictions.json
 evaluate-error-detection:
   icdar-output-csv: results/detection/icdar_evaluation_results.csv
