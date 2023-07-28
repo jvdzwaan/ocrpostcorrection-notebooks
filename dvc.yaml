@@ -130,14 +130,17 @@ stages:
     outs:
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
   evaluate-error-detection:
-    cmd: python src/stages/run-icdar-evaluation.py ${base.raw-data-zip} ${convert-error-detection-predictions-to-icdar-output.icdar-output-json} ${evaluate-error-detection.icdar-output-csv} ${base.loglevel}
+    cmd: >
+      python src/stages/run-icdar-evaluation.py
+      --raw-dataset ${base.raw-data-zip}
+      --json-file ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
+      --csv-file ${evaluate-error-detection.icdar-output-csv}
     deps:
       - src/stages/run-icdar-evaluation.py
       - ${base.raw-data-zip}
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
     params:
       - base
-      - predict-test-set-error-detection
       - convert-error-detection-predictions-to-icdar-output
       - evaluate-error-detection
     outs:
@@ -261,17 +264,15 @@ stages:
   evaluate-error-correction-perfect-detection:
     cmd: >
       python src/stages/run-icdar-evaluation.py
-      ${base.raw-data-zip}
-      ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
-      ${evaluate-error-correction-perfect-detection.icdar-output-csv}
-      ${base.loglevel}
+      --raw-dataset ${base.raw-data-zip}
+      --json-file ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
+      --csv-file ${evaluate-error-correction-perfect-detection.icdar-output-csv}
     deps:
       - src/stages/run-icdar-evaluation.py
       - ${base.raw-data-zip}
       - ${convert-perfect-correction-predicted-detection-results-to-icdar-format.out-file}
     params:
       - base
-      - predict-test-set-error-detection
       - convert-error-detection-predictions-to-icdar-output
       - evaluate-error-correction-perfect-detection
     outs:
@@ -295,17 +296,15 @@ stages:
   evaluate-error-correction-predicted-detection:
     cmd: >
       python src/stages/run-icdar-evaluation.py
-      ${base.raw-data-zip}
-      ${convert-predicted-correction-predicted-detection-results-to-icdar-format.out-file}
-      ${evaluate-error-correction-predicted-detection.icdar-output-csv}
-      ${base.loglevel}
+      --raw-dataset ${base.raw-data-zip}
+      --json-file ${convert-predicted-correction-predicted-detection-results-to-icdar-format.out-file}
+      --csv-file ${evaluate-error-correction-predicted-detection.icdar-output-csv}
     deps:
       - src/stages/run-icdar-evaluation.py
       - ${base.raw-data-zip}
       - ${convert-predicted-correction-predicted-detection-results-to-icdar-format.out-file}
     params:
       - base
-      - predict-test-set-error-detection
       - convert-error-detection-predictions-to-icdar-output
       - evaluate-error-correction-predicted-detection
     outs:
