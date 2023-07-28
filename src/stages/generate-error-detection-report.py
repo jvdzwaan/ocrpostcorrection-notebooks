@@ -1,40 +1,44 @@
-import argparse
 import json
-import sys
 from datetime import date
 from pathlib import Path
-from typing import Text
 
-from jinja2 import Environment, FileSystemLoader
 import pandas as pd
-import yaml
+import typer
+from jinja2 import Environment, FileSystemLoader
 from loguru import logger
 from ocrpostcorrection.utils import aggregate_results
+from typing_extensions import Annotated
+
+from common.option_types import file_in_option, file_out_option
 
 
-def generate_error_detection_report(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
-
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
+def generate_error_detection_report(
+    evaluation_csv: Annotated[Path, file_in_option],
+    train_log_file: Annotated[Path, file_in_option],
+    test_log_file: Annotated[Path, file_in_option],
+    seed: Annotated[int, typer.Option()],
+    val_size: Annotated[float, typer.Option()],
+    max_ed: Annotated[int, typer.Option()],
+    size: Annotated[int, typer.Option()],
+    step: Annotated[int, typer.Option()],
+    model_name: Annotated[str, typer.Option()],
+    metrics_file: Annotated[Path, file_out_option],
+    report_file: Annotated[Path, file_out_option],
+) -> None:
     here = Path(__file__).parent
     environment = Environment(
         loader=FileSystemLoader(here / ".." / ".." / "templates/")
     )
     template = environment.get_template("report-error-detection.md")
 
-    csv_file = config["evaluate-error-detection"]["icdar-output-csv"]
-    results = aggregate_results(csv_file)
+    results = aggregate_results(evaluation_csv)
 
-    train_log = pd.read_csv(config["train-error-detection"]["train-log"], index_col=0)
+    train_log = pd.read_csv(train_log_file, index_col=0)
     idx_min = train_log.query('stage == "eval"')["loss"].idxmin()
     val_loss = train_log.loc[idx_min].loss
     train_loss = train_log.loc[idx_min - 1].loss
 
-    test_log = pd.read_csv(
-        config["predict-test-set-error-detection"]["test-log"], index_col=0
-    )
+    test_log = pd.read_csv(test_log_file, index_col=0)
     test_loss = test_log.loc[0].loss
 
     metrics = {
@@ -45,19 +49,18 @@ def generate_error_detection_report(config_path: Text) -> None:
     for lang, f1 in results.T1_Fmesure.to_dict().items():
         metrics[f"{lang}_F1"] = f1
 
-    out_file = config["generate-error-detection-report"]["metrics"]
-    logger.info(f'Writing metrics "{out_file}"')
-    with open(out_file, mode="w", encoding="utf-8") as f:
+    logger.info(f'Writing metrics "{metrics_file}"')
+    with open(metrics_file, mode="w", encoding="utf-8") as f:
         json.dump(metrics, f)
 
     content = template.render(
         today=date.today(),
-        seed=config["base"]["seed"],
-        val_size=config["data-split"]["val-size"],
-        max_edit_distance=config["create-error-detection-dataset"]["max-edit-distance"],
-        size=config["create-error-detection-dataset"]["size"],
-        step=config["create-error-detection-dataset"]["step"],
-        model_name=config["train-error-detection"]["pretrained-model-name"],
+        seed=seed,
+        val_size=val_size,
+        max_edit_distance=max_ed,
+        size=size,
+        step=step,
+        model_name=model_name,
         train_loss=train_loss,
         val_loss=val_loss,
         test_loss=test_loss,
@@ -65,15 +68,10 @@ def generate_error_detection_report(config_path: Text) -> None:
         summarized_results=results[["T1_Fmesure"]].round(2).transpose().to_markdown(),
     )
 
-    out_file = config["generate-error-detection-report"]["report-file"]
-    logger.info(f'Writing report "{out_file}"')
-    with open(out_file, mode="w", encoding="utf-8") as report:
+    logger.info(f'Writing report "{report_file}"')
+    with open(report_file, mode="w", encoding="utf-8") as report:
         report.write(content)
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    generate_error_detection_report(args.config)
+    typer.run(generate_error_detection_report)

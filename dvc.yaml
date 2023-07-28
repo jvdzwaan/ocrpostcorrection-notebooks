@@ -146,7 +146,19 @@ stages:
     outs:
       - ${evaluate-error-detection.icdar-output-csv}
   generate-error-detection-report:
-    cmd: python src/stages/generate-error-detection-report.py --config params.yaml
+    cmd: >
+      python src/stages/generate-error-detection-report.py
+      --evaluation-csv ${evaluate-error-detection.icdar-output-csv}
+      --train-log-file ${train-error-detection.train-log}
+      --test-log-file ${predict-test-set-error-detection.test-log}
+      --seed ${base.seed}
+      --val-size ${data-split.val-size}
+      --max-ed ${create-error-detection-dataset.max-edit-distance}
+      --size ${create-error-detection-dataset.size}
+      --step ${create-error-detection-dataset.step}
+      --model-name ${train-error-detection.pretrained-model-name}
+      --metrics-file ${generate-error-detection-report.metrics}
+      --report-file ${generate-error-detection-report.report-file}
     deps:
       - src/stages/generate-error-detection-report.py
       - templates/report-error-detection.md
