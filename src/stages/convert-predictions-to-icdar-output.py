@@ -1,42 +1,39 @@
-import argparse
 import json
-import sys
 import tempfile
-from typing import Text
+from pathlib import Path
 
 import numpy as np
-import yaml
+import typer
 from datasets import load_from_disk
 from loguru import logger
 from ocrpostcorrection.icdar_data import extract_icdar_data, generate_data
 from ocrpostcorrection.token_classification import tokenize_and_align_labels
-from ocrpostcorrection.utils import (
-    predictions2icdar_output,
-    predictions_to_labels,
-)
+from ocrpostcorrection.utils import predictions2icdar_output, predictions_to_labels
 from transformers import AutoTokenizer
+from typing_extensions import Annotated
+
+from common.option_types import dir_in_option, file_in_option, file_out_option
 
 
-def convert_predictions_to_icdar_output(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
-
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
-    dataset = load_from_disk(config["create-error-detection-dataset"]["dataset"])
+def convert_error_detection_predictions_to_icdar_output(
+    dataset_in: Annotated[Path, dir_in_option],
+    model_name: Annotated[str, typer.Option()],
+    predictions_in: Annotated[Path, dir_in_option],
+    raw_dataset: Annotated[Path, file_in_option],
+    json_out: Annotated[Path, file_out_option],
+) -> None:
+    dataset = load_from_disk(dataset_in)
 
     logger.info(f'Dataset loaded: # samples test: {len(dataset["test"])}')
-
-    model_name = config["train-error-detection"]["pretrained-model-name"]
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenized_dataset = dataset.map(tokenize_and_align_labels(tokenizer), batched=True)
 
-    predictions = np.load(config["predict-test-set-error-detection"]["predictions"])
+    predictions = np.load(predictions_in)
 
     logger.info("Converting predictions to icdar output format")
     with tempfile.TemporaryDirectory() as tmp_dir:
-        _, test_path = extract_icdar_data(tmp_dir, config["base"]["raw-data-zip"])
+        _, test_path = extract_icdar_data(tmp_dir, raw_dataset)
 
         data_test, _ = generate_data(test_path)
 
@@ -47,14 +44,9 @@ def convert_predictions_to_icdar_output(config_path: Text) -> None:
             data_test,
         )
 
-    json_file = config["convert-predictions-to-icdar-output"]["icdar-output-json"]
-    with open(json_file, "w") as f:
+    with open(json_out, "w") as f:
         json.dump(icdar_output, f)
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    convert_predictions_to_icdar_output(args.config)
+    typer.run(convert_error_detection_predictions_to_icdar_output)

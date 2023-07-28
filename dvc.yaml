@@ -110,7 +110,13 @@ stages:
           cache: false
       - ${predict-test-set-error-detection.predictions}
   convert-predictions-to-icdar-output:
-    cmd: python src/stages/convert-predictions-to-icdar-output.py --config params.yaml
+    cmd: >
+      python src/stages/convert-predictions-to-icdar-output.py
+      --dataset-in ${create-error-detection-dataset.dataset}
+      --model-name ${train-error-detection.pretrained-model-name}
+      --predictions-in ${predict-test-set-error-detection.predictions}
+      --raw-dataset ${base.raw-data-zip}
+      --json-out ${convert-predictions-to-icdar-output.icdar-output-json}
     deps:
       - src/stages/convert-predictions-to-icdar-output.py
       - ${base.raw-data-zip}
