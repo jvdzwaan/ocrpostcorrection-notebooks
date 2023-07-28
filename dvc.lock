@@ -14,7 +14,6 @@ stages:
     params:
       params.yaml:
         base:
-          loglevel: INFO
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         data-split:
@@ -50,12 +49,11 @@ stages:
       md5: 481d6c2885fa9f6aa7805c0100cb32e6
       size: 63904
     - path: src/stages/create-error-detection-dataset.py
-      md5: 8da6a3522725bca2d4becc41e5c993a8
-      size: 2569
+      md5: 0091e4f12b62dfe8e3883cf6cdcbb126
+      size: 2567
     params:
       params.yaml:
         base:
-          loglevel: INFO
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         create-error-detection-dataset:
@@ -70,23 +68,25 @@ stages:
           test-split: data/splits/test.csv
     outs:
     - path: data/processed/detection-dataset
-      md5: a838004d6753cbfeea57c6f6f4586b1f.dir
+      md5: 649d31b769a41e287af7e069efcf8f54.dir
       size: 77550059
       nfiles: 10
   train-error-detection:
-    cmd: python src/stages/train-error-detection.py --config params.yaml
+    cmd: "python src/stages/train-error-detection.py --seed 8232 --dataset-in data/processed/detection-dataset\
+      \ --model-name bert-base-multilingual-cased --evaluation-strategy epoch --per-device-train-batch-size\
+      \ 32 --num-train-epochs 3 --load-best-model-at-end --save-strategy epoch --delete-checkpoints\
+      \ --model-dir models/error-detection/ --train-log results/detection/logs/train-log.csv\n"
     deps:
     - path: data/processed/detection-dataset
       md5: 649d31b769a41e287af7e069efcf8f54.dir
       size: 77550059
       nfiles: 10
     - path: src/stages/train-error-detection.py
-      md5: 38fac49446a37bcf488710d9eb492d24
-      size: 3958
+      md5: a4649ba561440191d21139306e36ed28
+      size: 3784
     params:
       params.yaml:
         base:
-          loglevel: INFO
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         create-error-detection-dataset:
@@ -99,69 +99,64 @@ stages:
           output-dir: models/error-detection/
           evaluation-strategy: epoch
           num-train-epochs: 3
-          load-best-model-at-end: true
           save-strategy: epoch
-          per-device-train-batch-size: 16
+          per-device-train-batch-size: 32
           train-log: results/detection/logs/train-log.csv
-          delete-checkpoints: true
     outs:
     - path: models/error-detection/
-      md5: c6ae910b1dde1c6dd1476ba0016ef584.dir
-      size: 713052764
+      md5: c29dbeea64b4b6a2e9383f58f28af9ac.dir
+      size: 713052828
       nfiles: 7
     - path: results/detection/logs/train-log.csv
-      md5: 18ce9c5204d48f5913664f2fd29e4ff1
-      size: 1092
+      md5: 9f2791cee68245d7cfa09e68fa8f5772
+      size: 705
   evaluate-error-detection:
-    cmd: python src/stages/run-icdar-evaluation.py data/raw/ICDAR2019_POCR_competition_dataset.zip
-      results/detection/icdar_predictions.json results/detection/icdar_evaluation_results.csv
-      INFO
+    cmd: "python src/stages/run-icdar-evaluation.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
+      \ --json-file results/detection/icdar_predictions.json --csv-file results/detection/icdar_evaluation_results.csv\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: results/detection/icdar_predictions.json
-      md5: 1f1295ece1c46384f92aaa6fe1de2c7e
-      size: 5172170
+      md5: 9f117e1b4f058a8768184f7f67236f76
+      size: 5202078
     - path: src/stages/run-icdar-evaluation.py
-      md5: 36368e053f7968b516715d047e0c7857
-      size: 649
+      md5: 79deffa29b79f17f0ea4033a27a3a352
+      size: 754
     params:
       params.yaml:
         base:
-          loglevel: INFO
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
-        convert-predictions-to-icdar-output:
+        convert-error-detection-predictions-to-icdar-output:
           icdar-output-json: results/detection/icdar_predictions.json
         evaluate-error-detection:
           icdar-output-csv: results/detection/icdar_evaluation_results.csv
-        predict-test-set-error-detection:
-          per-device-eval-batch-size: 16
-          test-log: results/detection/logs/test-log.csv
-          predictions: results/detection/predictions.npy
     outs:
     - path: results/detection/icdar_evaluation_results.csv
-      md5: 7eb61fb367022ea9ca9dffa7d05a048c
-      size: 158458
+      md5: 88d5ca832811eb050132eb1e44480f72
+      size: 158454
   predict-test-set-error-detection:
-    cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
+    cmd: "python src/stages/predict-test-set-error-detection.py --seed 8232 --dataset-in\
+      \ data/processed/detection-dataset --model-dir models/error-detection/ --model-name\
+      \ bert-base-multilingual-cased --evaluation-strategy epoch --eval-batch-size\
+      \ 32 --num-train-epochs 3 --predictions-out results/detection/predictions.npy\
+      \ --test-log results/detection/logs/test-log.csv\n"
     deps:
     - path: data/processed/detection-dataset
       md5: 649d31b769a41e287af7e069efcf8f54.dir
       size: 77550059
       nfiles: 10
     - path: models/error-detection/
-      md5: c6ae910b1dde1c6dd1476ba0016ef584.dir
-      size: 713052764
+      md5: c29dbeea64b4b6a2e9383f58f28af9ac.dir
+      size: 713052828
       nfiles: 7
     - path: src/stages/predict-test-set-error-detection.py
-      md5: c2f49ae8c643c94baf0bd101d0e0a461
-      size: 2986
+      md5: 04a24f995366bf12b767c64fc1658a47
+      size: 2673
     params:
       params.yaml:
         base:
-          loglevel: INFO
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         create-error-detection-dataset:
@@ -178,40 +173,40 @@ stages:
           output-dir: models/error-detection/
           evaluation-strategy: epoch
           num-train-epochs: 3
-          load-best-model-at-end: true
           save-strategy: epoch
-          per-device-train-batch-size: 16
+          per-device-train-batch-size: 32
           train-log: results/detection/logs/train-log.csv
-          delete-checkpoints: true
     outs:
     - path: results/detection/logs/test-log.csv
-      md5: 40aced86d4b486aee8dfa00a1f14573c
+      md5: b4a35664f6f2df5f780890ddc6ee3e54
       size: 95
     - path: results/detection/predictions.npy
-      md5: f3b134a9149b2205687ac3e13737d732
+      md5: 168254a4e44de9f966b5d10dd9b18f03
       size: 78632336
   generate-error-detection-report:
-    cmd: python src/stages/generate-error-detection-report.py --config params.yaml
+    cmd: "python src/stages/generate-error-detection-report.py --evaluation-csv results/detection/icdar_evaluation_results.csv\
+      \ --train-log-file results/detection/logs/train-log.csv --test-log-file results/detection/logs/test-log.csv\
+      \ --seed 8232 --val-size 0.1 --max-ed 0.3 --size 35 --step 30 --model-name bert-base-multilingual-cased\
+      \ --metrics-file reports/detection/metrics.json --report-file reports/detection/experiment_results.md\n"
     deps:
     - path: results/detection/icdar_evaluation_results.csv
-      md5: 7eb61fb367022ea9ca9dffa7d05a048c
-      size: 158458
+      md5: 88d5ca832811eb050132eb1e44480f72
+      size: 158454
     - path: results/detection/logs/test-log.csv
-      md5: 40aced86d4b486aee8dfa00a1f14573c
+      md5: b4a35664f6f2df5f780890ddc6ee3e54
       size: 95
     - path: results/detection/logs/train-log.csv
-      md5: 18ce9c5204d48f5913664f2fd29e4ff1
-      size: 1092
+      md5: 9f2791cee68245d7cfa09e68fa8f5772
+      size: 705
     - path: src/stages/generate-error-detection-report.py
-      md5: 9721c57fc0a83d3336218eea950db930
-      size: 2721
+      md5: 034f17bf8e2c5b63adfa0caab836fd69
+      size: 2499
     - path: templates/report-error-detection.md
       md5: a6f392d6f73022cf9ef9b35dfa600b74
       size: 633
     params:
       params.yaml:
         base:
-          loglevel: INFO
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
         create-error-detection-dataset:
@@ -235,18 +230,16 @@ stages:
           output-dir: models/error-detection/
           evaluation-strategy: epoch
           num-train-epochs: 3
-          load-best-model-at-end: true
           save-strategy: epoch
-          per-device-train-batch-size: 16
+          per-device-train-batch-size: 32
           train-log: results/detection/logs/train-log.csv
-          delete-checkpoints: true
     outs:
     - path: reports/detection/experiment_results.md
-      md5: d4e0bd9e1339ff66ce31095ff6f95152
+      md5: 214bcb21247486d3d47818bcbd6799b9
       size: 1520
     - path: reports/detection/metrics.json
-      md5: a0ffc36c50a661284c907e4a55d58f27
-      size: 329
+      md5: 19ffa2ede7d8a5bb7ffbed42e57fdb65
+      size: 366
   convert-predictions-to-icdar-output:
     cmd: python src/stages/convert-predictions-to-icdar-output.py --config params.yaml
     deps:
@@ -641,3 +634,45 @@ stages:
     - path: reports/correction/metrics.json
       md5: ab25e0fecfe9c65562fa675fc62f17ce
       size: 1188
+  convert-error-detection-predictions-to-icdar-output:
+    cmd: "python src/stages/convert-error-detection-predictions-to-icdar-output.py\
+      \ --dataset-in data/processed/detection-dataset --model-name bert-base-multilingual-cased\
+      \ --predictions-in results/detection/predictions.npy --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
+      \ --json-out results/detection/icdar_predictions.json\n"
+    deps:
+    - path: data/processed/detection-dataset
+      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      size: 77550059
+      nfiles: 10
+    - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
+      md5: 12de784f02a0dd99d1b3997674ee97f4
+      size: 66523152
+    - path: results/detection/predictions.npy
+      md5: 168254a4e44de9f966b5d10dd9b18f03
+      size: 78632336
+    - path: src/stages/convert-error-detection-predictions-to-icdar-output.py
+      md5: 0998a0eddb1ff1b3bc3aee88398988c7
+      size: 1757
+    params:
+      params.yaml:
+        base:
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        convert-error-detection-predictions-to-icdar-output:
+          icdar-output-json: results/detection/icdar_predictions.json
+        predict-test-set-error-detection:
+          per-device-eval-batch-size: 16
+          test-log: results/detection/logs/test-log.csv
+          predictions: results/detection/predictions.npy
+        train-error-detection:
+          pretrained-model-name: bert-base-multilingual-cased
+          output-dir: models/error-detection/
+          evaluation-strategy: epoch
+          num-train-epochs: 3
+          save-strategy: epoch
+          per-device-train-batch-size: 32
+          train-log: results/detection/logs/train-log.csv
+    outs:
+    - path: results/detection/icdar_predictions.json
+      md5: 9f117e1b4f058a8768184f7f67236f76
+      size: 5202078

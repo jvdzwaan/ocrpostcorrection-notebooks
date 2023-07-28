@@ -18,7 +18,7 @@ def generate_error_detection_report(
     test_log_file: Annotated[Path, file_in_option],
     seed: Annotated[int, typer.Option()],
     val_size: Annotated[float, typer.Option()],
-    max_ed: Annotated[int, typer.Option()],
+    max_ed: Annotated[float, typer.Option()],
     size: Annotated[int, typer.Option()],
     step: Annotated[int, typer.Option()],
     model_name: Annotated[str, typer.Option()],

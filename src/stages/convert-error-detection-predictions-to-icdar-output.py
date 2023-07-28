@@ -18,7 +18,7 @@ from common.option_types import dir_in_option, file_in_option, file_out_option
 def convert_error_detection_predictions_to_icdar_output(
     dataset_in: Annotated[Path, dir_in_option],
     model_name: Annotated[str, typer.Option()],
-    predictions_in: Annotated[Path, dir_in_option],
+    predictions_in: Annotated[Path, file_in_option],
     raw_dataset: Annotated[Path, file_in_option],
     json_out: Annotated[Path, file_out_option],
 ) -> None:

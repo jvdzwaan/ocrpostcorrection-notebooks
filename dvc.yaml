@@ -94,7 +94,7 @@ stages:
       --evaluation-strategy ${train-error-detection.evaluation-strategy}
       --eval-batch-size ${train-error-detection.per-device-train-batch-size}
       --num-train-epochs ${train-error-detection.num-train-epochs}
-      --predictions-out: ${predict-test-set-error-detection.predictions}
+      --predictions-out ${predict-test-set-error-detection.predictions}
       --test-log ${predict-test-set-error-detection.test-log}
     deps:
       - src/stages/predict-test-set-error-detection.py
@@ -118,7 +118,7 @@ stages:
       --raw-dataset ${base.raw-data-zip}
       --json-out ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
     deps:
-      - convert-error-detection-predictions-to-icdar-output.py
+      - src/stages/convert-error-detection-predictions-to-icdar-output.py
       - ${base.raw-data-zip}
       - ${create-error-detection-dataset.dataset}
       - ${predict-test-set-error-detection.predictions}
