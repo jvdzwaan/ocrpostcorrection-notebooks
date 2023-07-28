@@ -17,7 +17,7 @@ from transformers import (
 )
 from typing_extensions import Annotated
 
-from common.option_types import dir_in_option, file_in_option, file_out_option
+from common.option_types import dir_in_option, file_out_option
 
 
 def save_test_log(metrics: Dict[str, Any], out_file: Path) -> None:
@@ -30,7 +30,7 @@ def save_test_log(metrics: Dict[str, Any], out_file: Path) -> None:
 
 def predict_test_set_error_detection(
     seed: Annotated[int, typer.Option()],
-    dataset_in: Annotated[Path, file_in_option],
+    dataset_in: Annotated[Path, dir_in_option],
     model_dir: Annotated[Path, dir_in_option],
     model_name: Annotated[str, typer.Option()],
     evaluation_strategy: Annotated[str, typer.Option()],

@@ -7,7 +7,7 @@ from loguru import logger
 from ocrpostcorrection.icdar_data import generate_sentences, get_intermediate_data
 from typing_extensions import Annotated
 
-from common.option_types import file_in_option, file_out_option
+from common.option_types import dir_out_option, file_in_option
 
 
 def create_error_detection_dataset(
@@ -18,7 +18,7 @@ def create_error_detection_dataset(
     size: Annotated[int, typer.Option()],
     step: Annotated[int, typer.Option()],
     max_ed: Annotated[float, typer.Option()],
-    dataset_out: Annotated[Path, file_out_option],
+    dataset_out: Annotated[Path, dir_out_option],
 ) -> None:
     data, _, data_test, _ = get_intermediate_data(raw_dataset)
 

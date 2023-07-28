@@ -17,7 +17,7 @@ from transformers import (
 )
 from typing_extensions import Annotated
 
-from common.option_types import dir_out_option, file_in_option, file_out_option
+from common.option_types import dir_in_option, dir_out_option, file_out_option
 
 
 def add_values(
@@ -61,7 +61,7 @@ def create_train_log(logs: List[Dict[str, Any]]) -> pd.DataFrame:
 
 def train_error_detection(
     seed: Annotated[int, typer.Option()],
-    dataset_in: Annotated[Path, file_in_option],
+    dataset_in: Annotated[Path, dir_in_option],
     model_name: Annotated[str, typer.Option()],
     evaluation_strategy: Annotated[str, typer.Option()],
     per_device_train_batch_size: Annotated[int, typer.Option()],
