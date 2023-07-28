@@ -68,9 +68,9 @@ stages:
       --evaluation-strategy ${train-error-detection.evaluation-strategy}
       --per-device-train-batch-size ${train-error-detection.per-device-train-batch-size}
       --num-train-epochs ${train-error-detection.num-train-epochs}
-      --load-best-model-at-end ${train-error-detection.load-best-model-at-end}
+      --load-best-model-at-end
       --save-strategy ${train-error-detection.save-strategy}
-      --delete-checkpoints ${train-error-detection.delete-checkpoints}
+      --delete-checkpoints
       --model-dir ${train-error-detection.output-dir}
       --train-log ${train-error-detection.train-log}
     deps:
