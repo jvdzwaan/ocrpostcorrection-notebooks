@@ -73,7 +73,17 @@ stages:
           cache: false
       - ${train-error-detection.output-dir}
   predict-test-set-error-detection:
-    cmd: python src/stages/predict-test-set-error-detection.py --config params.yaml
+    cmd: >
+      python src/stages/predict-test-set-error-detection.py
+      --seed ${base.seed}
+      --dataset-in ${create-error-detection-dataset.dataset}
+      --model-dir ${train-error-detection.output-dir}
+      --model-name ${train-error-detection.pretrained-model-name}
+      --evaluation-strategy ${train-error-detection.evaluation-strategy}
+      --eval-batch-size ${train-error-detection.per-device-train-batch-size}
+      --num-train-epochs ${train-error-detection.num-train-epochs}
+      --predictions-out: ${predict-test-set-error-detection.predictions}
+      --test-log ${predict-test-set-error-detection.test-log}
     deps:
       - src/stages/predict-test-set-error-detection.py
       - ${create-error-detection-dataset.dataset}

@@ -1,11 +1,9 @@
-import argparse
-import sys
 from pathlib import Path
-from typing import Any, Dict, Text
+from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
-import yaml
+import typer
 from datasets import load_from_disk
 from loguru import logger
 from ocrpostcorrection.token_classification import tokenize_and_align_labels
@@ -17,9 +15,12 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
+from typing_extensions import Annotated
+
+from common.option_types import dir_in_option, file_in_option, file_out_option
 
 
-def save_test_log(metrics: Dict[str, Any], out_file: str) -> None:
+def save_test_log(metrics: Dict[str, Any], out_file: Path) -> None:
     test_log = pd.DataFrame([metrics])
     test_log.columns = [col.replace("test_", "") for col in test_log.columns]
 
@@ -27,20 +28,22 @@ def save_test_log(metrics: Dict[str, Any], out_file: str) -> None:
     test_log.to_csv(out_file)
 
 
-def predict_test_set_error_detection(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
+def predict_test_set_error_detection(
+    seed: Annotated[int, typer.Option()],
+    dataset_in: Annotated[Path, file_in_option],
+    model_dir: Annotated[Path, dir_in_option],
+    model_name: Annotated[str, typer.Option()],
+    evaluation_strategy: Annotated[str, typer.Option()],
+    eval_batch_size: Annotated[int, typer.Option()],
+    num_train_epochs: Annotated[int, typer.Option()],
+    predictions_out: Annotated[Path, file_out_option],
+    test_log: Annotated[Path, file_out_option],
+) -> None:
+    set_seed(seed)
 
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
-    set_seed(config["base"]["seed"])
-
-    dataset = load_from_disk(config["create-error-detection-dataset"]["dataset"])
+    dataset = load_from_disk(dataset_in)
 
     logger.info(f'Dataset loaded: # samples test: {len(dataset["test"])}')
-
-    model_dir = config["train-error-detection"]["output-dir"]
-    model_name = config["train-error-detection"]["pretrained-model-name"]
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenized_dataset = dataset.map(tokenize_and_align_labels(tokenizer), batched=True)
@@ -48,7 +51,7 @@ def predict_test_set_error_detection(config_path: Text) -> None:
 
     training_args = TrainingArguments(
         output_dir=model_dir,
-        evaluation_strategy=config["train-error-detection"]["evaluation-strategy"],
+        evaluation_strategy=evaluation_strategy,
         num_train_epochs=3,
     )
 
@@ -57,12 +60,10 @@ def predict_test_set_error_detection(config_path: Text) -> None:
         model_dir, num_labels=num_labels
     )
 
-    stage = "predict-test-set-error-detection"
-    eval_batch_size = config[stage]["per-device-eval-batch-size"]
     training_args = TrainingArguments(
-        output_dir=config["train-error-detection"]["output-dir"],
-        evaluation_strategy=config["train-error-detection"]["evaluation-strategy"],
-        num_train_epochs=config["train-error-detection"]["num-train-epochs"],
+        output_dir=model_dir,
+        evaluation_strategy=evaluation_strategy,
+        num_train_epochs=num_train_epochs,
         per_device_eval_batch_size=eval_batch_size,
     )
 
@@ -76,13 +77,9 @@ def predict_test_set_error_detection(config_path: Text) -> None:
     )
 
     pred = trainer.predict(tokenized_dataset["test"])
-    np.save(config["predict-test-set-error-detection"]["predictions"], pred.predictions)
-    save_test_log(pred.metrics, config["predict-test-set-error-detection"]["test-log"])
+    np.save(predictions_out, pred.predictions)
+    save_test_log(pred.metrics, test_log)
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    predict_test_set_error_detection(args.config)
+    typer.run(predict_test_set_error_detection)
