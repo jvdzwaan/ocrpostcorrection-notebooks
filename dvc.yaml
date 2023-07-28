@@ -37,7 +37,16 @@ stages:
 
   # Error detection
   create-error-detection-dataset:
-    cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
+    cmd: >
+      python src/stages/create-error-detection-dataset.py
+      --raw-dataset ${base.raw-data-zip}
+      --train-split ${data-split.train-split}
+      --val-split ${data-split.val-split}
+      --test-split ${data-split.test-split}
+      --size ${create-error-detection-dataset.size}
+      --step ${create-error-detection-dataset.step}
+      --max-ed ${create-error-detection-dataset.max-edit-distance}
+      --dataset-out ${create-error-detection-dataset.dataset}
     deps:
       - src/stages/create-error-detection-dataset.py
       - ${data-split.train-split}
@@ -46,6 +55,7 @@ stages:
       - ${base.raw-data-zip}
     params:
       - base
+      - data-split
       - create-error-detection-dataset
     outs:
       - ${create-error-detection-dataset.dataset}

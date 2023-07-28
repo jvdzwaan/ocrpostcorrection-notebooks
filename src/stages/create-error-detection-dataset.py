@@ -1,28 +1,30 @@
-import argparse
-import sys
-from typing import Text
+from pathlib import Path
 
 import pandas as pd
-import yaml
+import typer
 from datasets import ClassLabel, Dataset, DatasetDict, Sequence
 from loguru import logger
 from ocrpostcorrection.icdar_data import generate_sentences, get_intermediate_data
+from typing_extensions import Annotated
+
+from common.option_types import file_in_option, file_out_option
 
 
-def create_error_detection_dataset(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
+def create_error_detection_dataset(
+    raw_dataset: Annotated[Path, file_in_option],
+    train_split: Annotated[Path, file_in_option],
+    val_split: Annotated[Path, file_in_option],
+    test_split: Annotated[Path, file_in_option],
+    size: Annotated[int, typer.Option()],
+    step: Annotated[int, typer.Option()],
+    max_ed: Annotated[float, typer.Option()],
+    dataset_out: Annotated[Path, file_out_option],
+) -> None:
+    data, _, data_test, _ = get_intermediate_data(raw_dataset)
 
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
-    data, _, data_test, _ = get_intermediate_data(config["base"]["raw-data-zip"])
-
-    X_train = pd.read_csv(config["data-split"]["train-split"], index_col=0)
-    X_val = pd.read_csv(config["data-split"]["val-split"], index_col=0)
-    X_test = pd.read_csv(config["data-split"]["test-split"], index_col=0)
-
-    size = config["create-error-detection-dataset"]["size"]
-    step = config["create-error-detection-dataset"]["step"]
+    X_train = pd.read_csv(train_split, index_col=0)
+    X_val = pd.read_csv(val_split, index_col=0)
+    X_test = pd.read_csv(test_split, index_col=0)
 
     logger.info(f"Generating sentences (size: {size}, step: {step})")
 
@@ -35,7 +37,6 @@ def create_error_detection_dataset(config_path: Text) -> None:
     num_test = test_data.shape[0]
     logger.info(f"# samples train: {num_train}, val: {num_val}, test: {num_test})")
 
-    max_ed = config["create-error-detection-dataset"]["max-edit-distance"]
     logger.info(f"Filtering train and val based on maximum edit distance of {max_ed}")
     train_data = train_data[train_data.score < max_ed]
     val_data = val_data[val_data.score < max_ed]
@@ -63,7 +64,7 @@ def create_error_detection_dataset(config_path: Text) -> None:
     )
 
     logger.info("Saving dataset")
-    dataset.save_to_disk(config["create-error-detection-dataset"]["dataset"])
+    dataset.save_to_disk(dataset_out)
     num_train = len(dataset["train"])
     num_val = len(dataset["val"])
     num_test = len(dataset["test"])
@@ -71,8 +72,4 @@ def create_error_detection_dataset(config_path: Text) -> None:
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    create_error_detection_dataset(args.config)
+    typer.run(create_error_detection_dataset)
