@@ -9,8 +9,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: src/stages/data-split.py
-      md5: 9a918e6774d3e67fd9e8daa7f9ea9efb
-      size: 1298
+      md5: 2a0bbe5100db9f5acefd41f5bd823aeb
+      size: 1235
     params:
       params.yaml:
         base:
@@ -33,7 +33,9 @@ stages:
       md5: 481d6c2885fa9f6aa7805c0100cb32e6
       size: 63904
   create-error-detection-dataset:
-    cmd: python src/stages/create-error-detection-dataset.py --config params.yaml
+    cmd: "python src/stages/create-error-detection-dataset.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
+      \ --train-split data/splits/train.csv --val-split data/splits/val.csv --test-split\
+      \ data/splits/test.csv --size 35 --step 30 --max-ed 0.3 --dataset-out data/processed/detection-dataset\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
@@ -48,8 +50,8 @@ stages:
       md5: 481d6c2885fa9f6aa7805c0100cb32e6
       size: 63904
     - path: src/stages/create-error-detection-dataset.py
-      md5: 71bcecd7f786dda1e8a30f51377e6d54
-      size: 2738
+      md5: 8da6a3522725bca2d4becc41e5c993a8
+      size: 2569
     params:
       params.yaml:
         base:
@@ -61,9 +63,14 @@ stages:
           step: 30
           max-edit-distance: 0.3
           dataset: data/processed/detection-dataset
+        data-split:
+          val-size: 0.1
+          train-split: data/splits/train.csv
+          val-split: data/splits/val.csv
+          test-split: data/splits/test.csv
     outs:
     - path: data/processed/detection-dataset
-      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      md5: a838004d6753cbfeea57c6f6f4586b1f.dir
       size: 77550059
       nfiles: 10
   train-error-detection:
