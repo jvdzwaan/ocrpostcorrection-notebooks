@@ -19,7 +19,7 @@ train-error-detection:
   evaluation-strategy: epoch
   num-train-epochs: 3
   save-strategy: epoch
-  per-device-train-batch-size: 32
+  per-device-train-batch-size: 16
   train-log: results/detection/logs/train-log.csv
 predict-test-set-error-detection:
   per-device-eval-batch-size: 16
