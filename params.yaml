@@ -1,5 +1,4 @@
 base:
-  loglevel: INFO
   seed: 8232
   raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
 data-split:
