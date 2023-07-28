@@ -1,11 +1,9 @@
-import argparse
 import shutil
-import sys
 from pathlib import Path
-from typing import Any, Dict, List, Text
+from typing import Any, Dict, List
 
 import pandas as pd
-import yaml
+import typer
 from datasets import load_from_disk
 from loguru import logger
 from ocrpostcorrection.token_classification import tokenize_and_align_labels
@@ -17,6 +15,9 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
+from typing_extensions import Annotated
+
+from common.option_types import dir_out_option, file_in_option, file_out_option
 
 
 def add_values(
@@ -58,37 +59,38 @@ def create_train_log(logs: List[Dict[str, Any]]) -> pd.DataFrame:
     return log_data
 
 
-def train_error_detection(config_path: Text) -> None:
-    config = yaml.safe_load(open(config_path))
+def train_error_detection(
+    seed: Annotated[int, typer.Option()],
+    dataset_in: Annotated[Path, file_in_option],
+    model_name: Annotated[str, typer.Option()],
+    evaluation_strategy: Annotated[str, typer.Option()],
+    per_device_train_batch_size: Annotated[int, typer.Option()],
+    num_train_epochs: Annotated[int, typer.Option()],
+    load_best_model_at_end: Annotated[bool, typer.Option()],
+    save_strategy: Annotated[str, typer.Option()],
+    delete_checkpoints: Annotated[bool, typer.Option()],
+    model_dir: Annotated[Path, dir_out_option],
+    train_log: Annotated[Path, file_out_option],
+) -> None:
+    set_seed(seed)
 
-    logger.remove()
-    logger.add(sys.stderr, level=config["base"]["loglevel"])
-
-    set_seed(config["base"]["seed"])
-
-    dataset = load_from_disk(config["create-error-detection-dataset"]["dataset"])
+    dataset = load_from_disk(dataset_in)
 
     num_train = len(dataset["train"])
     num_val = len(dataset["val"])
     logger.info(f"Dataset loaded: # samples train: {num_train}, val: {num_val}")
-
-    model_name = config["train-error-detection"]["pretrained-model-name"]
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenized_dataset = dataset.map(tokenize_and_align_labels(tokenizer), batched=True)
     data_collator = DataCollatorForTokenClassification(tokenizer)
 
     training_args = TrainingArguments(
-        output_dir=config["train-error-detection"]["output-dir"],
-        evaluation_strategy=config["train-error-detection"]["evaluation-strategy"],
-        num_train_epochs=config["train-error-detection"]["num-train-epochs"],
-        load_best_model_at_end=config["train-error-detection"][
-            "load-best-model-at-end"
-        ],
-        save_strategy=config["train-error-detection"]["save-strategy"],
-        per_device_train_batch_size=config["train-error-detection"][
-            "per-device-train-batch-size"
-        ],
+        output_dir=model_dir,
+        evaluation_strategy=evaluation_strategy,
+        num_train_epochs=num_train_epochs,
+        load_best_model_at_end=load_best_model_at_end,
+        save_strategy=save_strategy,
+        per_device_train_batch_size=per_device_train_batch_size,
     )
 
     num_labels = dataset["train"].features["tags"].feature.num_classes
@@ -104,28 +106,19 @@ def train_error_detection(config_path: Text) -> None:
         data_collator=data_collator,
         tokenizer=tokenizer,
     )
-
     trainer.train()
-
     trainer.save_model()
 
-    if config["train-error-detection"]["delete-checkpoints"]:
+    if delete_checkpoints:
         logger.info("Removing checkpoints")
-        for path in Path(config["train-error-detection"]["output-dir"]).glob(
-            "checkpoint-*"
-        ):
+        for path in Path(model_dir).glob("checkpoint-*"):
             if path.is_dir():
                 shutil.rmtree(path)
 
-    log_file = config["train-error-detection"]["train-log"]
-    Path(log_file).parent.mkdir(exist_ok=True, parents=True)
+    Path(train_log).parent.mkdir(exist_ok=True, parents=True)
     log_data = create_train_log(trainer.state.log_history)
-    log_data.to_csv(log_file)
+    log_data.to_csv(train_log)
 
 
 if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument("--config", dest="config", required=True)
-    args = args_parser.parse_args()
-
-    train_error_detection(args.config)
+    typer.run(train_error_detection)
