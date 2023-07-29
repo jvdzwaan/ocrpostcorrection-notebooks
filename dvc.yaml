@@ -254,7 +254,8 @@ stages:
       - generate-perfect-icdar-json
       - predict-error-correction
     outs:
-      - ${predict-error-correction.test-log}
+      - ${predict-error-correction.test-log}:
+          cache: false
       - ${predict-error-correction.perfect-detection-out}
       - ${predict-error-correction.predicted-detection-out}
   convert-perfect-correction-predicted-detection-results-to-icdar-format:
