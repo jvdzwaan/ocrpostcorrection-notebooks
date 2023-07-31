@@ -16,6 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def create_bert_vectors_for_split(
+    split: str,
     model: BertModel,
     collator: DataCollatorWithPadding,
     dataset: Dataset,
@@ -24,9 +25,9 @@ def create_bert_vectors_for_split(
 ) -> None:
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collator)
 
-    out_path = out_dir / str(dataset.split)
+    out_path = out_dir / split
     out_path.mkdir(exist_ok=True, parents=True)
-    logger.debug(f"Saving vectors for {str(dataset.split)} in {out_path}")
+    logger.debug(f"Saving vectors for {split} in {out_path}")
 
     with torch.no_grad():
         for i, batch in enumerate(tqdm(dataloader)):
@@ -86,6 +87,7 @@ def create_bert_vectors(
     for split_name in ("train", "val", "test"):
         logger.info(f"Creating BERT vectors for {split_name}")
         create_bert_vectors_for_split(
+            split=split_name,
             model=model,
             collator=collator,
             dataset=tokenized_dataset[split_name],
