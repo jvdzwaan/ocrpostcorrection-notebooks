@@ -196,6 +196,26 @@ stages:
       - create-error-correction-dataset
     outs:
       - ${create-error-correction-dataset.dataset}
+  create-bert-vectors:
+    cmd: >
+      python src/stages/create-bert-vectors.py
+      --seed ${base.seed}
+      --dataset-in ${create-error-correction-dataset.dataset}
+      --model-dir ${train-error-detection.output-dir}
+      --model-name ${train-error-detection.pretrained-model-name}
+      --batch-size ${create-bert-vectors.batch-size}
+      --out-dir ${create-bert-vectors.out-dir}
+    deps:
+      - src/stages/create-bert-vectors.py
+      - ${create-error-correction-dataset.dataset}
+      - ${train-error-detection.output-dir}
+    params:
+      - base
+      - create-error-correction-dataset
+      - train-error-detection
+      - create-bert-vectors
+    outs:
+      - ${create-bert-vectors.out-dir}
   train-error-correction:
     cmd: >
       python src/stages/train-error-correction.py
