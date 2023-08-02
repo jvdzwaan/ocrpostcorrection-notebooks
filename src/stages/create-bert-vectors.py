@@ -98,9 +98,8 @@ def create_bert_vectors(
 
     model = BertModel.from_pretrained(model_dir)
     model.eval()
-    model = model.to(device=device)
-
     hidden_size = get_hidden_size(model)
+    model = model.to(device=device)
 
     collator = DataCollatorWithPadding(tokenizer)
 
