@@ -37,7 +37,7 @@ generate-error-detection-report:
 create-error-correction-dataset:
   dataset: data/processed/correction-dataset/dataset.csv
 create-bert-vectors:
-  batch-size: 512
+  batch-size: 128
   out-file: data/intermediate/correction-bert-vectors.hdf5
 train-error-correction:
   max-len: 22
