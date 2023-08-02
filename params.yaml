@@ -38,7 +38,7 @@ create-error-correction-dataset:
   dataset: data/processed/correction-dataset/dataset.csv
 create-bert-vectors:
   batch-size: 128
-  out-dir: data/processed/correction-bert-vectors/
+  out-file: data/intermediate/correction-bert-vectors.hdf5
 train-error-correction:
   max-len: 22
   batch-size: 256

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import h5py
 import pandas as pd
 import torch
 import typer
@@ -16,33 +17,42 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def create_bert_vectors_for_split(
-    split: str,
     model: BertModel,
     collator: DataCollatorWithPadding,
     dataset: Dataset,
-    out_dir: Path,
+    dset: h5py.Dataset,
     batch_size: int = 8,
 ) -> None:
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collator)
 
-    out_path = out_dir / split
-    out_path.mkdir(exist_ok=True, parents=True)
-    logger.debug(f"Saving vectors for {split} in {out_path}")
-
     with torch.no_grad():
-        for i, batch in enumerate(tqdm(dataloader)):
+        index = 0
+        for batch in tqdm(dataloader):
             batch.to(device=device)
 
             output = model(**batch)
 
             samples = output["pooler_output"].detach().cpu()
-            out_file = out_path / f"bert_vectors_{i}.pt"
-            torch.save(samples, out_file)
+            dset[index : index + samples.size(0)] = samples
+
+            index += samples.size(0)
 
             del samples
             del output
             del batch
             torch.cuda.empty_cache()
+
+
+def get_hidden_size(model: BertModel) -> int:
+    batch = {
+        "input_ids": torch.tensor([[101, 119, 102]]),
+        "token_type_ids": torch.tensor([[0, 0, 0]]),
+        "attention_mask": torch.tensor([[1, 1, 1]]),
+    }
+    output = model(**batch)
+    samples = output["pooler_output"].detach().cpu()
+
+    return int(samples.size(-1))
 
 
 def create_bert_vectors(
@@ -51,13 +61,21 @@ def create_bert_vectors(
     model_dir: Annotated[Path, dir_in_option],
     model_name: Annotated[str, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
-    out_dir: Annotated[Path, file_out_option],
+    out_file: Annotated[Path, file_out_option],
 ) -> None:
     logger.info("Creating BERT vectors")
     set_seed(seed)
 
+    splits = ("train", "val", "test")
+
     data = pd.read_csv(dataset_in, index_col=0)
     data.fillna("", inplace=True)
+
+    sizes = {}
+    for name in splits:
+        num = (data.dataset == name).sum()
+        sizes[name] = num
+
     train_data = data[data.dataset == "train"].copy()
     val_data = data[data.dataset == "val"].copy()
     test_data = data[data.dataset == "test"].copy()
@@ -82,18 +100,25 @@ def create_bert_vectors(
     model.eval()
     model = model.to(device=device)
 
+    hidden_size = get_hidden_size(model)
+
     collator = DataCollatorWithPadding(tokenizer)
 
-    for split_name in ("train", "val", "test"):
-        logger.info(f"Creating BERT vectors for {split_name}")
-        create_bert_vectors_for_split(
-            split=split_name,
-            model=model,
-            collator=collator,
-            dataset=tokenized_dataset[split_name],
-            batch_size=batch_size,
-            out_dir=out_dir,
-        )
+    out_file.parent.mkdir(exist_ok=True, parents=True)
+
+    with h5py.File(out_file, "w") as f:
+        for split_name in splits:
+            logger.info(f"Creating BERT vectors for {split_name}")
+            dset = f.create_dataset(
+                split_name, (sizes[split_name], hidden_size), dtype="f"
+            )
+            create_bert_vectors_for_split(
+                model=model,
+                collator=collator,
+                dataset=tokenized_dataset[split_name],
+                batch_size=batch_size,
+                dset=dset,
+            )
 
 
 if __name__ == "__main__":
