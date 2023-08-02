@@ -662,3 +662,40 @@ stages:
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
+  create-bert-vectors:
+    cmd: "python src/stages/create-bert-vectors.py --seed 8232 --dataset-in data/processed/correction-dataset/dataset.csv\
+      \ --model-dir models/error-detection/ --model-name bert-base-multilingual-cased\
+      \ --batch-size 128 --out-file data/intermediate/correction-bert-vectors.hdf5\n"
+    deps:
+    - path: data/processed/correction-dataset/dataset.csv
+      md5: be7a5f227615e26c71ca48d5d28c671e
+      size: 85464285
+    - path: models/error-detection/
+      md5: debe96c827522fdf34dcb76c7ba56d5f.dir
+      size: 713052828
+      nfiles: 7
+    - path: src/stages/create-bert-vectors.py
+      md5: 477089764afa0107b28c8fba3ab79e44
+      size: 3641
+    params:
+      params.yaml:
+        base:
+          seed: 8232
+          raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-bert-vectors:
+          batch-size: 128
+          out-file: data/intermediate/correction-bert-vectors.hdf5
+        create-error-correction-dataset:
+          dataset: data/processed/correction-dataset/dataset.csv
+        train-error-detection:
+          pretrained-model-name: bert-base-multilingual-cased
+          output-dir: models/error-detection/
+          evaluation-strategy: epoch
+          num-train-epochs: 3
+          save-strategy: epoch
+          per-device-train-batch-size: 16
+          train-log: results/detection/logs/train-log.csv
+    outs:
+    - path: data/intermediate/correction-bert-vectors.hdf5
+      md5: 7a419059a039c71900a39cf40098f98a
+      size: 3469958144
