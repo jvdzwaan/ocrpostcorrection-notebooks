@@ -43,10 +43,10 @@ train-error-correction:
   max-len: 22
   batch-size: 256
   model-save-path: models/error-correction/model.rar
-  hidden-size: 256
+  hidden-size: 768
   dropout: 0.1
   teacher-forcing-ratio: 0.5
-  num-epochs: 25
+  num-epochs: 50
   valid-niter: 1000
   max-num-patience: 5
   max-num-trial: 5
