@@ -221,6 +221,7 @@ stages:
       python src/stages/train-error-correction.py
       --seed ${base.seed}
       --dataset ${create-error-correction-dataset.dataset}
+      --bert-vectors-file ${create-bert-vectors.out-file}
       --max-len ${train-error-correction.max-len}
       --batch-size ${train-error-correction.batch-size}
       --hidden-size ${train-error-correction.hidden-size}
@@ -236,9 +237,11 @@ stages:
     deps:
       - src/stages/train-error-correction.py
       - ${create-error-correction-dataset.dataset}
+      - ${create-bert-vectors.out-file}
     params:
       - base
       - create-error-correction-dataset
+      - create-bert-vectors
       - train-error-correction
     outs:
       - ${train-error-correction.train-log}:
