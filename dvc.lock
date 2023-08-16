@@ -404,7 +404,7 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/logs/test-log.csv
-      md5: 43eab52c0dff3c93dd78b737a5e34993
+      md5: 1ab558f0bd49bc7abc8c263030027b79
       size: 31
     - path: results/correction/perfect-detection+predicted-correction.csv
       md5: e65e4b9a085ca462d8f94fda1da5405a
@@ -563,7 +563,7 @@ stages:
       md5: d479125384df56f94edb0220eee3aaf2
       size: 158458
     - path: results/correction/logs/test-log.csv
-      md5: b9bf680b42dafd2bf0fdf946492acac4
+      md5: 1ab558f0bd49bc7abc8c263030027b79
       size: 31
     - path: results/correction/logs/train-log.csv
       md5: bfe991f618e216f00ccabc38f305f424
@@ -615,11 +615,11 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: reports/correction/experiment_results.md
-      md5: f1d3b7d47ea27b9afa2f9fccf675fcc9
+      md5: de3685e066b340d7bec83ddeb6e7758e
       size: 1230
     - path: reports/correction/metrics.json
-      md5: 77a569c40780ac2df2c11f808faa86d1
-      size: 1199
+      md5: 7419dbadfc15ed80a71aae2a1650e567
+      size: 1183
   convert-error-detection-predictions-to-icdar-output:
     cmd: "python src/stages/convert-error-detection-predictions-to-icdar-output.py\
       \ --dataset-in data/processed/detection-dataset --model-name bert-base-multilingual-cased\
