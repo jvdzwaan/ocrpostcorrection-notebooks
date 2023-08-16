@@ -43,8 +43,9 @@ def generate_error_correction_report(
     template = environment.get_template("report-error-correction.md")
 
     df_train_log = pd.read_csv(train_log, index_col=0)
-    val_loss = df_train_log["train_loss"].iloc[-1]
-    train_loss = df_train_log["val_loss"].iloc[-1]
+    idx_min = df_train_log["val_loss"].idxmin()
+    val_loss = df_train_log["val_loss"].loc[idx_min]
+    train_loss = df_train_log["train_loss"].loc[idx_min]
 
     df_test_log = pd.read_csv(test_log, index_col=0)
     test_loss = df_test_log["test_loss"].iloc[-1]
