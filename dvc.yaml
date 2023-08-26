@@ -264,16 +264,19 @@ stages:
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
+      --bert-vectors-file ${create-bert-vectors.out-file}
     deps:
       - src/stages/predict-error-correction.py
       - ${create-error-correction-dataset.dataset}
       - ${base.raw-data-zip}
       - ${train-error-correction.model-save-path}
+      - ${create-bert-vectors.out-file}
       - ${generate-perfect-icdar-json.out-file-detection}
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
     params:
       - create-error-correction-dataset
       - train-error-correction
+      - create-bert-vectors
       - convert-error-detection-predictions-to-icdar-output
       - generate-perfect-icdar-json
       - predict-error-correction
