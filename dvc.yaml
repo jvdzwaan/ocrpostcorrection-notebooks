@@ -268,6 +268,7 @@ stages:
       - src/stages/predict-error-correction.py
       - ${create-error-correction-dataset.dataset}
       - ${base.raw-data-zip}
+      - ${train-error-correction.model-save-path}
       - ${generate-perfect-icdar-json.out-file-detection}
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
     params:
