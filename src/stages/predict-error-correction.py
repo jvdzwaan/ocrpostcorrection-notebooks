@@ -1,23 +1,26 @@
 import json
 import tempfile
-from typing import Any, Callable, Dict, Text, Tuple
+from pathlib import Path
+from typing import Any, Callable, Dict, Tuple
 
 import edlib
 import pandas as pd
 import torch
 import typer
 from loguru import logger
-from ocrpostcorrection.error_correction import (
-    SimpleCorrectionDataset,
-    SimpleCorrectionSeq2seq,
+from ocrpostcorrection.bert_vectors_correction_data import (
+    BertVectorsCorrectionDataset,
     collate_fn,
+    validate_model,
+)
+from ocrpostcorrection.error_correction import (
+    SimpleCorrectionSeq2seq,
     generate_vocabs,
     get_text_transform,
     predict_and_convert_to_str,
-    validate_model,
 )
-from ocrpostcorrection.icdar_data import Text as ICDARText
 from ocrpostcorrection.icdar_data import (
+    Text,
     extract_icdar_data,
     generate_data,
     normalized_ed,
@@ -26,6 +29,8 @@ from ocrpostcorrection.utils import icdar_output2simple_correction_dataset_df
 from torch.utils.data import DataLoader
 from torchtext.vocab import Vocab
 from typing_extensions import Annotated
+
+from common.option_types import file_in_option, file_out_option
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -37,7 +42,7 @@ def load_model(
     dropout: float,
     max_len: int,
     teacher_forcing_ratio: float,
-    model_path: Text,
+    model_path: Path,
 ) -> Tuple[SimpleCorrectionSeq2seq, torch.optim.Optimizer]:
     model = SimpleCorrectionSeq2seq(
         input_size=input_size,
@@ -60,11 +65,14 @@ def load_model(
 
 def create_test_dataloader(
     test: pd.DataFrame,
+    bert_vectors_file: Path,
     max_len: int,
     batch_size: int,
     text_transform: Dict[str, Callable[[Any], Any]],
 ) -> DataLoader:
-    test_dataset = SimpleCorrectionDataset(test, max_len=max_len)
+    test_dataset = BertVectorsCorrectionDataset(
+        test, bert_vectors_file, split_name="test", max_len=max_len
+    )
     test_dataloader = DataLoader(
         test_dataset, batch_size=batch_size, collate_fn=collate_fn(text_transform)
     )
@@ -99,14 +107,15 @@ def create_predictions_csv(
 
 
 def predict_and_save(
-    in_file: Text,
-    data_test: Dict[str, ICDARText],
+    in_file: Path,
+    data_test: Dict[str, Text],
+    bert_vectors_file: Path,
     max_len: int,
     batch_size: int,
     text_transform: Dict[str, Callable[[Any], Any]],
     vocab_transform: Dict[str, Vocab],
     model: SimpleCorrectionSeq2seq,
-    out_file: Text,
+    out_file: Path,
 ) -> None:
     logger.info(f"Generating predictions for '{in_file}'")
     if in_file and out_file:
@@ -114,7 +123,7 @@ def predict_and_save(
             output = json.load(f)
         test = icdar_output2simple_correction_dataset_df(output, data_test)
         test_dataloader = create_test_dataloader(
-            test, max_len, batch_size, text_transform
+            test, bert_vectors_file, max_len, batch_size, text_transform
         )
 
         predictions = predict_and_convert_to_str(
@@ -132,20 +141,21 @@ def predict_and_save(
 
 
 def predict_error_correction(
-    error_correction_dataset: Annotated[Text, typer.Option()],
+    error_correction_dataset: Annotated[Path, file_in_option],
+    bert_vectors_file: Annotated[Path, file_in_option],
     hidden_size: Annotated[int, typer.Option()],
     dropout: Annotated[float, typer.Option()],
     max_len: Annotated[int, typer.Option()],
     teacher_forcing_ratio: Annotated[float, typer.Option()],
-    model_path: Annotated[Text, typer.Option()],
+    model_path: Annotated[Path, file_in_option],
     batch_size: Annotated[int, typer.Option()],
     calculate_loss: Annotated[bool, typer.Option()],
-    test_log_file: Annotated[Text, typer.Option()],
-    raw_dataset: Annotated[Text, typer.Option()],
-    perfect_detection_in: Annotated[Text, typer.Option()] = "",
-    perfect_detection_out: Annotated[Text, typer.Option()] = "",
-    predicted_detection_in: Annotated[Text, typer.Option()] = "",
-    predicted_detection_out: Annotated[Text, typer.Option()] = "",
+    test_log_file: Annotated[Path, file_out_option],
+    raw_dataset: Annotated[Path, file_in_option],
+    perfect_detection_in: Annotated[Path, file_in_option],
+    perfect_detection_out: Annotated[Path, file_out_option],
+    predicted_detection_in: Annotated[Path, file_in_option],
+    predicted_detection_out: Annotated[Path, file_out_option],
 ) -> None:
     # Load data
     logger.info("Loading data")
@@ -176,7 +186,7 @@ def predict_error_correction(
     if calculate_loss:
         logger.info("Calculating loss on dataset without duplicates")
         test_dataloader = create_test_dataloader(
-            test, max_len, batch_size, text_transform
+            test, bert_vectors_file, max_len, batch_size, text_transform
         )
         test_loss = validate_model(model, test_dataloader, device)
         test_log = pd.DataFrame({"test_loss": [test_loss]})
@@ -193,6 +203,7 @@ def predict_error_correction(
     predict_and_save(
         perfect_detection_in,
         data_test,
+        bert_vectors_file,
         max_len,
         batch_size,
         text_transform,
@@ -204,6 +215,7 @@ def predict_error_correction(
     predict_and_save(
         predicted_detection_in,
         data_test,
+        bert_vectors_file,
         max_len,
         batch_size,
         text_transform,
