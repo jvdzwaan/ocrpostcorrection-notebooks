@@ -313,22 +313,29 @@ stages:
       size: 85464285
   train-error-correction:
     cmd: "python src/stages/train-error-correction.py --seed 8232 --dataset data/processed/correction-dataset/dataset.csv\
-      \ --max-len 22 --batch-size 256 --hidden-size 768 --dropout 0.1 --teacher-forcing-ratio\
+      \ --bert-vectors-file data/intermediate/correction-bert-vectors.hdf5 --max-len\
+      \ 22 --batch-size 256 --hidden-size 768 --dropout 0.1 --teacher-forcing-ratio\
       \ 0.5 --num-epochs 50 --valid-niter 1000 --max-num-patience 5 --max-num-trial\
       \ 5 --lr-decay 0.5 --model-save-path models/error-correction/model.rar --train-log\
       \ results/correction/logs/train-log.csv\n"
     deps:
+    - path: data/intermediate/correction-bert-vectors.hdf5
+      md5: 7a419059a039c71900a39cf40098f98a
+      size: 3469958144
     - path: data/processed/correction-dataset/dataset.csv
       md5: be7a5f227615e26c71ca48d5d28c671e
       size: 85464285
     - path: src/stages/train-error-correction.py
-      md5: 7d0e308eea97d29cf026dc6d12aae0b7
-      size: 7176
+      md5: 81978f8e24b43e6ab1886e15a587c526
+      size: 3354
     params:
       params.yaml:
         base:
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+        create-bert-vectors:
+          batch-size: 128
+          out-file: data/intermediate/correction-bert-vectors.hdf5
         create-error-correction-dataset:
           dataset: data/processed/correction-dataset/dataset.csv
         train-error-correction:
@@ -346,11 +353,11 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: models/error-correction/model.rar
-      md5: a0bc0aca47802e9283370254b2149df8
+      md5: 7b83107571b6d77df0cba3706d5e8601
       size: 111249023
     - path: results/correction/logs/train-log.csv
-      md5: bfe991f618e216f00ccabc38f305f424
-      size: 1892
+      md5: 4e4e7eb1a4060a2dfee4e92bb024f43c
+      size: 1969
   predict-error-correction:
     cmd: "python src/stages/predict-error-correction.py --error-correction-dataset\
       \ data/processed/correction-dataset/dataset.csv --hidden-size 768 --dropout\
@@ -566,8 +573,8 @@ stages:
       md5: 1ab558f0bd49bc7abc8c263030027b79
       size: 31
     - path: results/correction/logs/train-log.csv
-      md5: bfe991f618e216f00ccabc38f305f424
-      size: 1892
+      md5: 4e4e7eb1a4060a2dfee4e92bb024f43c
+      size: 1969
     - path: src/stages/generate-error-correction-report.py
       md5: c4f66b0de329ee7079b30fd87fd15cd0
       size: 3107
@@ -615,11 +622,11 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: reports/correction/experiment_results.md
-      md5: de3685e066b340d7bec83ddeb6e7758e
+      md5: 5466afd6a7563dab7aa2923c8bac5a08
       size: 1230
     - path: reports/correction/metrics.json
-      md5: 7419dbadfc15ed80a71aae2a1650e567
-      size: 1183
+      md5: 7729968b4666da58fd4bacfe34ed171b
+      size: 1199
   convert-error-detection-predictions-to-icdar-output:
     cmd: "python src/stages/convert-error-detection-predictions-to-icdar-output.py\
       \ --dataset-in data/processed/detection-dataset --model-name bert-base-multilingual-cased\
