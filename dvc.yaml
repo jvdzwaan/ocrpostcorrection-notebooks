@@ -265,8 +265,11 @@ stages:
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
       --bert-vectors-file ${create-bert-vectors.out-file}
+      --bert-model-name ${train-error-detection.pretrained-model-name}
+      --bert-model-dir ${train-error-detection.output-dir}
     deps:
       - src/stages/predict-error-correction.py
+      - ${train-error-detection.output-dir}
       - ${create-error-correction-dataset.dataset}
       - ${base.raw-data-zip}
       - ${train-error-correction.model-save-path}
@@ -274,6 +277,7 @@ stages:
       - ${generate-perfect-icdar-json.out-file-detection}
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
     params:
+      - train-error-detection
       - create-error-correction-dataset
       - train-error-correction
       - create-bert-vectors
