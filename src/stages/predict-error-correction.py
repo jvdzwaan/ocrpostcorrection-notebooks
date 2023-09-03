@@ -1,23 +1,24 @@
 import json
 import tempfile
 from pathlib import Path
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import edlib
 import pandas as pd
 import torch
 import typer
+from datasets import Dataset
 from loguru import logger
 from ocrpostcorrection.bert_vectors_correction_data import (
     BertVectorsCorrectionDataset,
     collate_fn,
+    predict_and_convert_to_str,
     validate_model,
 )
 from ocrpostcorrection.error_correction import (
     SimpleCorrectionSeq2seq,
     generate_vocabs,
     get_text_transform,
-    predict_and_convert_to_str,
 )
 from ocrpostcorrection.icdar_data import (
     Text,
@@ -28,9 +29,10 @@ from ocrpostcorrection.icdar_data import (
 from ocrpostcorrection.utils import icdar_output2simple_correction_dataset_df
 from torch.utils.data import DataLoader
 from torchtext.vocab import Vocab
+from transformers import AutoTokenizer, BertModel, DataCollatorWithPadding
 from typing_extensions import Annotated
 
-from common.option_types import file_in_option, file_out_option
+from common.option_types import dir_in_option, file_in_option, file_out_option
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -64,14 +66,21 @@ def load_model(
 
 
 def create_test_dataloader(
-    test: pd.DataFrame,
-    bert_vectors_file: Path,
+    test_df: pd.DataFrame,
     max_len: int,
+    hidden_size: int,
     batch_size: int,
     text_transform: Dict[str, Callable[[Any], Any]],
+    look_up_bert_vectors: bool,
+    bert_vectors_file: Optional[Path] = None,
 ) -> DataLoader:
     test_dataset = BertVectorsCorrectionDataset(
-        test, bert_vectors_file, split_name="test", max_len=max_len
+        data=test_df,
+        bert_vectors_file=bert_vectors_file,
+        split_name="test",
+        max_len=max_len,
+        hidden_size=hidden_size,
+        look_up_bert_vectors=look_up_bert_vectors,
     )
     test_dataloader = DataLoader(
         test_dataset, batch_size=batch_size, collate_fn=collate_fn(text_transform)
@@ -109,8 +118,10 @@ def create_predictions_csv(
 def predict_and_save(
     in_file: Path,
     data_test: Dict[str, Text],
-    bert_vectors_file: Path,
     max_len: int,
+    hidden_size: int,
+    tokenizer: AutoTokenizer,
+    bert_model: BertModel,
     batch_size: int,
     text_transform: Dict[str, Callable[[Any], Any]],
     vocab_transform: Dict[str, Vocab],
@@ -123,11 +134,34 @@ def predict_and_save(
             output = json.load(f)
         test = icdar_output2simple_correction_dataset_df(output, data_test)
         test_dataloader = create_test_dataloader(
-            test, bert_vectors_file, max_len, batch_size, text_transform
+            test,
+            bert_vectors_file=None,
+            max_len=max_len,
+            hidden_size=hidden_size,
+            batch_size=batch_size,
+            text_transform=text_transform,
+            look_up_bert_vectors=False,
+        )
+
+        dataset = Dataset.from_pandas(test_dataloader.dataset.ds.ocr.to_frame())
+        tokenized_dataset = dataset.map(
+            lambda sample: tokenizer(sample["ocr"], truncation=True),
+            batched=True,
+        )
+        tokenized_dataset = tokenized_dataset.remove_columns(["ocr"])
+
+        collator = DataCollatorWithPadding(tokenizer)
+        test_dataloader_bert_vectors = DataLoader(
+            tokenized_dataset, batch_size=batch_size, collate_fn=collator
         )
 
         predictions = predict_and_convert_to_str(
-            model, test_dataloader, vocab_transform["gs"], device
+            model=model,
+            dataloader=test_dataloader,
+            bert_model=bert_model,
+            dataloader_bert_vectors=test_dataloader_bert_vectors,
+            tgt_vocab=vocab_transform["gs"],
+            device=device,
         )
 
         results = create_predictions_csv(test, max_len, predictions)
@@ -143,6 +177,8 @@ def predict_and_save(
 def predict_error_correction(
     error_correction_dataset: Annotated[Path, file_in_option],
     bert_vectors_file: Annotated[Path, file_in_option],
+    bert_model_name: Annotated[str, typer.Option()],
+    bert_model_dir: Annotated[Path, dir_in_option],
     hidden_size: Annotated[int, typer.Option()],
     dropout: Annotated[float, typer.Option()],
     max_len: Annotated[int, typer.Option()],
@@ -186,7 +222,13 @@ def predict_error_correction(
     if calculate_loss:
         logger.info("Calculating loss on dataset without duplicates")
         test_dataloader = create_test_dataloader(
-            test, bert_vectors_file, max_len, batch_size, text_transform
+            test_df=test,
+            max_len=max_len,
+            hidden_size=hidden_size,
+            batch_size=batch_size,
+            text_transform=text_transform,
+            look_up_bert_vectors=True,
+            bert_vectors_file=bert_vectors_file,
         )
         test_loss = validate_model(model, test_dataloader, device)
         test_log = pd.DataFrame({"test_loss": [test_loss]})
@@ -200,28 +242,38 @@ def predict_error_correction(
         data_test, _md_test = generate_data(test_path)
         logger.info(f"Found {len(data_test)} texts in test data")
 
+    # Model for calculating bert vectors on the fly
+    tokenizer = AutoTokenizer.from_pretrained(bert_model_name)
+    bert_model = BertModel.from_pretrained(bert_model_dir)
+    bert_model.eval()
+    bert_model = bert_model.to(device=device)
+
     predict_and_save(
-        perfect_detection_in,
-        data_test,
-        bert_vectors_file,
-        max_len,
-        batch_size,
-        text_transform,
-        vocab_transform,
-        model,
-        perfect_detection_out,
+        in_file=perfect_detection_in,
+        data_test=data_test,
+        max_len=max_len,
+        hidden_size=hidden_size,
+        tokenizer=tokenizer,
+        bert_model=bert_model,
+        batch_size=batch_size,
+        text_transform=text_transform,
+        vocab_transform=vocab_transform,
+        model=model,
+        out_file=perfect_detection_out,
     )
 
     predict_and_save(
-        predicted_detection_in,
-        data_test,
-        bert_vectors_file,
-        max_len,
-        batch_size,
-        text_transform,
-        vocab_transform,
-        model,
-        predicted_detection_out,
+        in_file=predicted_detection_in,
+        data_test=data_test,
+        max_len=max_len,
+        hidden_size=hidden_size,
+        tokenizer=tokenizer,
+        bert_model=bert_model,
+        batch_size=batch_size,
+        text_transform=text_transform,
+        vocab_transform=vocab_transform,
+        model=model,
+        out_file=predicted_detection_out,
     )
 
 
