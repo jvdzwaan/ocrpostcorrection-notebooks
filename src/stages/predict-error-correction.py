@@ -94,7 +94,7 @@ def create_predictions_csv(
     test: pd.DataFrame, max_len: int, predictions: pd.DataFrame
 ) -> pd.DataFrame:
     test_results = (
-        test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
+        test.query(f"len_ocr < {max_len}").query(f"len_gs < {max_len}").copy()
     )
     test_results["pred"] = predictions
 
