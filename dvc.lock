@@ -404,7 +404,7 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/logs/test-log.csv
-      md5: b9bf680b42dafd2bf0fdf946492acac4
+      md5: 2532e198a1e9296f1e57943aa274e1a6
       size: 31
     - path: results/correction/perfect-detection+predicted-correction.csv
       md5: c0ef37a65b3de52d8d6198f9e8d198ba
@@ -563,7 +563,7 @@ stages:
       md5: ee79ce4f49d6fcda09a67ad0b211dc1b
       size: 158458
     - path: results/correction/logs/test-log.csv
-      md5: b9bf680b42dafd2bf0fdf946492acac4
+      md5: 2532e198a1e9296f1e57943aa274e1a6
       size: 31
     - path: results/correction/logs/train-log.csv
       md5: e649f7bc6b5e767a24672c3450fdfc92
@@ -615,10 +615,10 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: reports/correction/experiment_results.md
-      md5: 59dfb5dd8efc03d55b4d3a4fe8a24b6b
+      md5: 3b5122b406f9d5a8d43a95c227f1b60d
       size: 1230
     - path: reports/correction/metrics.json
-      md5: d3ee90999421607112fe877778ccbd87
+      md5: 4f6483823c4feee34f45f7615f357901
       size: 1181
   convert-error-detection-predictions-to-icdar-output:
     cmd: "python src/stages/convert-error-detection-predictions-to-icdar-output.py\

@@ -1,4 +1,4 @@
-### Experiment XXX (2023-07-29) { #sec-experiment-correction-XXX }
+### Experiment XXX (2023-12-15) { #sec-experiment-correction-XXX }
 
 * ocrpostcorrection-notebooks commit: [XXX](XXX)
 * Detection model from experiment [XXX](XXX)
@@ -11,7 +11,7 @@
 * Loss
     * Train: 8.595188051536567
     * Val: 9.212168355464936
-    * Test: 9.366749288250466
+    * Test: 9.199934135306986
 
 ### Summarized results (average % of improvement in edit distance between original and corrected)
 
