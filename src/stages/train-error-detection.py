@@ -1,8 +1,5 @@
-import shutil
 from pathlib import Path
-from typing import Any, Dict, List
 
-import pandas as pd
 import typer
 from datasets import load_from_disk
 from loguru import logger
@@ -17,46 +14,8 @@ from transformers import (
 )
 from typing_extensions import Annotated
 
+from common.common import remove_checkpoints, save_train_log
 from common.option_types import dir_in_option, dir_out_option, file_out_option
-
-
-def add_values(
-    prefix: str, row: Dict[str, Any], name: str, value: Any
-) -> Dict[str, Any]:
-    new_name = name.replace(prefix, "")
-    row[new_name] = value
-    row["stage"] = prefix.replace("_", "")
-    return row
-
-
-def create_train_log(logs: List[Dict[str, Any]]) -> pd.DataFrame:
-    rows = []
-
-    for log in logs:
-        row: Dict[str, Any] = {}
-        for name, value in log.items():
-            if name.startswith("eval_"):
-                row = add_values("eval_", row, name, value)
-            elif name.startswith("train_"):
-                row = add_values("train_", row, name, value)
-            else:
-                row[name] = value
-        rows.append(row)
-
-    log_data = pd.DataFrame(rows)
-    log_data = log_data[
-        [
-            "stage",
-            "epoch",
-            "step",
-            "loss",
-            "runtime",
-            "samples_per_second",
-            "steps_per_second",
-            "total_flos",
-        ]
-    ]
-    return log_data
 
 
 def train_error_detection(
@@ -110,14 +69,9 @@ def train_error_detection(
     trainer.save_model()
 
     if delete_checkpoints:
-        logger.info("Removing checkpoints")
-        for path in Path(model_dir).glob("checkpoint-*"):
-            if path.is_dir():
-                shutil.rmtree(path)
+        remove_checkpoints(model_dir)
 
-    Path(train_log).parent.mkdir(exist_ok=True, parents=True)
-    log_data = create_train_log(trainer.state.log_history)
-    log_data.to_csv(train_log)
+    save_train_log(train_log_data=trainer.state.log_history, train_log_file=train_log)
 
 
 if __name__ == "__main__":
