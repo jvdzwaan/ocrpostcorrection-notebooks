@@ -202,17 +202,14 @@ stages:
       --seed ${base.seed}
       --dataset ${create-error-correction-dataset.dataset}
       --max-len ${train-error-correction.max-len}
+      --model-name ${train-error-correction.model-name}
       --batch-size ${train-error-correction.batch-size}
-      --hidden-size ${train-error-correction.hidden-size}
-      --dropout ${train-error-correction.dropout}
-      --teacher-forcing-ratio ${train-error-correction.teacher-forcing-ratio}
       --num-epochs ${train-error-correction.num-epochs}
       --valid-niter ${train-error-correction.valid-niter}
-      --max-num-patience ${train-error-correction.max-num-patience}
-      --max-num-trial ${train-error-correction.max-num-trial}
-      --lr-decay ${train-error-correction.lr-decay}
-      --model-save-path ${train-error-correction.model-save-path}
+      --model-dir ${train-error-correction.model-dir}
+      --delete-checkpoints
       --train-log ${train-error-correction.train-log}
+      --${base.dev-mode}
     deps:
       - src/stages/train-error-correction.py
       - ${create-error-correction-dataset.dataset}
@@ -223,16 +220,12 @@ stages:
     outs:
       - ${train-error-correction.train-log}:
           cache: false
-      - ${train-error-correction.model-save-path}
+      - ${train-error-correction.model-dir}
   predict-error-correction:
     cmd: >
       python src/stages/predict-error-correction.py
       --error-correction-dataset ${create-error-correction-dataset.dataset}
-      --hidden-size ${train-error-correction.hidden-size}
-      --dropout ${train-error-correction.dropout}
       --max-len ${train-error-correction.max-len}
-      --teacher-forcing-ratio ${train-error-correction.teacher-forcing-ratio}
-      --model-path ${train-error-correction.model-save-path}
       --batch-size ${train-error-correction.batch-size}
       --calculate-loss
       --test-log-file ${predict-error-correction.test-log}
