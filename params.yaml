@@ -1,7 +1,7 @@
 base:
   seed: 8232
   raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
-  dev-mode: dev # One of dev, no-dev
+  dev-mode: no-dev # One of dev, no-dev
 data-split:
   val-size: 0.1
   train-split: data/splits/train.csv
