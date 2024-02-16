@@ -1,4 +1,4 @@
-### Experiment XXX (2023-07-28) { #sec-experiment-detection-XXX }
+### Experiment XXX (2024-02-16) { #sec-experiment-detection-XXX }
 
 * ocrpostcorrection-notebooks commit: [XXX](XXX)
 * Dataset
