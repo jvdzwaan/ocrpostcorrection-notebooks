@@ -302,6 +302,7 @@ stages:
         base:
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+          dev-mode: no-dev
         create-error-correction-dataset:
           dataset: data/processed/correction-dataset/dataset.csv
         data-split:
@@ -311,8 +312,8 @@ stages:
           test-split: data/splits/test.csv
     outs:
     - path: data/processed/correction-dataset/dataset.csv
-      md5: be7a5f227615e26c71ca48d5d28c671e
-      size: 85464285
+      md5: 5aedf88c965281394f392a479262a3e2
+      size: 102554560
   train-error-correction:
     cmd: "python src/stages/train-error-correction.py --seed 8232 --dataset data/processed/correction-dataset/dataset.csv\
       \ --max-len 22 --batch-size 256 --hidden-size 256 --dropout 0.1 --teacher-forcing-ratio\
