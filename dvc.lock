@@ -16,6 +16,7 @@ stages:
         base:
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+          dev-mode: no-dev
         data-split:
           val-size: 0.1
           train-split: data/splits/train.csv
@@ -56,6 +57,7 @@ stages:
         base:
           seed: 8232
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
+          dev-mode: no-dev
         create-error-detection-dataset:
           size: 35
           step: 30
@@ -68,7 +70,7 @@ stages:
           test-split: data/splits/test.csv
     outs:
     - path: data/processed/detection-dataset
-      md5: 649d31b769a41e287af7e069efcf8f54.dir
+      md5: a838004d6753cbfeea57c6f6f4586b1f.dir
       size: 77550059
       nfiles: 10
   train-error-detection:
