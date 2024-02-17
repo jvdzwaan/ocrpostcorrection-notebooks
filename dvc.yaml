@@ -209,7 +209,7 @@ stages:
       --model-dir ${train-error-correction.model-dir}
       --delete-checkpoints
       --train-log ${train-error-correction.train-log}
-      --${base.dev-mode}
+      --${error-correction-base.dev-mode}
     deps:
       - src/stages/train-error-correction.py
       - ${create-error-correction-dataset.dataset}
@@ -235,7 +235,7 @@ stages:
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
-      --${base.dev-mode}
+      --${error-correction-base.dev-mode}
     deps:
       - src/stages/predict-error-correction.py
       - ${create-error-correction-dataset.dataset}

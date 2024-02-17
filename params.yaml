@@ -35,6 +35,8 @@ generate-error-detection-report:
   report-file: reports/detection/experiment_results.md
 
 # Error correction
+error-correction-base:
+  dev-mode: no-dev # One of dev, no-dev
 create-error-correction-dataset:
   dataset: data/processed/correction-dataset/dataset.csv
 train-error-correction:
