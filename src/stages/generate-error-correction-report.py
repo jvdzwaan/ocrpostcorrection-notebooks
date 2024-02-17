@@ -42,12 +42,18 @@ def generate_error_correction_report(
     )
     template = environment.get_template("report-error-correction.md")
 
-    df_train_log = pd.read_csv(train_log, index_col=0)
-    val_loss = df_train_log["train_loss"].iloc[-1]
-    train_loss = df_train_log["val_loss"].iloc[-1]
+    train_log = pd.read_csv(train_log, index_col=0)
+    try:
+        idx_min = train_log.query('stage == "eval"')["loss"].idxmin()
+        val_loss = train_log.loc[idx_min].loss
+        train_loss = train_log.loc[idx_min - 1].loss
+    except ValueError:
+        logger.info("Train log does not contain all expected losses. Loss is set to 0.")
+        val_loss = 0.0
+        train_loss = 0.0
 
-    df_test_log = pd.read_csv(test_log, index_col=0)
-    test_loss = df_test_log["test_loss"].iloc[-1]
+    test_log = pd.read_csv(test_log, index_col=0)
+    test_loss = test_log.loc[0].test_loss
 
     metrics = {
         "train_loss": train_loss,
