@@ -8,7 +8,7 @@ import pandas as pd
 import typer
 from datasets import Dataset
 from loguru import logger
-from ocrpostcorrection.error_correction_t5 import filter_max_len, preprocess_function
+from ocrpostcorrection.error_correction_t5 import preprocess_function
 from ocrpostcorrection.icdar_data import Text as ICDARText
 from ocrpostcorrection.icdar_data import (
     extract_icdar_data,
@@ -64,8 +64,8 @@ def predict_and_save(
     out_file: Text,
     dev: bool = False,
 ) -> None:
-    logger.info(f"Generating predictions for '{in_file}'")
     if in_file and out_file:
+        logger.info(f"Generating predictions for '{in_file}'")
         with open(in_file) as f:
             output = json.load(f)
         test = icdar_output2simple_correction_dataset_df(output, data_test)
@@ -91,11 +91,8 @@ def predict_and_save(
 
 
 def predict_error_correction(
-    error_correction_dataset: Annotated[Path, file_in_option],
     max_len: Annotated[int, typer.Option()],
     model_name: Annotated[Text, typer.Option()],
-    calculate_loss: Annotated[bool, typer.Option()],
-    test_log_file: Annotated[Path, typer.Option()],
     raw_dataset: Annotated[Path, file_in_option],
     seed: Annotated[int, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
@@ -130,30 +127,6 @@ def predict_error_correction(
         tokenizer=tokenizer,
         data_collator=data_collator,
     )
-
-    if calculate_loss:
-        logger.info("Calculating loss on dataset without duplicates")
-        data = pd.read_csv(error_correction_dataset, index_col=0)
-        data.fillna("", inplace=True)
-
-        dataset = Dataset.from_pandas(data.query('dataset == "test"'))
-
-        dataset = dataset.filter(
-            filter_max_len, fn_kwargs={"max_len": max_len}, batched=False
-        )
-
-        if dev:
-            dataset = dataset.select(range(5))
-
-        tokenized_dataset = dataset.map(
-            preprocess_function, fn_kwargs={"tokenizer": tokenizer}, batched=True
-        )
-
-        pred = trainer.predict(tokenized_dataset)
-
-        logs = pd.DataFrame([pred.metrics])
-        (test_log_file.parent).mkdir(exist_ok=True, parents=True)
-        logs.to_csv(test_log_file)
 
     predict_and_save(
         perfect_detection_in,
