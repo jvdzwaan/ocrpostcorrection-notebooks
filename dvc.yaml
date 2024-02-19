@@ -221,27 +221,63 @@ stages:
       - ${train-error-correction.train-log}:
           cache: false
       - ${train-error-correction.model-dir}
-  predict-error-correction:
+  calculate-loss-error-correction:
     cmd: >
-      python src/stages/predict-error-correction.py
+      python src/stages/calculate-loss-error-correction.py
       --error-correction-dataset ${create-error-correction-dataset.dataset}
       --max-len ${train-error-correction.max-len}
       --model-name ${train-error-correction.model-dir}
-      --calculate-loss
-      --test-log-file ${predict-error-correction.test-log}
+      --test-log-file ${calculate-loss-error-correction.test-log}
+      --seed ${base.seed}
+      --batch-size ${calculate-loss-error-correction.batch-size}
+      --${error-correction-base.dev-mode}
+    deps:
+      - src/stages/calculate-loss-error-correction.py
+      - ${create-error-correction-dataset.dataset}
+      - ${train-error-correction.model-dir}
+    params:
+      - create-error-correction-dataset
+      - train-error-correction
+      - calculate-loss-error-correction
+    outs:
+      - ${calculate-loss-error-correction.test-log}:
+          cache: false
+  predict-error-correction-perfect-detection:
+    cmd: >
+      python src/stages/predict-error-correction.py
+      --max-len ${train-error-correction.max-len}
+      --model-name ${train-error-correction.model-dir}
       --raw-dataset ${base.raw-data-zip}
       --seed ${base.seed}
       --batch-size ${predict-error-correction.batch-size}
       --perfect-detection-in ${generate-perfect-icdar-json.out-file-detection}
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
+      --${error-correction-base.dev-mode}
+    deps:
+      - src/stages/predict-error-correction.py
+      - ${base.raw-data-zip}
+      - ${generate-perfect-icdar-json.out-file-detection}
+    params:
+      - create-error-correction-dataset
+      - train-error-correction
+      - generate-perfect-icdar-json
+      - predict-error-correction
+    outs:
+      - ${predict-error-correction.perfect-detection-out}
+  predict-error-correction-predicted-detection:
+    cmd: >
+      python src/stages/predict-error-correction.py
+      --max-len ${train-error-correction.max-len}
+      --model-name ${train-error-correction.model-dir}
+      --raw-dataset ${base.raw-data-zip}
+      --seed ${base.seed}
+      --batch-size ${predict-error-correction.batch-size}
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/predict-error-correction.py
-      - ${create-error-correction-dataset.dataset}
       - ${base.raw-data-zip}
-      - ${generate-perfect-icdar-json.out-file-detection}
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
     params:
       - create-error-correction-dataset
@@ -250,9 +286,6 @@ stages:
       - generate-perfect-icdar-json
       - predict-error-correction
     outs:
-      - ${predict-error-correction.test-log}:
-          cache: false
-      - ${predict-error-correction.perfect-detection-out}
       - ${predict-error-correction.predicted-detection-out}
   convert-perfect-correction-predicted-detection-results-to-icdar-format:
     cmd: >
@@ -322,7 +355,7 @@ stages:
     cmd: >
       python src/stages/generate-error-correction-report.py
       --train-log ${train-error-correction.train-log}
-      --test-log ${predict-error-correction.test-log}
+      --test-log ${calculate-loss-error-correction.test-log}
       --eval-perfect-detection ${evaluate-error-correction-perfect-detection.icdar-output-csv}
       --eval-predicted-detection ${evaluate-error-correction-predicted-detection.icdar-output-csv}
       --metrics-file ${generate-error-correction-report.metrics}
@@ -334,7 +367,7 @@ stages:
       - src/stages/generate-error-correction-report.py
       - templates/report-error-correction.md
       - ${train-error-correction.train-log}
-      - ${predict-error-correction.test-log}
+      - ${calculate-loss-error-correction.test-log}
       - ${evaluate-error-correction-perfect-detection.icdar-output-csv}
       - ${evaluate-error-correction-predicted-detection.icdar-output-csv}
     params:
