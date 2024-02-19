@@ -231,6 +231,7 @@ stages:
       --test-log-file ${predict-error-correction.test-log}
       --raw-dataset ${base.raw-data-zip}
       --seed ${base.seed}
+      --batch-size ${predict-error-correction.batch-size}
       --perfect-detection-in ${generate-perfect-icdar-json.out-file-detection}
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}

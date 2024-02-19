@@ -48,6 +48,7 @@ train-error-correction:
   model-name: google/byt5-small
   train-log: results/correction/logs/train-log.csv
 predict-error-correction:
+  batch-size: 32
   test-log: results/correction/logs/test-log.csv
   perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
   predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv

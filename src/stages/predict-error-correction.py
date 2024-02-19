@@ -98,6 +98,7 @@ def predict_error_correction(
     test_log_file: Annotated[Path, typer.Option()],
     raw_dataset: Annotated[Path, file_in_option],
     seed: Annotated[int, typer.Option()],
+    batch_size: Annotated[int, typer.Option()],
     perfect_detection_in: Annotated[Text, typer.Option()] = "",
     perfect_detection_out: Annotated[Text, typer.Option()] = "",
     predicted_detection_in: Annotated[Text, typer.Option()] = "",
@@ -120,6 +121,7 @@ def predict_error_correction(
         seed=seed,
         output_dir=model_name,
         predict_with_generate=True,
+        per_device_eval_batch_size=batch_size,
     )
 
     trainer = Seq2SeqTrainer(
