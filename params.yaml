@@ -48,7 +48,7 @@ train-error-correction:
   model-name: google/byt5-small
   train-log: results/correction/logs/train-log.csv
 calculate-loss-error-correction:
-  batch-size: 64
+  batch-size: 128
   test-log: results/correction/logs/test-log.csv
 predict-error-correction:
   batch-size: 32

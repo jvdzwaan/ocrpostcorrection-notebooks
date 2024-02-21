@@ -667,3 +667,38 @@ stages:
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
+  calculate-loss-error-correction:
+    cmd: "python src/stages/calculate-loss-error-correction.py --error-correction-dataset\
+      \ data/processed/correction-dataset/dataset.csv --max-len 22 --model-name models/error-correction-model\
+      \ --test-log-file results/correction/logs/test-log.csv --seed 8232 --batch-size\
+      \ 128 --no-dev\n"
+    deps:
+    - path: data/processed/correction-dataset/dataset.csv
+      md5: 5aedf88c965281394f392a479262a3e2
+      size: 102554560
+    - path: models/error-correction-model
+      md5: 8c58243bcbbe5acf1d528007926d5577.dir
+      size: 1198620889
+      nfiles: 6
+    - path: src/stages/calculate-loss-error-correction.py
+      md5: 483de6d469c94a0b9cb222db5f1681de
+      size: 2177
+    params:
+      params.yaml:
+        calculate-loss-error-correction:
+          batch-size: 128
+          test-log: results/correction/logs/test-log.csv
+        create-error-correction-dataset:
+          dataset: data/processed/correction-dataset/dataset.csv
+        train-error-correction:
+          max-len: 22
+          batch-size: 16
+          model-dir: models/error-correction-model
+          num-epochs: 1
+          valid-niter: 5000
+          model-name: google/byt5-small
+          train-log: results/correction/logs/train-log.csv
+    outs:
+    - path: results/correction/logs/test-log.csv
+      md5: 470507639f9c230cb85a6a76b57f7c71
+      size: 115
