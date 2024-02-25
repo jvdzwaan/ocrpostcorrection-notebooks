@@ -1,15 +1,14 @@
 import json
 import tempfile
-from itertools import chain
 from pathlib import Path
 from typing import Dict, Text
 
 import edlib
 import pandas as pd
-import torch
 import typer
 from datasets import Dataset
 from loguru import logger
+from ocrpostcorrection.error_correction_t5 import preprocess_function
 from ocrpostcorrection.icdar_data import Text as ICDARText
 from ocrpostcorrection.icdar_data import (
     extract_icdar_data,
@@ -17,17 +16,26 @@ from ocrpostcorrection.icdar_data import (
     normalized_ed,
 )
 from ocrpostcorrection.utils import icdar_output2simple_correction_dataset_df
-from tqdm import tqdm
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
+from transformers import (
+    AutoModelForSeq2SeqLM,
+    AutoTokenizer,
+    DataCollatorForSeq2Seq,
+    Seq2SeqTrainer,
+    Seq2SeqTrainingArguments,
+)
 from typing_extensions import Annotated
 
 from common.option_types import file_in_option
 
 
 def create_predictions_csv(
-    test: pd.DataFrame, predictions: pd.DataFrame
+    test: pd.DataFrame, max_len: int, predictions: pd.DataFrame, dev: bool = False
 ) -> pd.DataFrame:
-    test_results = test.copy()
+    test_results = (
+        test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
+    )
+    if dev:
+        test_results = test_results[:5]
     test_results["pred"] = predictions
 
     test_results["ed"] = test_results.apply(
@@ -51,8 +59,8 @@ def predict_and_save(
     in_file: Text,
     data_test: Dict[str, ICDARText],
     max_len: int,
-    pipe,
-    batch_size: int,
+    trainer,
+    tokenizer,
     out_file: Text,
     dev: bool = False,
 ) -> None:
@@ -62,19 +70,17 @@ def predict_and_save(
             output = json.load(f)
         test = icdar_output2simple_correction_dataset_df(output, data_test)
 
-        test = test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
-        if dev:
-            test = test.head(5)
         dataset = Dataset.from_pandas(test)
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+        if dev:
+            dataset = dataset.select(range(5))
+        tokenized_dataset = dataset.map(
+            preprocess_function, fn_kwargs={"tokenizer": tokenizer}, batched=True
+        )
 
-        predictions_data = []
-        for batch in tqdm(dataloader):
-            r = pipe.predict(batch["ocr"])
-            predictions_data.append(r)
+        pred = trainer.predict(tokenized_dataset)
+        predictions = tokenizer.batch_decode(pred.predictions, skip_special_tokens=True)
 
-        predictions = [p["generated_text"] for p in chain(*predictions_data)]
-        results = create_predictions_csv(test, predictions)
+        results = create_predictions_csv(test, max_len, predictions, dev)
         results.to_csv(out_file)
         logger.info(f"Saved predictions to '{out_file}'")
     elif in_file or out_file:
@@ -88,6 +94,7 @@ def predict_error_correction(
     max_len: Annotated[int, typer.Option()],
     model_name: Annotated[Text, typer.Option()],
     raw_dataset: Annotated[Path, file_in_option],
+    seed: Annotated[int, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
     perfect_detection_in: Annotated[Text, typer.Option()] = "",
     perfect_detection_out: Annotated[Text, typer.Option()] = "",
@@ -104,17 +111,29 @@ def predict_error_correction(
         logger.info(f"Found {len(data_test)} texts in test data")
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    pipe = pipeline(
-        model=model, tokenizer=tokenizer, task="text2text-generation", device_map="auto"
+
+    training_args = Seq2SeqTrainingArguments(
+        seed=seed,
+        output_dir=model_name,
+        predict_with_generate=True,
+        per_device_eval_batch_size=batch_size,
+    )
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        tokenizer=tokenizer,
+        data_collator=data_collator,
     )
 
     predict_and_save(
         perfect_detection_in,
         data_test,
         max_len,
-        pipe,
-        batch_size,
+        trainer,
+        tokenizer,
         perfect_detection_out,
         dev,
     )
@@ -123,8 +142,8 @@ def predict_error_correction(
         predicted_detection_in,
         data_test,
         max_len,
-        pipe,
-        batch_size,
+        trainer,
+        tokenizer,
         predicted_detection_out,
         dev,
     )
