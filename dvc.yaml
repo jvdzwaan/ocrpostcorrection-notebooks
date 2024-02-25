@@ -248,7 +248,6 @@ stages:
       --max-len ${train-error-correction.max-len}
       --model-name ${train-error-correction.model-dir}
       --raw-dataset ${base.raw-data-zip}
-      --seed ${base.seed}
       --batch-size ${predict-error-correction.batch-size}
       --perfect-detection-in ${generate-perfect-icdar-json.out-file-detection}
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
@@ -259,7 +258,7 @@ stages:
       - ${generate-perfect-icdar-json.out-file-detection}
       - ${train-error-correction.model-dir}
     params:
-      - create-error-correction-dataset
+      - error-correction-base
       - train-error-correction
       - generate-perfect-icdar-json
       - predict-error-correction
@@ -271,7 +270,6 @@ stages:
       --max-len ${train-error-correction.max-len}
       --model-name ${train-error-correction.model-dir}
       --raw-dataset ${base.raw-data-zip}
-      --seed ${base.seed}
       --batch-size ${predict-error-correction.batch-size}
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
@@ -282,10 +280,10 @@ stages:
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       - ${train-error-correction.model-dir}
     params:
+      - error-correction-base
       - create-error-correction-dataset
       - train-error-correction
       - convert-error-detection-predictions-to-icdar-output
-      - generate-perfect-icdar-json
       - predict-error-correction
     outs:
       - ${predict-error-correction.predicted-detection-out}
