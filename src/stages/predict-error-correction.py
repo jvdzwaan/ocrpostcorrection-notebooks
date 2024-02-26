@@ -69,6 +69,7 @@ def predict_and_save(
         with open(in_file) as f:
             output = json.load(f)
         test = icdar_output2simple_correction_dataset_df(output, data_test)
+        logger.info(f"Number of samples in the dataset: {test.shape[0]}")
 
         dataset = Dataset.from_pandas(test)
         if dev:
@@ -96,6 +97,7 @@ def predict_error_correction(
     raw_dataset: Annotated[Path, file_in_option],
     seed: Annotated[int, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
+    accumulation_size: Annotated[int, typer.Option()],
     perfect_detection_in: Annotated[Text, typer.Option()] = "",
     perfect_detection_out: Annotated[Text, typer.Option()] = "",
     predicted_detection_in: Annotated[Text, typer.Option()] = "",
@@ -119,6 +121,7 @@ def predict_error_correction(
         output_dir=model_name,
         predict_with_generate=True,
         per_device_eval_batch_size=batch_size,
+        eval_accumulation_steps=accumulation_size,
     )
 
     trainer = Seq2SeqTrainer(
