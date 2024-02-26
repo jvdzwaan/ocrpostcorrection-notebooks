@@ -260,7 +260,8 @@ stages:
       - ${generate-perfect-icdar-json.out-file-detection}
       - ${train-error-correction.model-dir}
     params:
-      - create-error-correction-dataset
+      - base
+      - error-correction-base
       - train-error-correction
       - generate-perfect-icdar-json
       - predict-error-correction
@@ -284,10 +285,10 @@ stages:
       - ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       - ${train-error-correction.model-dir}
     params:
-      - create-error-correction-dataset
+      - base
+      - error-correction-base
       - train-error-correction
       - convert-error-detection-predictions-to-icdar-output
-      - generate-perfect-icdar-json
       - predict-error-correction
     outs:
       - ${predict-error-correction.predicted-detection-out}
