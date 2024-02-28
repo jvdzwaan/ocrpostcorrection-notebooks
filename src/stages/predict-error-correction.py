@@ -99,7 +99,6 @@ def predict_error_correction(
     raw_dataset: Annotated[Path, file_in_option],
     seed: Annotated[int, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
-    accumulation_size: Annotated[int, typer.Option()],
     perfect_detection_in: Annotated[Text, typer.Option()] = "",
     perfect_detection_out: Annotated[Text, typer.Option()] = "",
     predicted_detection_in: Annotated[Text, typer.Option()] = "",
@@ -123,7 +122,6 @@ def predict_error_correction(
         output_dir=model_name,
         predict_with_generate=True,
         per_device_eval_batch_size=batch_size,
-        eval_accumulation_steps=accumulation_size,
         generation_max_length=max_len,
     )
 

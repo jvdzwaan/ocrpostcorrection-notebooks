@@ -52,7 +52,6 @@ calculate-loss-error-correction:
   test-log: results/correction/logs/test-log.csv
 predict-error-correction:
   batch-size: 32
-  accumulation-size: 80000 # Number of samples in the test set is ~380,000; 80,000 is 20% of 400,000
   perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
   predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
 generate-perfect-icdar-json:
