@@ -68,6 +68,10 @@ def predict_and_save(
         logger.info(f"Number of samples in the dataset: {test.shape[0]}")
 
         test = test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
+        test = test.sort_values(by=["len_ocr"], ascending=False)
+        logger.info(
+            f"Number of samples after filtering on ocr and gs length: {test.shape[0]}"
+        )
         if dev:
             test = test.head(5)
 
@@ -120,6 +124,7 @@ def predict_error_correction(
         predict_with_generate=True,
         per_device_eval_batch_size=batch_size,
         eval_accumulation_steps=accumulation_size,
+        generation_max_length=max_len,
     )
 
     trainer = Seq2SeqTrainer(
