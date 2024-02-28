@@ -29,13 +29,9 @@ from common.option_types import file_in_option
 
 
 def create_predictions_csv(
-    test: pd.DataFrame, max_len: int, predictions: pd.DataFrame, dev: bool = False
+    test: pd.DataFrame, predictions: pd.DataFrame
 ) -> pd.DataFrame:
-    test_results = (
-        test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
-    )
-    if dev:
-        test_results = test_results[:5]
+    test_results = test.copy()
     test_results["pred"] = predictions
 
     test_results["ed"] = test_results.apply(
@@ -71,9 +67,11 @@ def predict_and_save(
         test = icdar_output2simple_correction_dataset_df(output, data_test)
         logger.info(f"Number of samples in the dataset: {test.shape[0]}")
 
-        dataset = Dataset.from_pandas(test)
+        test = test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
         if dev:
-            dataset = dataset.select(range(5))
+            test = test.head(5)
+
+        dataset = Dataset.from_pandas(test)
         tokenized_dataset = dataset.map(
             preprocess_function, fn_kwargs={"tokenizer": tokenizer}, batched=True
         )
@@ -81,7 +79,7 @@ def predict_and_save(
         pred = trainer.predict(tokenized_dataset)
         predictions = tokenizer.batch_decode(pred.predictions, skip_special_tokens=True)
 
-        results = create_predictions_csv(test, max_len, predictions, dev)
+        results = create_predictions_csv(test, predictions)
         results.to_csv(out_file)
         logger.info(f"Saved predictions to '{out_file}'")
     elif in_file or out_file:
