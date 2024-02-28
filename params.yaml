@@ -51,7 +51,7 @@ calculate-loss-error-correction:
   batch-size: 128
   test-log: results/correction/logs/test-log.csv
 predict-error-correction:
-  batch-size: 32
+  batch-size: 128
   perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
   predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
 generate-perfect-icdar-json:
