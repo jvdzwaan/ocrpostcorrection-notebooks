@@ -1,13 +1,13 @@
-### Experiment XXX (2024-03-01) { #sec-experiment-correction-XXX }
+### Experiment byt5-small 1 (2024-03-01) { #sec-experiment-correction-byt5-small-1 }
 
-* ocrpostcorrection-notebooks commit: [XXX](XXX)
-* Detection model from experiment [XXX](XXX)
+* ocrpostcorrection-notebooks commit: [b677b6b](https://github.com/jvdzwaan/ocrpostcorrection-notebooks/commit/b677b6b4f2097a1eae7f4f374948da3635f5ceba)
+* Detection model from experiment [9099e78](https://github.com/jvdzwaan/ocrpostcorrection-notebooks/commit/9099e785177a5c5207d01d80422e68d30f39636d)
 * Dataset
     * Split seed: 8232
     * Validation set: 10.0%
     * Max token length: 22
-* Model: XXX
-* Decoder: XXX
+* Model: byt5-small
+    * Number of epochs: 1
 * Loss
     * Train: 0.6192
     * Val: 0.4882390201091766
