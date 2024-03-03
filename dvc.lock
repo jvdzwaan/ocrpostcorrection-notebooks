@@ -328,8 +328,8 @@ stages:
       md5: 5aedf88c965281394f392a479262a3e2
       size: 102554560
     - path: src/stages/train-error-correction.py
-      md5: d81522ecf71d820488d9e0d6491b8461
-      size: 3100
+      md5: 2700e40887ea4acae0167f7adb0aebd7
+      size: 3152
     params:
       params.yaml:
         base:
@@ -348,12 +348,12 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: models/error-correction-model
-      md5: 8c58243bcbbe5acf1d528007926d5577.dir
-      size: 1198620889
+      md5: 2f72166643b32a96b0103dec97f87f7e.dir
+      size: 1198620825
       nfiles: 6
     - path: results/correction/logs/train-log.csv
-      md5: 71847a1d3bfb59f1f2654c33cce52347
-      size: 3099
+      md5: 8d12f39f1113cce5cc88c0e55c86b835
+      size: 3102
   predict-error-correction:
     cmd: "python src/stages/predict-error-correction.py --error-correction-dataset\
       \ data/processed/correction-dataset/dataset.csv --hidden-size 256 --dropout\
