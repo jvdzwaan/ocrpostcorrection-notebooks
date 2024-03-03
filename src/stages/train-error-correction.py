@@ -78,6 +78,8 @@ def train_error_correction(
         load_best_model_at_end=True,
         save_strategy="steps",
         save_steps=valid_niter,
+        adafactor=True,
+        learning_rate=1e-3,
     )
 
     trainer = Seq2SeqTrainer(
