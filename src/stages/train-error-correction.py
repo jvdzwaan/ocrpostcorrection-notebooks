@@ -30,6 +30,7 @@ def train_error_correction(
     model_dir: Annotated[Path, dir_out_option],
     train_log: Annotated[Path, file_out_option],
     delete_checkpoints: Annotated[bool, typer.Option()],
+    add_task_prefix: Annotated[bool, typer.Option()] = False,
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
     set_seed(seed)
@@ -57,8 +58,11 @@ def train_error_correction(
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     tokenized_dataset = dataset.map(
-        preprocess_function, fn_kwargs={"tokenizer": tokenizer}, batched=True
+        preprocess_function,
+        fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": add_task_prefix},
+        batched=True,
     )
+    print(tokenizer.decode(tokenized_dataset["train"][1]["input_ids"]))
 
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model_name)
 

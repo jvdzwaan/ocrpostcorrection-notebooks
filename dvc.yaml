@@ -209,6 +209,7 @@ stages:
       --model-dir ${train-error-correction.model-dir}
       --delete-checkpoints
       --train-log ${train-error-correction.train-log}
+      --${train-error-correction.add-task-prefix}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/train-error-correction.py

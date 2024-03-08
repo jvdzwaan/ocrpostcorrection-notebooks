@@ -47,6 +47,7 @@ train-error-correction:
   valid-niter: 5000
   model-name: google/byt5-small
   train-log: results/correction/logs/train-log.csv
+  add-task-prefix: add-task-prefix # one of: add-task-prefix, no-add-task-prefix
 calculate-loss-error-correction:
   batch-size: 128
   test-log: results/correction/logs/test-log.csv
