@@ -448,8 +448,8 @@ stages:
       \ --icdar-json results/perfect/perfect-detection.json --out-file results/correction/perfect-detection+predicted-correction.json\n"
     deps:
     - path: results/correction/perfect-detection+predicted-correction.csv
-      md5: b30b1d254de303bcc5d31a88e30082be
-      size: 37665116
+      md5: ba6e6440a441dc66b9dbe9d441508b39
+      size: 37373498
     - path: results/perfect/perfect-detection.json
       md5: 81705463572854cb06fb5582a09f4fd3
       size: 5197896
@@ -469,8 +469,8 @@ stages:
           predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
     outs:
     - path: results/correction/perfect-detection+predicted-correction.json
-      md5: fcb810b7b4e7013e82d6f622d6db814c
-      size: 11483698
+      md5: ccb264ef608c5d984048f45b6ba039a5
+      size: 11511044
   evaluate-error-correction-perfect-detection:
     cmd: "python src/stages/run-icdar-evaluation.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
       \ --json-file results/correction/perfect-detection+predicted-correction.json\
@@ -480,8 +480,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: results/correction/perfect-detection+predicted-correction.json
-      md5: fcb810b7b4e7013e82d6f622d6db814c
-      size: 11483698
+      md5: ccb264ef608c5d984048f45b6ba039a5
+      size: 11511044
     - path: src/stages/run-icdar-evaluation.py
       md5: 79deffa29b79f17f0ea4033a27a3a352
       size: 754
@@ -497,7 +497,7 @@ stages:
           icdar-output-csv: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
     outs:
     - path: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
-      md5: dcd28b6f2098a9ab02ced65f49149229
+      md5: b339b01e45a617f70333bf6aa621d377
       size: 158494
   convert-predicted-correction-predicted-detection-results-to-icdar-format:
     cmd: "python src/stages/convert-error-correction-predictions-to-icdar-format.py\
@@ -505,8 +505,8 @@ stages:
       \ --icdar-json results/detection/icdar_predictions.json --out-file results/correction/predicted-detection+predicted-correction.json\n"
     deps:
     - path: results/correction/predicted-detection+predicted-correction.csv
-      md5: da45a017b06744ce46caf0bc4ac30f28
-      size: 36577056
+      md5: 84095fab6a76279ed07274dfb73d5ede
+      size: 36385355
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
@@ -525,8 +525,8 @@ stages:
           predicted-detection-out: results/correction/predicted-detection+predicted-correction.csv
     outs:
     - path: results/correction/predicted-detection+predicted-correction.json
-      md5: 1bc69929383b11e00da44ea8fb467785
-      size: 11293630
+      md5: d961a2c2de69334a93fb6f8bdcfe336d
+      size: 11315614
   evaluate-error-correction-predicted-detection:
     cmd: "python src/stages/run-icdar-evaluation.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
       \ --json-file results/correction/predicted-detection+predicted-correction.json\
@@ -536,8 +536,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: results/correction/predicted-detection+predicted-correction.json
-      md5: 1bc69929383b11e00da44ea8fb467785
-      size: 11293630
+      md5: d961a2c2de69334a93fb6f8bdcfe336d
+      size: 11315614
     - path: src/stages/run-icdar-evaluation.py
       md5: 79deffa29b79f17f0ea4033a27a3a352
       size: 754
@@ -553,7 +553,7 @@ stages:
           icdar-output-csv: results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv
     outs:
     - path: results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv
-      md5: 677f322e4578557c3013f18a3a5b9ad1
+      md5: 5f2256cc151a99efca0d78d7acb7e6a7
       size: 158502
   generate-error-correction-report:
     cmd: "python src/stages/generate-error-correction-report.py --train-log results/correction/logs/train-log.csv\
@@ -563,17 +563,17 @@ stages:
       \ --max-len 22 --report-file reports/correction/experiment_results.md\n"
     deps:
     - path: results/correction/icdar-evaluation-perfect-detection+predicted-correction.csv
-      md5: dcd28b6f2098a9ab02ced65f49149229
+      md5: b339b01e45a617f70333bf6aa621d377
       size: 158494
     - path: results/correction/icdar-evaluation-predicted-detection+predicted-correction.csv
-      md5: 677f322e4578557c3013f18a3a5b9ad1
+      md5: 5f2256cc151a99efca0d78d7acb7e6a7
       size: 158502
     - path: results/correction/logs/test-log.csv
-      md5: 470507639f9c230cb85a6a76b57f7c71
+      md5: b0cb2b3938fcf84227ab90913cbf588c
       size: 115
     - path: results/correction/logs/train-log.csv
-      md5: 71847a1d3bfb59f1f2654c33cce52347
-      size: 3099
+      md5: 8d12f39f1113cce5cc88c0e55c86b835
+      size: 3102
     - path: src/stages/generate-error-correction-report.py
       md5: 403c809899f6c43849bbc923af0144dd
       size: 3274
@@ -617,11 +617,11 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: reports/correction/experiment_results.md
-      md5: bfc395b7fe3f2a3c0b186561134bdb21
+      md5: ca4af272dc67b1c2d15dcfc0fcc0b841
       size: 1221
     - path: reports/correction/metrics.json
-      md5: ecf2192aa30c369eb0729e1b884ba80f
-      size: 1183
+      md5: c0832e39323deaf184ecc9cbc1ec4915
+      size: 1180
   convert-error-detection-predictions-to-icdar-output:
     cmd: "python src/stages/convert-error-detection-predictions-to-icdar-output.py\
       \ --dataset-in data/processed/detection-dataset --model-name bert-base-multilingual-cased\
@@ -711,8 +711,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: models/error-correction-model
-      md5: 8c58243bcbbe5acf1d528007926d5577.dir
-      size: 1198620889
+      md5: 2f72166643b32a96b0103dec97f87f7e.dir
+      size: 1198620825
       nfiles: 6
     - path: results/perfect/perfect-detection.json
       md5: 81705463572854cb06fb5582a09f4fd3
@@ -745,8 +745,8 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/perfect-detection+predicted-correction.csv
-      md5: b30b1d254de303bcc5d31a88e30082be
-      size: 37665116
+      md5: ba6e6440a441dc66b9dbe9d441508b39
+      size: 37373498
   predict-error-correction-predicted-detection:
     cmd: "python src/stages/predict-error-correction.py --max-len 22 --model-name\
       \ models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
@@ -758,8 +758,8 @@ stages:
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: models/error-correction-model
-      md5: 8c58243bcbbe5acf1d528007926d5577.dir
-      size: 1198620889
+      md5: 2f72166643b32a96b0103dec97f87f7e.dir
+      size: 1198620825
       nfiles: 6
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
@@ -791,5 +791,5 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/predicted-detection+predicted-correction.csv
-      md5: da45a017b06744ce46caf0bc4ac30f28
-      size: 36577056
+      md5: 84095fab6a76279ed07274dfb73d5ede
+      size: 36385355
