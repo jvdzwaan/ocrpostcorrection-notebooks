@@ -22,7 +22,7 @@ def create_error_correction_dataset(
 
     logger.info("Getting tokens with OCR mistakes")
     tdata = get_tokens_with_OCR_mistakes(data, data_test, list(X_val.file_name))
-    tdata.drop_duplicates(subset=["ocr", "gs", "dataset"], inplace=True)
+    tdata.drop_duplicates(subset=["ocr", "gs", "language", "dataset"], inplace=True)
     tdata.reset_index(drop=True, inplace=True)
 
     counts = tdata.dataset.value_counts()
