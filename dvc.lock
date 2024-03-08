@@ -675,8 +675,8 @@ stages:
       md5: 5aedf88c965281394f392a479262a3e2
       size: 102554560
     - path: models/error-correction-model
-      md5: 8c58243bcbbe5acf1d528007926d5577.dir
-      size: 1198620889
+      md5: 2f72166643b32a96b0103dec97f87f7e.dir
+      size: 1198620825
       nfiles: 6
     - path: src/stages/calculate-loss-error-correction.py
       md5: 483de6d469c94a0b9cb222db5f1681de
@@ -698,7 +698,7 @@ stages:
           train-log: results/correction/logs/train-log.csv
     outs:
     - path: results/correction/logs/test-log.csv
-      md5: 470507639f9c230cb85a6a76b57f7c71
+      md5: b0cb2b3938fcf84227ab90913cbf588c
       size: 115
   predict-error-correction-perfect-detection:
     cmd: "python src/stages/predict-error-correction.py --max-len 22 --model-name\
