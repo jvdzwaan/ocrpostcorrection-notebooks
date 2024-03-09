@@ -62,7 +62,9 @@ def train_error_correction(
         fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": add_task_prefix},
         batched=True,
     )
-    print(tokenizer.decode(tokenized_dataset["train"][1]["input_ids"]))
+
+    ocr_in = tokenizer.decode(tokenized_dataset["train"][1]["input_ids"])
+    logger.info(f"Input for first sample: {ocr_in}")
 
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model_name)
 
