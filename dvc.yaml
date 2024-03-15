@@ -186,6 +186,7 @@ stages:
       --raw-dataset ${base.raw-data-zip}
       --val-split ${data-split.val-split}
       --dataset-out ${create-error-correction-dataset.dataset}
+      --${error-correction-base.language-prefix}
     deps:
       - src/stages/create-error-correction-dataset.py
       - ${data-split.val-split}
@@ -193,6 +194,7 @@ stages:
     params:
       - base
       - data-split
+      - error-correction-base
       - create-error-correction-dataset
     outs:
       - ${create-error-correction-dataset.dataset}
@@ -209,7 +211,7 @@ stages:
       --model-dir ${train-error-correction.model-dir}
       --delete-checkpoints
       --train-log ${train-error-correction.train-log}
-      --${train-error-correction.add-task-prefix}
+      --${error-correction-base.language-prefix}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/train-error-correction.py

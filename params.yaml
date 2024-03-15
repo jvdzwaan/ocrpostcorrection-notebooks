@@ -37,6 +37,7 @@ generate-error-detection-report:
 # Error correction
 error-correction-base:
   dev-mode: no-dev # One of dev, no-dev
+  language-prefix: include-language # One of include-language, exclude-language
 create-error-correction-dataset:
   dataset: data/processed/correction-dataset/dataset.csv
 train-error-correction:

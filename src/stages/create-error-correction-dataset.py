@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 import typer
@@ -14,6 +15,9 @@ def create_error_correction_dataset(
     raw_dataset: Annotated[Path, file_in_option],
     val_split: Annotated[Path, file_in_option],
     dataset_out: Annotated[Path, file_out_option],
+    include_language: Annotated[
+        Optional[bool], typer.Option("--include-language/--exclude-language")
+    ] = False,
 ) -> None:
     logger.info("Creating intermediary data")
     data, _, data_test, _ = get_intermediate_data(raw_dataset)
@@ -22,7 +26,13 @@ def create_error_correction_dataset(
 
     logger.info("Getting tokens with OCR mistakes")
     tdata = get_tokens_with_OCR_mistakes(data, data_test, list(X_val.file_name))
-    tdata.drop_duplicates(subset=["ocr", "gs", "language", "dataset"], inplace=True)
+
+    subset = ["ocr", "gs", "dataset"]
+    if include_language:
+        subset.append("language")
+    logger.info(f"Subset for identyfying duplicate samples: {subset}")
+
+    tdata.drop_duplicates(subset=subset, inplace=True)
     tdata.reset_index(drop=True, inplace=True)
 
     counts = tdata.dataset.value_counts()

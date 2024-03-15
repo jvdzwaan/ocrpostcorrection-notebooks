@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 import typer
@@ -30,7 +31,9 @@ def train_error_correction(
     model_dir: Annotated[Path, dir_out_option],
     train_log: Annotated[Path, file_out_option],
     delete_checkpoints: Annotated[bool, typer.Option()],
-    add_task_prefix: Annotated[bool, typer.Option()] = False,
+    include_language: Annotated[
+        Optional[bool], typer.Option("--include-language/--exclude-language")
+    ] = False,
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
     set_seed(seed)
@@ -59,7 +62,7 @@ def train_error_correction(
 
     tokenized_dataset = dataset.map(
         preprocess_function,
-        fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": add_task_prefix},
+        fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": include_language},
         batched=True,
     )
 
