@@ -233,6 +233,7 @@ stages:
       --test-log-file ${calculate-loss-error-correction.test-log}
       --seed ${base.seed}
       --batch-size ${calculate-loss-error-correction.batch-size}
+      --${error-correction-base.language-prefix}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/calculate-loss-error-correction.py
@@ -242,6 +243,7 @@ stages:
       - create-error-correction-dataset
       - train-error-correction
       - calculate-loss-error-correction
+      - error-correction-base
     outs:
       - ${calculate-loss-error-correction.test-log}:
           cache: false

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Text
+from typing import Text, Optional
 
 import pandas as pd
 import typer
@@ -25,6 +25,9 @@ def calculate_loss_error_correction(
     seed: Annotated[int, typer.Option()],
     batch_size: Annotated[int, typer.Option()],
     test_log_file: Annotated[Path, typer.Option()],
+    include_language: Annotated[
+        Optional[bool], typer.Option("--include-language/--exclude-language")
+    ] = False,
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -59,7 +62,9 @@ def calculate_loss_error_correction(
         dataset = dataset.select(range(5))
 
     tokenized_dataset = dataset.map(
-        preprocess_function, fn_kwargs={"tokenizer": tokenizer}, batched=True
+        preprocess_function,
+        fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": include_language},
+        batched=True,
     )
 
     pred = trainer.predict(tokenized_dataset)
