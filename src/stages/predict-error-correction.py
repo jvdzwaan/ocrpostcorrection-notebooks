@@ -31,6 +31,8 @@ from common.option_types import file_in_option
 def create_predictions_csv(
     test: pd.DataFrame, predictions: pd.DataFrame
 ) -> pd.DataFrame:
+    logger.info("Creating predictions csv")
+
     test_results = test.copy()
     test_results["pred"] = predictions
 
