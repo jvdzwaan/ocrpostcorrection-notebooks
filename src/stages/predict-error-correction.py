@@ -60,9 +60,7 @@ def predict_and_save(
     trainer,
     tokenizer,
     out_file: Text,
-    include_language: Annotated[
-        Optional[bool], typer.Option("--include-language/--exclude-language")
-    ] = False,
+    include_language: bool,
     dev: bool = False,
 ) -> None:
     if in_file and out_file:
@@ -110,6 +108,9 @@ def predict_error_correction(
     perfect_detection_out: Annotated[Text, typer.Option()] = "",
     predicted_detection_in: Annotated[Text, typer.Option()] = "",
     predicted_detection_out: Annotated[Text, typer.Option()] = "",
+    include_language: Annotated[
+        Optional[bool], typer.Option("--include-language/--exclude-language")
+    ] = False,
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
     logger.info("Loading the test dataset")
@@ -146,6 +147,7 @@ def predict_error_correction(
         trainer,
         tokenizer,
         perfect_detection_out,
+        include_language,
         dev,
     )
 
@@ -156,6 +158,7 @@ def predict_error_correction(
         trainer,
         tokenizer,
         predicted_detection_out,
+        include_language,
         dev,
     )
 
