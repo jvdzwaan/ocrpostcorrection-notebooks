@@ -282,6 +282,7 @@ stages:
       --batch-size ${predict-error-correction.batch-size}
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
+      --${error-correction-base.language-prefix}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/predict-error-correction.py
