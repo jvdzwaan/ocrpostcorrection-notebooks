@@ -714,21 +714,21 @@ stages:
       \ models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
       \ --seed 8232 --batch-size 128 --perfect-detection-in results/perfect/perfect-detection.json\
       \ --perfect-detection-out results/correction/perfect-detection+predicted-correction.csv\
-      \ --no-dev\n"
+      \ --include-language --no-dev\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: models/error-correction-model
-      md5: 2f72166643b32a96b0103dec97f87f7e.dir
+      md5: 6eeb8e5f39b88eda93f0beb69b68e0c8.dir
       size: 1198620825
       nfiles: 6
     - path: results/perfect/perfect-detection.json
       md5: 81705463572854cb06fb5582a09f4fd3
       size: 5197896
     - path: src/stages/predict-error-correction.py
-      md5: 86c713a256b5c59f149e5f21f5729a0a
-      size: 4896
+      md5: 657f0481eff2235c8f4964c7505295f5
+      size: 5219
     params:
       params.yaml:
         base:
@@ -737,6 +737,7 @@ stages:
           dev-mode: no-dev
         error-correction-base:
           dev-mode: no-dev
+          language-prefix: include-language
         generate-perfect-icdar-json:
           out-file-detection: results/perfect/perfect-detection.json
           out-file-correction: results/perfect/perfect-detection+correction.json
@@ -752,10 +753,11 @@ stages:
           valid-niter: 5000
           model-name: google/byt5-small
           train-log: results/correction/logs/train-log.csv
+          add-task-prefix: add-task-prefix
     outs:
     - path: results/correction/perfect-detection+predicted-correction.csv
-      md5: ba6e6440a441dc66b9dbe9d441508b39
-      size: 37373498
+      md5: 12187891b5122645b053e013e69e6163
+      size: 37317334
   predict-error-correction-predicted-detection:
     cmd: "python src/stages/predict-error-correction.py --max-len 22 --model-name\
       \ models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
