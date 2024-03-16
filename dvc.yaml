@@ -372,6 +372,8 @@ stages:
       --val-size ${data-split.val-size}
       --max-len ${train-error-correction.max-len}
       --report-file ${generate-error-correction-report.report-file}
+      --model-name ${train-error-correction.model-name}
+      --num-epochs ${train-error-correction.num-epochs}
     deps:
       - src/stages/generate-error-correction-report.py
       - templates/report-error-correction.md

@@ -34,6 +34,8 @@ def generate_error_correction_report(
     seed: Annotated[int, typer.Option()],
     val_size: Annotated[float, typer.Option()],
     max_len: Annotated[int, typer.Option()],
+    model_name: Annotated[str, typer.Option()],
+    num_epochs: Annotated[int, typer.Option()],
     report_file: Annotated[Path, file_out_option],
 ) -> None:
     here = Path(__file__).parent
@@ -81,6 +83,8 @@ def generate_error_correction_report(
         train_loss=train_loss,
         val_loss=val_loss,
         test_loss=test_loss,
+        model_name=model_name,
+        num_epochs=num_epochs,
         table_perfect=table_perfect,
         table_predicted=table_predicted,
     )

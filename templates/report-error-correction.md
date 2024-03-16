@@ -7,8 +7,8 @@
     * Split seed: {{seed}}
     * Validation set: {{val_size*100}}%
     * Max token length: {{max_len}}
-* Model: XXX
-* Decoder: XXX
+* Model: {{model_name}}
+    * Number of epochs: {{num_epochs}}
 * Loss
     * Train: {{train_loss}}
     * Val: {{val_loss}}
