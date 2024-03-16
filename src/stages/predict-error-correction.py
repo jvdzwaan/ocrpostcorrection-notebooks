@@ -1,7 +1,7 @@
 import json
 import tempfile
 from pathlib import Path
-from typing import Dict, Text
+from typing import Dict, Text, Optional
 
 import edlib
 import pandas as pd
@@ -60,6 +60,9 @@ def predict_and_save(
     trainer,
     tokenizer,
     out_file: Text,
+    include_language: Annotated[
+        Optional[bool], typer.Option("--include-language/--exclude-language")
+    ] = False,
     dev: bool = False,
 ) -> None:
     if in_file and out_file:
@@ -79,7 +82,9 @@ def predict_and_save(
 
         dataset = Dataset.from_pandas(test)
         tokenized_dataset = dataset.map(
-            preprocess_function, fn_kwargs={"tokenizer": tokenizer}, batched=True
+            preprocess_function,
+            fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": include_language},
+            batched=True,
         )
 
         pred = trainer.predict(tokenized_dataset)
