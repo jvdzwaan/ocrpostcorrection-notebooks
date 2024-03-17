@@ -763,21 +763,21 @@ stages:
       \ models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
       \ --seed 8232 --batch-size 128 --predicted-detection-in results/detection/icdar_predictions.json\
       \ --predicted-detection-out results/correction/predicted-detection+predicted-correction.csv\
-      \ --no-dev\n"
+      \ --include-language --no-dev\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: models/error-correction-model
-      md5: 2f72166643b32a96b0103dec97f87f7e.dir
+      md5: 6eeb8e5f39b88eda93f0beb69b68e0c8.dir
       size: 1198620825
       nfiles: 6
     - path: results/detection/icdar_predictions.json
       md5: 1f1295ece1c46384f92aaa6fe1de2c7e
       size: 5172170
     - path: src/stages/predict-error-correction.py
-      md5: 86c713a256b5c59f149e5f21f5729a0a
-      size: 4896
+      md5: 657f0481eff2235c8f4964c7505295f5
+      size: 5219
     params:
       params.yaml:
         base:
@@ -788,6 +788,7 @@ stages:
           icdar-output-json: results/detection/icdar_predictions.json
         error-correction-base:
           dev-mode: no-dev
+          language-prefix: include-language
         predict-error-correction:
           batch-size: 128
           perfect-detection-out: results/correction/perfect-detection+predicted-correction.csv
@@ -800,7 +801,8 @@ stages:
           valid-niter: 5000
           model-name: google/byt5-small
           train-log: results/correction/logs/train-log.csv
+          add-task-prefix: add-task-prefix
     outs:
     - path: results/correction/predicted-detection+predicted-correction.csv
-      md5: 84095fab6a76279ed07274dfb73d5ede
-      size: 36385355
+      md5: f9af83ff7f55a84e0ffe6983f1e53def
+      size: 36332966
