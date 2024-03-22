@@ -213,6 +213,7 @@ stages:
       --delete-checkpoints
       --train-log ${train-error-correction.train-log}
       --${error-correction-base.language-prefix}
+      --marker ${train-error-correction.marker}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/train-error-correction.py
