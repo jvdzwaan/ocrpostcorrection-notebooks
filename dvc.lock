@@ -290,8 +290,8 @@ stages:
       size: 5172170
   create-error-correction-dataset:
     cmd: "python src/stages/create-error-correction-dataset.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip\
-      \ --val-split data/splits/val.csv --dataset-out data/processed/correction-dataset/dataset.csv\
-      \ --include-language\n"
+      \ --val-split data/splits/val.csv --context-offset 25 --dataset-out data/processed/correction-dataset/dataset.csv\
+      \ --exclude-language\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
@@ -300,8 +300,8 @@ stages:
       md5: 481d6c2885fa9f6aa7805c0100cb32e6
       size: 63904
     - path: src/stages/create-error-correction-dataset.py
-      md5: 208838f8fef7b9ffab27141b0cc90977
-      size: 1670
+      md5: 1172da68f13f29ce7b14bc87c5245fe3
+      size: 2198
     params:
       params.yaml:
         base:
@@ -309,6 +309,7 @@ stages:
           raw-data-zip: data/raw/ICDAR2019_POCR_competition_dataset.zip
           dev-mode: no-dev
         create-error-correction-dataset:
+          context-offset: 25
           dataset: data/processed/correction-dataset/dataset.csv
         data-split:
           val-size: 0.1
@@ -317,11 +318,11 @@ stages:
           test-split: data/splits/test.csv
         error-correction-base:
           dev-mode: no-dev
-          language-prefix: include-language
+          language-prefix: exclude-language
     outs:
     - path: data/processed/correction-dataset/dataset.csv
-      md5: 66bbccf19b57c452fa66740971882c60
-      size: 102693229
+      md5: 2701e0687984f2678c64975581be1072
+      size: 245662995
   train-error-correction:
     cmd: "python src/stages/train-error-correction.py --seed 8232 --dataset data/processed/correction-dataset/dataset.csv\
       \ --max-len 22 --model-name google/byt5-small --batch-size 16 --num-epochs 1\
