@@ -37,8 +37,9 @@ generate-error-detection-report:
 # Error correction
 error-correction-base:
   dev-mode: no-dev # One of dev, no-dev
-  language-prefix: include-language # One of include-language, exclude-language
+  language-prefix: exclude-language # One of include-language, exclude-language
 create-error-correction-dataset:
+  context-offset: 25
   dataset: data/processed/correction-dataset/dataset.csv
 train-error-correction:
   max-len: 22
@@ -48,7 +49,7 @@ train-error-correction:
   valid-niter: 5000
   model-name: google/byt5-small
   train-log: results/correction/logs/train-log.csv
-  add-task-prefix: add-task-prefix # one of: add-task-prefix, no-add-task-prefix
+  add-task-prefix: no-add-task-prefix # one of: add-task-prefix, no-add-task-prefix
 calculate-loss-error-correction:
   batch-size: 128
   test-log: results/correction/logs/test-log.csv

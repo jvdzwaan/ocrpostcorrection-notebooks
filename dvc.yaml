@@ -185,6 +185,7 @@ stages:
       python src/stages/create-error-correction-dataset.py
       --raw-dataset ${base.raw-data-zip}
       --val-split ${data-split.val-split}
+      --context-offset ${create-error-correction-dataset.context-offset}
       --dataset-out ${create-error-correction-dataset.dataset}
       --${error-correction-base.language-prefix}
     deps:
