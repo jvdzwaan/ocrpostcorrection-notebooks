@@ -31,6 +31,7 @@ def train_error_correction(
     model_dir: Annotated[Path, dir_out_option],
     train_log: Annotated[Path, file_out_option],
     delete_checkpoints: Annotated[bool, typer.Option()],
+    marker: Annotated[str, typer.Option()] = "",
     include_language: Annotated[
         Optional[bool], typer.Option("--include-language/--exclude-language")
     ] = False,
@@ -59,10 +60,17 @@ def train_error_correction(
     logger.info(f"# val samples: {len(dataset['val'])}")
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+    if marker:
+        logger.info("Adding markers to the tokenizer")
+        tokenizer.add_tokens([f"<{marker}>", f"</{marker}>"])
 
     tokenized_dataset = dataset.map(
         preprocess_function,
-        fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": include_language},
+        fn_kwargs={
+            "tokenizer": tokenizer,
+            "add_task_prefix": include_language,
+            "context_marker": marker,
+        },
         batched=True,
     )
 
@@ -72,6 +80,9 @@ def train_error_correction(
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model_name)
 
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    if marker:
+        logger.info("Resizing token embeddings")
+        model.resize_token_embeddings(len(tokenizer))
 
     training_args = Seq2SeqTrainingArguments(
         seed=seed,
