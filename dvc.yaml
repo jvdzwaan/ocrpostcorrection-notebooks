@@ -236,6 +236,7 @@ stages:
       --seed ${base.seed}
       --batch-size ${calculate-loss-error-correction.batch-size}
       --${error-correction-base.language-prefix}
+      --marker ${train-error-correction.marker}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/calculate-loss-error-correction.py
