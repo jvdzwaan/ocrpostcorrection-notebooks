@@ -261,6 +261,8 @@ stages:
       --perfect-detection-in ${generate-perfect-icdar-json.out-file-detection}
       --perfect-detection-out ${predict-error-correction.perfect-detection-out}
       --${error-correction-base.language-prefix}
+      --context-offset ${create-error-correction-dataset.context-offset}
+      --marker ${train-error-correction.marker}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/predict-error-correction.py
@@ -270,6 +272,7 @@ stages:
     params:
       - base
       - error-correction-base
+      - create-error-correction-dataset
       - train-error-correction
       - generate-perfect-icdar-json
       - predict-error-correction
@@ -286,6 +289,8 @@ stages:
       --predicted-detection-in ${convert-error-detection-predictions-to-icdar-output.icdar-output-json}
       --predicted-detection-out ${predict-error-correction.predicted-detection-out}
       --${error-correction-base.language-prefix}
+      --context-offset ${create-error-correction-dataset.context-offset}
+      --marker ${train-error-correction.marker}
       --${error-correction-base.dev-mode}
     deps:
       - src/stages/predict-error-correction.py
@@ -295,6 +300,7 @@ stages:
     params:
       - base
       - error-correction-base
+      - create-error-correction-dataset
       - train-error-correction
       - convert-error-detection-predictions-to-icdar-output
       - predict-error-correction

@@ -1,13 +1,14 @@
 import json
 import tempfile
 from pathlib import Path
-from typing import Dict, Text, Optional
+from typing import Dict, Optional, Text
 
 import edlib
 import pandas as pd
 import typer
 from datasets import Dataset
 from loguru import logger
+from ocrpostcorrection.error_correction import get_context_for_dataset
 from ocrpostcorrection.error_correction_t5 import preprocess_function
 from ocrpostcorrection.icdar_data import Text as ICDARText
 from ocrpostcorrection.icdar_data import (
@@ -61,6 +62,8 @@ def predict_and_save(
     tokenizer,
     out_file: Text,
     include_language: bool,
+    context_offset: int,
+    marker: str,
     dev: bool = False,
 ) -> None:
     if in_file and out_file:
@@ -69,6 +72,15 @@ def predict_and_save(
             output = json.load(f)
         test = icdar_output2simple_correction_dataset_df(output, data_test)
         logger.info(f"Number of samples in the dataset: {test.shape[0]}")
+
+        if context_offset > 0:
+            logger.info(f"Adding context of ~{context_offset} characters")
+            context_data = get_context_for_dataset(
+                data_test,
+                test,
+                context_offset,
+            )
+            test = test.merge(context_data)
 
         test = test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
         test = test.sort_values(by=["len_ocr"], ascending=False)
@@ -81,9 +93,16 @@ def predict_and_save(
         dataset = Dataset.from_pandas(test)
         tokenized_dataset = dataset.map(
             preprocess_function,
-            fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": include_language},
+            fn_kwargs={
+                "tokenizer": tokenizer,
+                "add_task_prefix": include_language,
+                "context_marker": marker,
+            },
             batched=True,
         )
+
+        ocr_in = tokenizer.decode(tokenized_dataset[0]["input_ids"])
+        logger.info(f"Input for first sample: {ocr_in}")
 
         pred = trainer.predict(tokenized_dataset)
         predictions = tokenizer.batch_decode(pred.predictions, skip_special_tokens=True)
@@ -111,6 +130,8 @@ def predict_error_correction(
     include_language: Annotated[
         Optional[bool], typer.Option("--include-language/--exclude-language")
     ] = False,
+    context_offset: Annotated[int, typer.Option()] = 0,
+    marker: Annotated[str, typer.Option()] = "",
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
     logger.info("Loading the test dataset")
@@ -148,6 +169,8 @@ def predict_error_correction(
         tokenizer,
         perfect_detection_out,
         include_language,
+        context_offset,
+        marker,
         dev,
     )
 
@@ -159,6 +182,8 @@ def predict_error_correction(
         tokenizer,
         predicted_detection_out,
         include_language,
+        context_offset,
+        marker,
         dev,
     )
 
