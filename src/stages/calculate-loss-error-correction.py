@@ -28,6 +28,7 @@ def calculate_loss_error_correction(
     include_language: Annotated[
         Optional[bool], typer.Option("--include-language/--exclude-language")
     ] = False,
+    marker: Annotated[str, typer.Option()] = "",
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -63,9 +64,16 @@ def calculate_loss_error_correction(
 
     tokenized_dataset = dataset.map(
         preprocess_function,
-        fn_kwargs={"tokenizer": tokenizer, "add_task_prefix": include_language},
+        fn_kwargs={
+            "tokenizer": tokenizer,
+            "add_task_prefix": include_language,
+            "context_marker": marker,
+        },
         batched=True,
     )
+
+    ocr_in = tokenizer.decode(tokenized_dataset[0]["input_ids"])
+    logger.info(f"Input for first sample: {ocr_in}")
 
     pred = trainer.predict(tokenized_dataset)
 
