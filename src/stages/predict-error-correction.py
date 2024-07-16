@@ -9,7 +9,10 @@ import typer
 from datasets import Dataset
 from loguru import logger
 from ocrpostcorrection.error_correction import get_context_for_dataset
-from ocrpostcorrection.error_correction_t5 import preprocess_function
+from ocrpostcorrection.error_correction_t5 import (
+    filter_len_ocr_mistake_in_context,
+    preprocess_function,
+)
 from ocrpostcorrection.icdar_data import Text as ICDARText
 from ocrpostcorrection.icdar_data import (
     extract_icdar_data,
@@ -83,10 +86,16 @@ def predict_and_save(
             test = test.merge(context_data)
 
         test = test.query(f"len_ocr <= {max_len}").query(f"len_gs <= {max_len}").copy()
+        if context_offset:
+            # Filter samples on length (to prevent using too much GPU memory)
+            test = filter_len_ocr_mistake_in_context(
+                data=test, context_offset=context_offset
+            )
+            logger.info(
+                f"Max length of input samples: {test.len_mistake_in_context.max()}"
+            )
         test = test.sort_values(by=["len_ocr"], ascending=False)
-        logger.info(
-            f"Number of samples after filtering on ocr and gs length: {test.shape[0]}"
-        )
+        logger.info(f"Number of samples after filtering: {test.shape[0]}")
         if dev:
             test = test.head(5)
 

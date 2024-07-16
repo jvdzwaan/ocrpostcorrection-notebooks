@@ -5,7 +5,11 @@ import pandas as pd
 import typer
 from datasets import Dataset, DatasetDict
 from loguru import logger
-from ocrpostcorrection.error_correction_t5 import filter_max_len, preprocess_function
+from ocrpostcorrection.error_correction_t5 import (
+    filter_len_ocr_mistake_in_context,
+    filter_max_len,
+    preprocess_function,
+)
 from ocrpostcorrection.utils import reduce_dataset
 from transformers import (
     AutoModelForSeq2SeqLM,
@@ -31,6 +35,7 @@ def train_error_correction(
     model_dir: Annotated[Path, dir_out_option],
     train_log: Annotated[Path, file_out_option],
     delete_checkpoints: Annotated[bool, typer.Option()],
+    context_offset: Annotated[int, typer.Option()] = 0,
     marker: Annotated[str, typer.Option()] = "",
     include_language: Annotated[
         Optional[bool], typer.Option("--include-language/--exclude-language")
@@ -41,6 +46,12 @@ def train_error_correction(
 
     data = pd.read_csv(dataset, index_col=0)
     data.fillna("", inplace=True)
+    if context_offset:
+        # Filter samples on length (to prevent using too much GPU memory)
+        data = filter_len_ocr_mistake_in_context(
+            data=data, context_offset=context_offset
+        )
+        logger.info(f"Max length of input samples: {data.len_mistake_in_context.max()}")
 
     dataset = DatasetDict(
         {

@@ -1,11 +1,15 @@
 from pathlib import Path
-from typing import Text, Optional
+from typing import Optional, Text
 
 import pandas as pd
 import typer
 from datasets import Dataset
 from loguru import logger
-from ocrpostcorrection.error_correction_t5 import filter_max_len, preprocess_function
+from ocrpostcorrection.error_correction_t5 import (
+    filter_len_ocr_mistake_in_context,
+    filter_max_len,
+    preprocess_function,
+)
 from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
@@ -28,6 +32,7 @@ def calculate_loss_error_correction(
     include_language: Annotated[
         Optional[bool], typer.Option("--include-language/--exclude-language")
     ] = False,
+    context_offset: Annotated[int, typer.Option()] = 0,
     marker: Annotated[str, typer.Option()] = "",
     dev: Annotated[bool, typer.Option()] = False,
 ) -> None:
@@ -52,6 +57,12 @@ def calculate_loss_error_correction(
     logger.info("Calculating loss on dataset without duplicates")
     data = pd.read_csv(error_correction_dataset, index_col=0)
     data.fillna("", inplace=True)
+    if context_offset:
+        # Filter samples on length (to prevent using too much GPU memory)
+        data = filter_len_ocr_mistake_in_context(
+            data=data, context_offset=context_offset
+        )
+        logger.info(f"Max length of input samples: {data.len_mistake_in_context.max()}")
 
     dataset = Dataset.from_pandas(data.query('dataset == "test"'))
 

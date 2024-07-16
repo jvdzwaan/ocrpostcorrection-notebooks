@@ -213,6 +213,7 @@ stages:
       --delete-checkpoints
       --train-log ${train-error-correction.train-log}
       --${error-correction-base.language-prefix}
+      --context-offset ${create-error-correction-dataset.context-offset}
       --marker ${train-error-correction.marker}
       --${error-correction-base.dev-mode}
     deps:
