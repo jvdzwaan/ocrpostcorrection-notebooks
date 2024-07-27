@@ -1,4 +1,4 @@
-### Experiment XXX (2024-03-17) { #sec-experiment-correction-XXX }
+### Experiment XXX (2024-07-27) { #sec-experiment-correction-XXX }
 
 * ocrpostcorrection-notebooks commit: [XXX](XXX)
 * Detection model from experiment [XXX](XXX)
@@ -9,9 +9,9 @@
 * Model: google/byt5-small
     * Number of epochs: 1
 * Loss
-    * Train: 0.4285
-    * Val: 0.356132298707962
-    * Test: 0.3938777148723602
+    * Train: 0.2885
+    * Val: 0.2521135210990906
+    * Test: 0.2787809669971466
 
 ### Summarized results (average % of improvement in edit distance between original and corrected)
 
@@ -19,7 +19,7 @@ The input is the 'perfect' results for error detection.
 
 |                 |   BG |   CZ |   DE |   EN |   ES |   FI |   FR |   NL |   PL |   SL |
 |:----------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| %ed_improvement |   25 |    8 |   66 |   17 |   19 |   48 |   10 |   24 |   27 |   18 |
+| %ed_improvement |   23 |   10 |   72 |   18 |   22 |   50 |   25 |   28 |   28 |   15 |
 
 ### Summarized results (average % of improvement in edit distance between original and corrected)
 
@@ -27,6 +27,6 @@ The input is the errors detected by a model.
 
 |                 |   BG |   CZ |   DE |   EN |   ES |   FI |   FR |   NL |   PL |   SL |
 |:----------------|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|
-| %ed_improvement |   16 |   -4 |   60 |   -7 |   10 |   42 |   -2 |   15 |   19 |   11 |
+| %ed_improvement |   14 |   -2 |   65 |   -4 |   11 |   43 |    7 |   17 |   21 |    1 |
 
 ### Remarks
