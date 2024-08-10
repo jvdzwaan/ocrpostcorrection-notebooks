@@ -291,7 +291,7 @@ stages:
   create-error-correction-dataset:
     cmd: "python src/stages/create-error-correction-dataset.py --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip
       --val-split data/splits/val.csv --context-offset 25 --dataset-out data/processed/correction-dataset/dataset.csv
-      --exclude-language\n"
+      --include-language\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
@@ -318,7 +318,7 @@ stages:
           test-split: data/splits/test.csv
         error-correction-base:
           dev-mode: no-dev
-          language-prefix: exclude-language
+          language-prefix: include-language
     outs:
     - path: data/processed/correction-dataset/dataset.csv
       md5: 2701e0687984f2678c64975581be1072
