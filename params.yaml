@@ -37,7 +37,7 @@ generate-error-detection-report:
 # Error correction
 error-correction-base:
   dev-mode: no-dev # One of dev, no-dev
-  language-prefix: exclude-language # One of include-language, exclude-language
+  language-prefix: include-language # One of include-language, exclude-language
 create-error-correction-dataset:
   context-offset: 25
   dataset: data/processed/correction-dataset/dataset.csv
