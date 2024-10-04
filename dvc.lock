@@ -327,14 +327,15 @@ stages:
     cmd: "python src/stages/train-error-correction.py --seed 8232 --dataset data/processed/correction-dataset/dataset.csv
       --max-len 22 --model-name google/byt5-small --batch-size 16 --num-epochs 1 --valid-niter
       5000 --model-dir models/error-correction-model --delete-checkpoints --train-log
-      results/correction/logs/train-log.csv --exclude-language --marker mistake --no-dev\n"
+      results/correction/logs/train-log.csv --include-language --context-offset 25
+      --marker mistake --no-dev\n"
     deps:
     - path: data/processed/correction-dataset/dataset.csv
       md5: 2701e0687984f2678c64975581be1072
       size: 245662995
     - path: src/stages/train-error-correction.py
-      md5: a531d6d5024dc7c8eb28b5f9f8ad836e
-      size: 3860
+      md5: 1cc32db03747fa57e756edfb8cdd5135
+      size: 4267
     params:
       params.yaml:
         base:
@@ -356,12 +357,12 @@ stages:
           marker: mistake
     outs:
     - path: models/error-correction-model
-      md5: 930be16478602e41dcd4ac84e551c60f.dir
+      md5: 6a06836749824dc826c224dc002587a6.dir
       size: 1198644421
       nfiles: 7
     - path: results/correction/logs/train-log.csv
-      md5: 9ceb9c41545f5b6158d130337bf920de
-      size: 5008
+      md5: 801581888a2f4967f6cd1ac9f20ddb51
+      size: 5015
   predict-error-correction:
     cmd: "python src/stages/predict-error-correction.py --error-correction-dataset
       data/processed/correction-dataset/dataset.csv --hidden-size 256 --dropout 0.1
