@@ -723,21 +723,21 @@ stages:
       models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip
       --seed 8232 --batch-size 128 --perfect-detection-in results/perfect/perfect-detection.json
       --perfect-detection-out results/correction/perfect-detection+predicted-correction.csv
-      --exclude-language --context-offset 25 --marker mistake --no-dev\n"
+      --include-language --context-offset 25 --marker mistake --no-dev\n"
     deps:
     - path: data/raw/ICDAR2019_POCR_competition_dataset.zip
       md5: 12de784f02a0dd99d1b3997674ee97f4
       size: 66523152
     - path: models/error-correction-model
-      md5: 930be16478602e41dcd4ac84e551c60f.dir
+      md5: 6a06836749824dc826c224dc002587a6.dir
       size: 1198644421
       nfiles: 7
     - path: results/perfect/perfect-detection.json
       md5: 81705463572854cb06fb5582a09f4fd3
       size: 5197896
     - path: src/stages/predict-error-correction.py
-      md5: a4d685c3898fe0e7ddd2e6c805a80be2
-      size: 6031
+      md5: 624a4236bca09a99e318d7ced527db36
+      size: 6389
     params:
       params.yaml:
         base:
@@ -749,7 +749,7 @@ stages:
           dataset: data/processed/correction-dataset/dataset.csv
         error-correction-base:
           dev-mode: no-dev
-          language-prefix: exclude-language
+          language-prefix: include-language
         generate-perfect-icdar-json:
           out-file-detection: results/perfect/perfect-detection.json
           out-file-correction: results/perfect/perfect-detection+correction.json
@@ -769,8 +769,8 @@ stages:
           marker: mistake
     outs:
     - path: results/correction/perfect-detection+predicted-correction.csv
-      md5: 36496c0628a782aa9cc2a6bd86d5df23
-      size: 64810796
+      md5: 6ec2681081efee7c258216143c2dd0b8
+      size: 64811312
   predict-error-correction-predicted-detection:
     cmd: "python src/stages/predict-error-correction.py --max-len 22 --model-name
       models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip
