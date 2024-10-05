@@ -681,18 +681,18 @@ stages:
     cmd: "python src/stages/calculate-loss-error-correction.py --error-correction-dataset
       data/processed/correction-dataset/dataset.csv --max-len 22 --model-name models/error-correction-model
       --test-log-file results/correction/logs/test-log.csv --seed 8232 --batch-size
-      128 --exclude-language --marker mistake --no-dev\n"
+      128 --include-language --marker mistake --no-dev\n"
     deps:
     - path: data/processed/correction-dataset/dataset.csv
       md5: 2701e0687984f2678c64975581be1072
       size: 245662995
     - path: models/error-correction-model
-      md5: 930be16478602e41dcd4ac84e551c60f.dir
+      md5: 6a06836749824dc826c224dc002587a6.dir
       size: 1198644421
       nfiles: 7
     - path: src/stages/calculate-loss-error-correction.py
-      md5: 0aacbb399b58f4ed9ee5ae98d43cc2f5
-      size: 2608
+      md5: 2bcafe400192fc2479da69e53bac8c03
+      size: 3015
     params:
       params.yaml:
         calculate-loss-error-correction:
@@ -703,7 +703,7 @@ stages:
           dataset: data/processed/correction-dataset/dataset.csv
         error-correction-base:
           dev-mode: no-dev
-          language-prefix: exclude-language
+          language-prefix: include-language
         train-error-correction:
           max-len: 22
           batch-size: 16
@@ -716,8 +716,8 @@ stages:
           marker: mistake
     outs:
     - path: results/correction/logs/test-log.csv
-      md5: f7e266a6ea35823f7836195d08f55bac
-      size: 115
+      md5: d2bb41a9bcc8ba315f28896ddfb2138e
+      size: 116
   predict-error-correction-perfect-detection:
     cmd: "python src/stages/predict-error-correction.py --max-len 22 --model-name
       models/error-correction-model --raw-dataset data/raw/ICDAR2019_POCR_competition_dataset.zip
