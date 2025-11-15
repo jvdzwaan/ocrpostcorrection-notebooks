@@ -10,10 +10,9 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
-datasets = "2.10.0"
-transformers = "4.26.1"
-pandas = "1.5.3"
+python = ">=3.10.19,<3.15"
+datasets = "^2.10.0"
+pandas = "^2.3.3"
 dvc-gdrive = "2.19.1"
 dvc = "^2.46.0"
 scikit-learn = "^1.2.1"
@@ -23,10 +22,10 @@ ocrpostcorrection = {git = "https://github.com/jvdzwaan/ocrpostcorrection.git"}
 typer = "^0.9.0"
 evaluate = "^0.4.1"
 jiwer = "^3.0.3"
-sentencepiece = "^0.1.99"
 protobuf = "^3.20"
 accelerate = "^0.25.0"
 dvc-ssh = "^3.0.0"
+transformers = "^4.57.1"
 
 
 [tool.poetry.group.dev.dependencies]
